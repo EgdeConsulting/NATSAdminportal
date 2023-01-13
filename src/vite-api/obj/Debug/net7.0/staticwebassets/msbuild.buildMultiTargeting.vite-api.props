@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\vite-api.props" />
+</Project>
