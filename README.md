@@ -16,4 +16,4 @@ To start a local dev server for the .Net-backend, first `cd` into `src/vite-api`
 dotnet watch run
 ```
 
-The repository is configured with an automated CI/CD workflow which bundles and deployes the application to Azure App Service (https://egde-nats-admin.azurewebsites.net/). The workflow triggers on pushes to and pull-request for the `master` branch.
+The repository is configured with an automated CI/CD workflow which bundles and deployes the application to Azure App Service (https://nats-adminportal.azurewebsites.net/). The workflow triggers on pushes to and pull-request for the `main` branch.
