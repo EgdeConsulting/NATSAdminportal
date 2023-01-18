@@ -1,3 +1,4 @@
 # Debug directory
 src/vite-api/bin/Debug/
 src/vite-api/obj/Debug/ 
+.vscode
