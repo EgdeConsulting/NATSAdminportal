@@ -3,7 +3,7 @@ using Backend.Logic;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddSpaStaticFiles(config => 
+builder.Services.AddSpaStaticFiles(config =>
 {
     config.RootPath = "dist";
 });
@@ -29,7 +29,7 @@ var app = builder.Build();
 
 app.UseRouting();
 
-app.UseEndpoints(_ => {});
+app.UseEndpoints(_ => { });
 
 // app.Use((context, next) => 
 // {
@@ -44,7 +44,8 @@ app.UseEndpoints(_ => {});
 
 app.UseSpaStaticFiles();
 
-app.UseSpa(builder => {
+app.UseSpa(builder =>
+{
     if (app.Environment.IsDevelopment())
         builder.UseProxyToSpaDevelopmentServer("http://localhost:5173/");
 });
@@ -57,14 +58,14 @@ Publisher pub = new Publisher("EgdeTest");
 
 app.MapGet("/LastMessages", () => sub.GetLatestMessages());
 
-app.MapPost("/NewSubject", async (HttpRequest request) => 
+app.MapPost("/NewSubject", async (HttpRequest request) =>
 {
     string content = "";
     using (StreamReader stream = new StreamReader(request.Body))
     {
         content = await stream.ReadToEndAsync();
     }
-    
+
     var jsonObject = JsonNode.Parse(content);
 
     if (jsonObject != null && jsonObject["Subject"] != null)
@@ -76,14 +77,14 @@ app.MapPost("/NewSubject", async (HttpRequest request) =>
     }
 });
 
-app.MapPost("/PublishMessage", async (HttpRequest request) => 
+app.MapPost("/PublishMessage", async (HttpRequest request) =>
 {
     string content = "";
     using (StreamReader stream = new StreamReader(request.Body))
     {
         content = await stream.ReadToEndAsync();
     }
-    
+
     var jsonObject = JsonNode.Parse(content);
 
     if (jsonObject != null && jsonObject["Payload"] != null)

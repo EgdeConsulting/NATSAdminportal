@@ -27,12 +27,13 @@ namespace Backend.Logic
         string url = Defaults.Url;
         string? creds = null;
 
-        public string MessageSubject 
+        public string MessageSubject
         {
             get; set;
         }
 
-        public Publisher(string subject, string url = "nats://demo.nats.io") {
+        public Publisher(string subject, string url = "nats://demo.nats.io")
+        {
             MessageSubject = subject;
             this.url = url;
         }

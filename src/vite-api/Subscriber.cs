@@ -36,12 +36,13 @@ namespace Backend.Logic
         List<Msg> latestMessages;
         List<DateTime> timestamps;
 
-        public string MessageSubject 
+        public string MessageSubject
         {
             get; set;
         }
 
-        public Subscriber(string url = "nats://demo.nats.io") {
+        public Subscriber(string url = "nats://demo.nats.io")
+        {
             latestMessages = new List<Msg>();
             timestamps = new List<DateTime>();
             MessageSubject = ">";
@@ -126,33 +127,33 @@ namespace Backend.Logic
             return sw.Elapsed;
         }
 
-        private void AddMessage(Msg lastMessage) 
+        private void AddMessage(Msg lastMessage)
         {
-            if (latestMessages.Count == 100) 
+            if (latestMessages.Count == 100)
             {
                 latestMessages.RemoveAt(latestMessages.Count - 1);
                 timestamps.RemoveAt(timestamps.Count - 1);
-            } 
+            }
             latestMessages.Insert(0, lastMessage);
-            timestamps.Insert(0, DateTime.Now);   
+            timestamps.Insert(0, DateTime.Now);
         }
 
-        public string GetLatestMessages() 
+        public string GetLatestMessages()
         {
             string json = "[";
-            for (int i = 0; i < latestMessages.Count; i++) 
+            for (int i = 0; i < latestMessages.Count; i++)
             {
                 Msg msg = latestMessages[i];
                 string timestamp = timestamps[i].ToString("MM/dd/yyyy HH:mm:ss");
-                
-                if (!msg.Subject.Contains("ntu.amr.job")) 
+
+                if (!msg.Subject.Contains("ntu.amr.job"))
                 {
                     string payload = Encoding.UTF8.GetString(msg.Data);
-                    if (payload.Contains("{")) 
+                    if (payload.Contains("{"))
                     {
                         json += "{\"messageSubject\":\"" + msg.Subject + "\",\"messageTimestamp\":\"" + timestamp + "\",\"messageAck\":\"" + msg.LastAck + "\",\"messagePayload\":" + payload + "},";
                     }
-                    else 
+                    else
                     {
                         json += JsonSerializer.Serialize(
                                 new
@@ -179,7 +180,7 @@ namespace Backend.Logic
                 {
                     if (received == 0)
                         sw.Start();
-                    
+
                     Msg m = s.NextMessage();
                     received++;
 
