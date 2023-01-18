@@ -1,4 +1,5 @@
 # Debug directory
 src/vite-api/bin/Debug/
-src/vite-api/obj/Debug/ 
+src/vite-api/obj/ 
 .vscode
+
