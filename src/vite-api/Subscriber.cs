@@ -146,28 +146,21 @@ namespace Backend.Logic
                 Msg msg = latestMessages[i];
                 string timestamp = timestamps[i].ToString("MM/dd/yyyy HH:mm:ss");
 
-                if (!msg.Subject.Contains("ntu.amr.job"))
-                {
-                    string payload = Encoding.UTF8.GetString(msg.Data);
-                    if (payload.Contains("{"))
+                json += JsonSerializer.Serialize(
+                    new
                     {
-                        json += "{\"messageSubject\":\"" + msg.Subject + "\",\"messageTimestamp\":\"" + timestamp + "\",\"messageAck\":\"" + msg.LastAck + "\",\"messagePayload\":" + payload + "},";
+                        messageSubject = msg.Subject,
+                        messageTimestamp = timestamp,
+                        messageAck = msg.LastAck,
+                        // Checks if any characters are not ASCII.
+                        messagePayload = msg.Data.All(b => b >= 32 && b <= 127) ? Encoding.ASCII.GetString(msg.Data) : msg.Data.ToString()
                     }
-                    else
-                    {
-                        json += JsonSerializer.Serialize(
-                                new
-                                {
-                                    messageSubject = msg.Subject,
-                                    messageTimestamp = timestamp,
-                                    messageAck = msg.LastAck,
-                                    messagePayload = payload
-                                }) + ",";
-                    }
-                }
+                );
+
+                json = i < latestMessages.Count - 1 ? json + "," : json;
             }
 
-            return json.Remove(json.Length - 1, 1) + "]";
+            return json + "]";
         }
 
         private TimeSpan receiveSyncSubscriber(IConnection c)
