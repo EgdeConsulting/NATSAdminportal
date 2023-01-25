@@ -24,5 +24,8 @@ src/vite-client/dist-ssr
 *.sw?
 
 # Debug directory
-src/vite-api/bin/Debug
+src/vite-api/bin
 src/vite-api/obj
+
+# Build Folder
+src/prod
