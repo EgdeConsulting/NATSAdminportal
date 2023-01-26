@@ -3,3 +3,4 @@ src/vite-api/bin/Debug/
 src/vite-api/obj/ 
 .vscode
 
+src/json-server/node_modules
