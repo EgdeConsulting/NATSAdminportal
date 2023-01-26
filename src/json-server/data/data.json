@@ -1,0 +1,10 @@
+{
+  "message1": [
+    {
+      "messageSubject": "Testtt",
+      "messageTimestamp": "01.26.2023 09:31:52",
+      "messageAck": null,
+      "messagePayload": "lmao ok time to check"
+    }
+  ]
+}
