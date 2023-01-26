@@ -1,6 +1,35 @@
-# Debug directory
-src/vite-api/bin/Debug/
-src/vite-api/obj/ 
-.vscode
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
+src/vite-client/node_modules
+src/vite-client/dist
+src/vite-client/dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Debug directory
+src/vite-api/bin
+src/vite-api/obj
+
+# JSON-server 
 src/json-server/node_modules
+
+# Build Folder
+src/prod
+
