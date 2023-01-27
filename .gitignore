@@ -27,5 +27,9 @@ src/vite-client/dist-ssr
 src/vite-api/bin
 src/vite-api/obj
 
+# JSON-server 
+src/json-server/node_modules
+
 # Build Folder
 src/prod
+
