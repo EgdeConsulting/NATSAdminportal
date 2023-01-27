@@ -4,8 +4,9 @@ using Backend.Logic;
 var config = new ConfigurationBuilder()
     .AddUserSecrets<Program>()
     .Build();
-string? natsServerIp = config["natsServerIp"];
-string? natsServerPort = config["natsServerPort"];
+
+string? natsServerIp = args.Length != 0 ? args[0] : config["natsServerIp"];
+string? natsServerPort = args.Length != 0 ? args[1] : config["natsServerPort"];
 
 var builder = WebApplication.CreateBuilder(args);
 
