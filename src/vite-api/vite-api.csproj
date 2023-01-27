@@ -1,10 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>vite_api</RootNamespace>
+    <UserSecretsId>08baf803-4c6d-43f3-a5dd-8dbbbfa8a525</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

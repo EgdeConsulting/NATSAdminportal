@@ -1,6 +1,12 @@
 using System.Text.Json.Nodes;
 using Backend.Logic;
 
+var config = new ConfigurationBuilder()
+    .AddUserSecrets<Program>()
+    .Build();
+string? natsServerIp = config["natsServerIp"];
+string? natsServerPort = config["natsServerPort"];
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSpaStaticFiles(config =>
@@ -50,7 +56,7 @@ app.UseSpa(builder =>
         builder.UseProxyToSpaDevelopmentServer("http://localhost:5173/");
 });
 
-Subscriber sub = new Subscriber();
+Subscriber sub = new Subscriber(natsServerIp + ":" + natsServerPort);
 Thread thread = new Thread(sub.Run);
 thread.Start();
 
