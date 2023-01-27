@@ -56,7 +56,7 @@ app.UseSpa(builder =>
         builder.UseProxyToSpaDevelopmentServer("http://localhost:5173/");
 });
 
-Subscriber sub = new Subscriber();
+Subscriber sub = new Subscriber(natsServerIp + ":" + natsServerPort);
 Thread thread = new Thread(sub.Run);
 thread.Start();
 
