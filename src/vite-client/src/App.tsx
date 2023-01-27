@@ -66,7 +66,7 @@ function App() {
   const [allMessages, setAllMessages] = useState<any[]>([]);
 
   function getAllMessages() {
-    fetch("/LastMessages")
+    fetch("/LastMessages") // "http://localhost:3000/message1"
       .then((res) => res.json())
       .then((data) => {
         setAllMessages(data);

@@ -28,7 +28,7 @@ namespace Backend.Logic
         // Use > to subscribe to all subjects
         public string subject = ">";
         int count = 1000000;
-        string url;
+        string? url;
         bool sync = true;
         int received = 0;
         bool verbose = true;
@@ -41,7 +41,7 @@ namespace Backend.Logic
             get; set;
         }
 
-        public Subscriber(string url = "nats://demo.nats.io")
+        public Subscriber(string? url)
         {
             latestMessages = new List<Msg>();
             timestamps = new List<DateTime>();

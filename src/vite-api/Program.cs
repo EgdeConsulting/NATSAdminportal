@@ -10,6 +10,21 @@ builder.Services.AddSpaStaticFiles(config =>
 
 var app = builder.Build();
 
+string? natsServerURL;
+
+if (app.Environment.IsDevelopment())
+{
+    var config = new ConfigurationBuilder()
+    .AddUserSecrets<Program>()
+    .Build();
+
+    natsServerURL = config["LOCAL_NATS_SERVER_URL"];
+}
+else 
+{
+    natsServerURL = Environment.GetEnvironmentVariable("AZURE_NATS_SERVER_URL");
+}
+
 //var policyName = "enableCORS";
 
 // builder.Services.AddCors(options =>
@@ -50,7 +65,7 @@ app.UseSpa(builder =>
         builder.UseProxyToSpaDevelopmentServer("http://localhost:5173/");
 });
 
-Subscriber sub = new Subscriber();
+Subscriber sub = new Subscriber(natsServerURL);
 Thread thread = new Thread(sub.Run);
 thread.Start();
 
