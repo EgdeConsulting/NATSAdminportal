@@ -1,12 +1,6 @@
 using System.Text.Json.Nodes;
 using Backend.Logic;
 
-var config = new ConfigurationBuilder()
-    .AddUserSecrets<Program>()
-    .Build();
-string? natsServerIp = config["natsServerIp"];
-string? natsServerPort = config["natsServerPort"];
-
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSpaStaticFiles(config =>
@@ -15,6 +9,21 @@ builder.Services.AddSpaStaticFiles(config =>
 });
 
 var app = builder.Build();
+
+string? natsServerURL;
+
+if (app.Environment.IsDevelopment())
+{
+    var config = new ConfigurationBuilder()
+    .AddUserSecrets<Program>()
+    .Build();
+
+    natsServerURL = config["LOCAL_NATS_SERVER_URL"];
+}
+else 
+{
+    natsServerURL = Environment.GetEnvironmentVariable("AZURE_NATS_SERVER_URL");
+}
 
 //var policyName = "enableCORS";
 
@@ -56,7 +65,7 @@ app.UseSpa(builder =>
         builder.UseProxyToSpaDevelopmentServer("http://localhost:5173/");
 });
 
-Subscriber sub = new Subscriber(natsServerIp + ":" + natsServerPort);
+Subscriber sub = new Subscriber(natsServerURL);
 Thread thread = new Thread(sub.Run);
 thread.Start();
 

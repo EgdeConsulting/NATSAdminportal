@@ -59,9 +59,6 @@ jobs:
 
       - name: .net build and publish
         working-directory: ${{ env.DOTNET_PATH }}
-        env:
-          natsServerIp: ${{ secrets.NATS_SERVER_IP }}
-          natsServerPort: ${{ secrets.NATS_SERVER_PORT }}
         run: |
           dotnet build --configuration Release
           dotnet publish -c Release -o ../prod
