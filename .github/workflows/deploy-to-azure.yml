@@ -60,7 +60,7 @@ jobs:
       - name: .net build and publish
         working-directory: ${{ env.DOTNET_PATH }}
         run: |
-          dotnet build --configuration Release ${{ secrets.NATS_SERVER_IP }} ${{ secrets.NATS_SERVER_PORT }}
+          dotnet build --configuration Release
           dotnet publish -c Release -o ../prod
 
       - name: Set up Node.js
