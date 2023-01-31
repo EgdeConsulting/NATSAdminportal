@@ -1,10 +1,15 @@
 import { useRef, useState, useEffect } from "react";
 import {
-  ThemeProvider,
+  ChakraProvider,
+  Box,
   theme,
-  extendTheme,
+  Card,
+  Input,
   ColorModeProvider,
   CSSReset,
+  CardBody,
+  Text,
+  Button,
 } from "@chakra-ui/react";
 import { Topbar } from "./components";
 
@@ -96,60 +101,80 @@ function App() {
   }
 
   return (
-    <ThemeProvider theme={theme}>
+    <ChakraProvider theme={theme}>
       <ColorModeProvider>
         <CSSReset />
-        <div className="App">
-          <Topbar />
-          <div className="card">
-            <h3>
+        <Topbar />
+        <Card margin={2} variant={"outline"}>
+          <CardBody>
+            <Text fontSize={"lg"}>
               Use "<b>&gt;</b>" to subscribe to all subjects:
-            </h3>
-            <input
+            </Text>
+            <Input
               ref={subjectInputRef}
-              type="text"
-              placeholder="Message Subject"
+              type={"text"}
+              placeholder={"Message Subject"}
+              marginTop={2}
+              marginRight={2}
+              width={500}
             />
-            <button onClick={postNewSubject}>Change Message Subject</button>
-            <br />
-            <br />
-            <h3>Publish a message onto the NATS queue:</h3>
-            <input ref={publishInputRef} type="text" placeholder="Payload" />
-            <button onClick={postNewMessage}>Publish Message</button>
-          </div>
-          <div className="card">
-            <button onClick={manageAllMessagesInterval}>{buttonText}</button>
+            <Button onClick={postNewSubject} marginTop={-1}>
+              Change Message Subject
+            </Button>
+          </CardBody>
+        </Card>
+        <Card margin={2} variant={"outline"}>
+          <CardBody>
+            <Text fontSize={"lg"}>Publish a message onto the NATS queue:</Text>
+            <Input
+              ref={publishInputRef}
+              type={"text"}
+              placeholder={"Payload"}
+              marginTop={2}
+              marginRight={2}
+              width={500}
+            />
+            <Button onClick={postNewMessage} marginTop={-1}>
+              Publish Message
+            </Button>
+          </CardBody>
+        </Card>
+        <Card margin={2} variant={"outline"}>
+          <CardBody>
+            <Button onClick={manageAllMessagesInterval} marginBottom={6}>
+              {buttonText}
+            </Button>
             <hr />
             {allMessages.length != 0 &&
               allMessages.map((item, index) => {
                 return (
-                  <div key={index}>
-                    <h2>
+                  <Box key={index}>
+                    <Text fontSize={"md"} marginTop={2}>
                       #{index} Message Subject:{" "}
                       <code>{item.messageSubject}</code>
-                    </h2>
-                    <h4>
+                    </Text>
+                    <Text fontSize={"sm"}>
                       Timestamp: <code>{item.messageTimestamp}</code>
-                    </h4>
-                    <p>
+                    </Text>
+                    <Text fontSize={"sm"}>
                       Acknowledgement: <code>{item.messageAck}</code>
-                    </p>
-                    <p>
+                    </Text>
+                    <Text fontSize={"sm"} marginBottom={2}>
                       Payload:{" "}
                       <code>
                         {typeof item.messagePayload == "string"
                           ? item.messagePayload
                           : JSON.stringify(item.messagePayload)}
                       </code>
-                    </p>
+                    </Text>
                     <hr />
-                  </div>
+                  </Box>
                 );
               })}
-          </div>
-        </div>
+          </CardBody>
+        </Card>
       </ColorModeProvider>
-    </ThemeProvider>
+    </ChakraProvider>
   );
 }
 
