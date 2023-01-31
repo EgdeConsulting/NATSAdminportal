@@ -12,13 +12,13 @@ function Topbar() {
   const { colorMode, toggleColorMode } = useColorMode();
   return (
     <div>
-      <Flex maxH="100px" border="thin">
+      <Flex maxH={"100px"} border={"thin"}>
         <Box marginLeft={3}>
-          <Image src={natslogo} alt="NATS Logo" />
+          <Image src={natslogo} alt={"NATS Logo"} />
         </Box>
         <Spacer />
         <Box>
-          <Button margin={2} size="md" onClick={() => toggleColorMode()}>
+          <Button margin={2} size={"md"} onClick={() => toggleColorMode()}>
             {colorMode == "light" ? "☾" : "☼"}
           </Button>
         </Box>
