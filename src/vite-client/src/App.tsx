@@ -1,5 +1,12 @@
 import { useRef, useState, useEffect } from "react";
-import "./App.css";
+import {
+  ThemeProvider,
+  theme,
+  extendTheme,
+  ColorModeProvider,
+  CSSReset,
+} from "@chakra-ui/react";
+import { Topbar } from "./components";
 
 function App() {
   const subjectInputRef = useRef<any>(null);
@@ -89,54 +96,61 @@ function App() {
   }
 
   return (
-    <div className="App">
-      <div className="card">
-        <h3>
-          Use "<b>&gt;</b>" to subscribe to all subjects:
-        </h3>
-        <input
-          ref={subjectInputRef}
-          type="text"
-          placeholder="Message Subject"
-        />
-        <button onClick={postNewSubject}>Change Message Subject</button>
-        <br />
-        <br />
-        <h3>Publish a message onto the NATS queue:</h3>
-        <input ref={publishInputRef} type="text" placeholder="Payload" />
-        <button onClick={postNewMessage}>Publish Message</button>
-      </div>
-      <div className="card">
-        <button onClick={manageAllMessagesInterval}>{buttonText}</button>
-        <hr />
-        {allMessages.length != 0 &&
-          allMessages.map((item, index) => {
-            return (
-              <div key={index}>
-                <h2>
-                  #{index} Message Subject: <code>{item.messageSubject}</code>
-                </h2>
-                <h4>
-                  Timestamp: <code>{item.messageTimestamp}</code>
-                </h4>
-                <p>
-                  Acknowledgement: <code>{item.messageAck}</code>
-                </p>
-                <p>
-                  Payload:{" "}
-                  <code>
-                    {typeof item.messagePayload == "string"
-                      ? item.messagePayload
-                      : JSON.stringify(item.messagePayload)}
-                  </code>
-                </p>
-                <hr />
-              </div>
-            );
-          })}
-      </div>
-    </div>
+    <ThemeProvider theme={theme}>
+      <ColorModeProvider>
+        <CSSReset />
+        <div className="App">
+          <Topbar />
+          <div className="card">
+            <h3>
+              Use "<b>&gt;</b>" to subscribe to all subjects:
+            </h3>
+            <input
+              ref={subjectInputRef}
+              type="text"
+              placeholder="Message Subject"
+            />
+            <button onClick={postNewSubject}>Change Message Subject</button>
+            <br />
+            <br />
+            <h3>Publish a message onto the NATS queue:</h3>
+            <input ref={publishInputRef} type="text" placeholder="Payload" />
+            <button onClick={postNewMessage}>Publish Message</button>
+          </div>
+          <div className="card">
+            <button onClick={manageAllMessagesInterval}>{buttonText}</button>
+            <hr />
+            {allMessages.length != 0 &&
+              allMessages.map((item, index) => {
+                return (
+                  <div key={index}>
+                    <h2>
+                      #{index} Message Subject:{" "}
+                      <code>{item.messageSubject}</code>
+                    </h2>
+                    <h4>
+                      Timestamp: <code>{item.messageTimestamp}</code>
+                    </h4>
+                    <p>
+                      Acknowledgement: <code>{item.messageAck}</code>
+                    </p>
+                    <p>
+                      Payload:{" "}
+                      <code>
+                        {typeof item.messagePayload == "string"
+                          ? item.messagePayload
+                          : JSON.stringify(item.messagePayload)}
+                      </code>
+                    </p>
+                    <hr />
+                  </div>
+                );
+              })}
+          </div>
+        </div>
+      </ColorModeProvider>
+    </ThemeProvider>
   );
 }
 
-export default App;
+export { App };
