@@ -177,7 +177,7 @@ namespace Backend.Logic
         {
             return jsm.GetStreamNames();
         }
-        public static IList<StreamInfo> GetStreamInfoObject(IJetStreamManagement jsm)
+        public static IList<StreamInfo> GetStreamInfoArray(IJetStreamManagement jsm)
         {
             return jsm.GetStreams();
         }

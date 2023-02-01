@@ -128,6 +128,31 @@ app.MapGet("/StreamNames", () =>
 
     return json + "]";
 });
+
+app.MapGet("/StreamInfo", () =>
+{
+    List<StreamInfo> streamInfo;
+    string json = "[";
+
+    using (IConnection c = new ConnectionFactory().CreateConnection(natsServerURL))
+    {
+        IJetStreamManagement jsm = c.CreateJetStreamManagementContext();
+        streamInfo = JsUtils.GetStreamInfoArray(jsm).ToList<StreamInfo>();
+
+        for (int i = 0; i < streamInfo.Count; i++)
+        {
+            json += JsonSerializer.Serialize(
+                new
+                {
+                    StreamInfo = streamInfo[i]
+                }
+            );
+            json = i < streamInfo.Count - 1 ? json + "," : json;
+        }
+    }
+
+    return json + "]";
+});
 /////////////////////////////////////////////////////////////
 
 app.MapGet("/LastMessages", () => sub.GetLatestMessages());

@@ -74,6 +74,16 @@ function App() {
     console.log(streamNames);
   }
 
+  const [streamInfo, setStreamInfo] = useState<{}>({});
+
+  function getStreamInfo() {
+    fetch("/StreamInfo")
+      .then((res) => res.json())
+      .then((data) => {
+        setStreamInfo(data);
+      });
+    console.log(streamInfo);
+  }
   // async function loadData() {
   //   try {
   //     fetch("https://localhost:7116/LastMessage")
@@ -144,7 +154,8 @@ function App() {
         <h3>Create a stream:</h3>
         <input ref={streamInputRef} type="text" placeholder="Streamname" />
         <button onClick={postNewStream}>Create Stream</button>
-        <button onClick={getStreamNames}>Get All Streams(console)</button>
+        <button onClick={getStreamNames}>Get All StreamNames(console)</button>
+        <button onClick={getStreamInfo}>Get All StreamInfo(console)</button>
       </div>
       <div className="card">
         <button onClick={manageAllMessagesInterval}>{buttonText}</button>
