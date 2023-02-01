@@ -98,7 +98,7 @@ app.MapPost("/NewStream", async (HttpRequest request) =>
             using (IConnection c = new ConnectionFactory().CreateConnection(natsServerURL))
             {
                 IJetStreamManagement jsm = c.CreateJetStreamManagementContext();
-                JsUtils.CreateStreamWhenDoesNotExist(jsm, StorageType.Memory, streamName.ToString(), "test123");
+                JsUtils.CreateStreamWhenDoesNotExist(jsm, StorageType.File, streamName.ToString(), "test12345");
             }
         }
     }
