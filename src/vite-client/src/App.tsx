@@ -4,6 +4,7 @@ import "./App.css";
 function App() {
   const subjectInputRef = useRef<any>(null);
   const publishInputRef = useRef<any>(null);
+  const streamInputRef = useRef<any>(null);
 
   // const [subject, setSubject] = useState("empty");
   // const [payload, setPayload] = useState("empty");
@@ -41,6 +42,38 @@ function App() {
     });
   }
 
+  function postNewStream() {
+    fetch("/NewStream", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        StreamName:
+          streamInputRef.current != null
+            ? streamInputRef.current.value
+            : "error",
+        // Only create stream with 1 subject for the time being
+        // Subject:
+        //   subjectInputRef.current != null
+        //     ? subjectInputRef.current.value
+        //     : "error",
+      }),
+    });
+  }
+
+  const [streamNames, setStreamNames] = useState<any[]>([]);
+
+  function getStreamNames() {
+    fetch("/StreamNames")
+      .then((res) => res.json())
+      .then((data) => {
+        setStreamNames(data);
+      });
+    console.log(streamNames);
+  }
+
   // async function loadData() {
   //   try {
   //     fetch("https://localhost:7116/LastMessage")
@@ -71,6 +104,7 @@ function App() {
       .then((data) => {
         setAllMessages(data);
       });
+    console.log(allMessages);
   }
 
   const initialButtonText: string = "Get all Messages";
@@ -105,6 +139,12 @@ function App() {
         <h3>Publish a message onto the NATS queue:</h3>
         <input ref={publishInputRef} type="text" placeholder="Payload" />
         <button onClick={postNewMessage}>Publish Message</button>
+        <br />
+        <br />
+        <h3>Create a stream:</h3>
+        <input ref={streamInputRef} type="text" placeholder="Streamname" />
+        <button onClick={postNewStream}>Create Stream</button>
+        <button onClick={getStreamNames}>Get All Streams(console)</button>
       </div>
       <div className="card">
         <button onClick={manageAllMessagesInterval}>{buttonText}</button>

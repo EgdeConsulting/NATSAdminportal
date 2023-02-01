@@ -1,5 +1,8 @@
 using System.Text.Json.Nodes;
 using Backend.Logic;
+using NATS.Client;
+using NATS.Client.JetStream;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,7 +23,7 @@ if (app.Environment.IsDevelopment())
 
     natsServerURL = config["LOCAL_NATS_SERVER_URL"];
 }
-else 
+else
 {
     natsServerURL = Environment.GetEnvironmentVariable("AZURE_NATS_SERVER_URL");
 }
@@ -69,7 +72,63 @@ Subscriber sub = new Subscriber(natsServerURL);
 Thread thread = new Thread(sub.Run);
 thread.Start();
 
-Publisher pub = new Publisher("EgdeTest");
+Publisher pub = new Publisher("EgdeTest", natsServerURL);
+
+// NEW CODE PER BRANCH 11
+///////////////////////////////////////////////////////////
+///
+app.MapPost("/NewStream", async (HttpRequest request) =>
+{
+    string content = "";
+
+    using (StreamReader stream = new StreamReader(request.Body))
+    {
+        content = await stream.ReadToEndAsync();
+    }
+
+    var jsonObject = JsonNode.Parse(content);
+
+    if (jsonObject != null && jsonObject["StreamName"] != null)
+    {
+        var streamName = jsonObject["StreamName"];
+        //var subject = jsonObject["Subject"]!;
+
+        if (streamName != null && !string.IsNullOrWhiteSpace(streamName.ToString()))
+        {
+            using (IConnection c = new ConnectionFactory().CreateConnection(natsServerURL))
+            {
+                IJetStreamManagement jsm = c.CreateJetStreamManagementContext();
+                JsUtils.CreateStreamWhenDoesNotExist(jsm, StorageType.Memory, streamName.ToString(), "test123");
+            }
+        }
+    }
+});
+
+app.MapGet("/StreamNames", () =>
+{
+    List<string> streamNames;
+    string json = "[";
+
+    using (IConnection c = new ConnectionFactory().CreateConnection(natsServerURL))
+    {
+        IJetStreamManagement jsm = c.CreateJetStreamManagementContext();
+        streamNames = JsUtils.GetStreamNamesArray(jsm).ToList<string>();
+
+        for (int i = 0; i < streamNames.Count; i++)
+        {
+            json += JsonSerializer.Serialize(
+                new
+                {
+                    StreamNames = streamNames[i]
+                }
+            );
+            json = i < streamNames.Count - 1 ? json + "," : json;
+        }
+    }
+
+    return json + "]";
+});
+/////////////////////////////////////////////////////////////
 
 app.MapGet("/LastMessages", () => sub.GetLatestMessages());
 
@@ -91,6 +150,11 @@ app.MapPost("/NewSubject", async (HttpRequest request) =>
             sub.MessageSubject = subject.ToString();
     }
 });
+
+// app.MapPost("/AddStream", async (HttpRequest request) =>
+// {
+//     pub.CreateStream();
+// });
 
 app.MapPost("/PublishMessage", async (HttpRequest request) =>
 {

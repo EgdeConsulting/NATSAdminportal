@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using NATS.Client;
+using NATS.Client.JetStream;
 
 namespace Backend.Logic
 {
@@ -24,7 +25,7 @@ namespace Backend.Logic
         Dictionary<string, string> parsedArgs = new Dictionary<string, string>();
 
         int count = 1;
-        string url = Defaults.Url;
+        string? url = Defaults.Url;
         string? creds = null;
 
         public string MessageSubject
@@ -32,7 +33,7 @@ namespace Backend.Logic
             get; set;
         }
 
-        public Publisher(string subject, string url = "nats://demo.nats.io")
+        public Publisher(string subject, string? url)
         {
             MessageSubject = subject;
             this.url = url;
