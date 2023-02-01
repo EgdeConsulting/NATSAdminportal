@@ -11,7 +11,7 @@ import {
   Text,
   Button,
 } from "@chakra-ui/react";
-import { Topbar } from "./components";
+import { Topbar, MessageView } from "./components";
 
 function App() {
   const subjectInputRef = useRef<any>(null);
@@ -145,32 +145,7 @@ function App() {
               {buttonText}
             </Button>
             <hr />
-            {allMessages.length != 0 &&
-              allMessages.map((item, index) => {
-                return (
-                  <Box key={index}>
-                    <Text fontSize={"md"} marginTop={2}>
-                      #{index} Message Subject:{" "}
-                      <code>{item.messageSubject}</code>
-                    </Text>
-                    <Text fontSize={"sm"}>
-                      Timestamp: <code>{item.messageTimestamp}</code>
-                    </Text>
-                    <Text fontSize={"sm"}>
-                      Acknowledgement: <code>{item.messageAck}</code>
-                    </Text>
-                    <Text fontSize={"sm"} marginBottom={2}>
-                      Payload:{" "}
-                      <code>
-                        {typeof item.messagePayload == "string"
-                          ? item.messagePayload
-                          : JSON.stringify(item.messagePayload)}
-                      </code>
-                    </Text>
-                    <hr />
-                  </Box>
-                );
-              })}
+            <MessageView messages={allMessages} />
           </CardBody>
         </Card>
       </ColorModeProvider>

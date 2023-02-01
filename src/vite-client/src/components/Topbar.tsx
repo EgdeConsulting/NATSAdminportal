@@ -19,7 +19,7 @@ function Topbar() {
         <Spacer />
         <Box>
           <Button margin={2} size={"md"} onClick={() => toggleColorMode()}>
-            {colorMode == "light" ? "☾" : "☼"}
+            {colorMode == "light" ? "🌙" : "☀️"}
           </Button>
         </Box>
       </Flex>
