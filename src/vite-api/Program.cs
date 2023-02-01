@@ -37,25 +37,10 @@ else
 // });
 
 // app.UseCors(policyName);
-// app.UseStaticFiles(config => 
-// {
-//     config.RootPath = "dist";
-// });
 
 app.UseRouting();
 
 app.UseEndpoints(_ => { });
-
-// app.Use((context, next) => 
-// {
-//     if (context.Request.Path.StartsWithSegments("/LastMessages"))
-//     {
-//         context.Response.StatusCode = 404;
-//         return Task.CompletedTask;
-//     }
-
-//     return next();
-// });
 
 app.UseSpaStaticFiles();
 
@@ -69,7 +54,7 @@ Subscriber sub = new Subscriber(natsServerURL);
 Thread thread = new Thread(sub.Run);
 thread.Start();
 
-Publisher pub = new Publisher("EgdeTest");
+Publisher pub = new Publisher("EgdeTest", natsServerURL);
 
 app.MapGet("/LastMessages", () => sub.GetLatestMessages());
 
