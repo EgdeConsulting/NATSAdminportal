@@ -187,7 +187,7 @@ namespace Backend.Logic
 
             StreamConfiguration sc = StreamConfiguration.Builder()
                 .WithName(stream)
-                .WithStorageType(StorageType.Memory)
+                .WithStorageType(storageType)
                 .WithSubjects(subjects)
                 .Build();
             jsm.AddStream(sc);
