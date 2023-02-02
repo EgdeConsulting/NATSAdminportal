@@ -130,5 +130,59 @@ namespace Backend.Logic
         //     Console.WriteLine("  Payload is {0} bytes.",
         //         payload != null ? payload.Length : 0);
         // }
+        // ----------------------------------------------------------------------------------------------------
+        // PUBLISH FROM JsUtils.cs
+        // ----------------------------------------------------------------------------------------------------
+        //     public static void Publish(IConnection c, string subject, int count)
+        //     {
+        //         Publish(c.CreateJetStreamContext(), subject, "data", count, false);
+        //     }
+
+        //     public static void Publish(IJetStream js, String subject, int count)
+        //     {
+        //         Publish(js, subject, "data", count, false);
+        //     }
+
+        //     public static void Publish(IJetStream js, String subject, String prefix, int count, bool verbose = true)
+        //     {
+        //         if (verbose)
+        //         {
+        //             Console.Write("Publish ->");
+        //         }
+        //         for (int x = 1; x <= count; x++)
+        //         {
+        //             String data = prefix + x;
+        //             if (verbose)
+        //             {
+        //                 Console.Write(" " + data);
+        //             }
+        //             js.Publish(subject, Encoding.UTF8.GetBytes(data));
+        //         }
+        //         if (verbose)
+        //         {
+        //             Console.WriteLine(" <-");
+        //         }
+        //     }
+
+        //     public static void PublishInBackground(IJetStream js, String subject, String prefix, int count)
+        //     {
+        //         new Thread(() =>
+        //         {
+        //             try
+        //             {
+        //                 for (int x = 1; x <= count; x++)
+        //                 {
+        //                     js.Publish(subject, Encoding.ASCII.GetBytes(prefix + "-" + x));
+        //                 }
+        //             }
+        //             catch (Exception e)
+        //             {
+        //                 Console.WriteLine(e);
+        //                 Environment.Exit(-1);
+        //             }
+        //         }).Start();
+        //         Thread.Sleep(100); // give the publish thread a little time to get going
+        //     }
+
     }
 }

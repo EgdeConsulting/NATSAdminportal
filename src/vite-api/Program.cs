@@ -74,90 +74,18 @@ thread.Start();
 
 Publisher pub = new Publisher("EgdeTest", natsServerURL);
 
-// NEW CODE PER BRANCH 11
-///////////////////////////////////////////////////////////
-///
-app.MapPost("/NewStream", async (HttpRequest request) =>
+app.MapPost("/NewStream", (HttpRequest request) =>
 {
-    string content = "";
-
-    using (StreamReader stream = new StreamReader(request.Body))
-    {
-        content = await stream.ReadToEndAsync();
-    }
-
-    var jsonObject = JsonNode.Parse(content);
-
-    if (jsonObject != null && jsonObject["StreamName"] != null)
-    {
-        var streamName = jsonObject["StreamName"];
-        //var subject = jsonObject["Subject"]!;
-
-        if (streamName != null && !string.IsNullOrWhiteSpace(streamName.ToString()))
-        {
-            using (IConnection c = new ConnectionFactory().CreateConnection(natsServerURL))
-            {
-                IJetStreamManagement jsm = c.CreateJetStreamManagementContext();
-                JsUtils.CreateStreamWhenDoesNotExist(jsm, StorageType.File, streamName.ToString(), "test12345");
-            }
-        }
-    }
+    Streams.CreateStreamFromRequest(request, natsServerURL);
 });
 
-app.MapGet("/StreamNames", () =>
-{
-    List<string> streamNames;
-    string json = "[";
+app.MapGet("/StreamNames", () => Streams.GetStreamNames(natsServerURL));
 
-    using (IConnection c = new ConnectionFactory().CreateConnection(natsServerURL))
-    {
-        IJetStreamManagement jsm = c.CreateJetStreamManagementContext();
-        streamNames = JsUtils.GetStreamNamesArray(jsm).ToList<string>();
-
-        for (int i = 0; i < streamNames.Count; i++)
-        {
-            json += JsonSerializer.Serialize(
-                new
-                {
-                    StreamNames = streamNames[i]
-                }
-            );
-            json = i < streamNames.Count - 1 ? json + "," : json;
-        }
-    }
-
-    return json + "]";
-});
-
-app.MapGet("/StreamInfo", () =>
-{
-    List<StreamInfo> streamInfo;
-    string json = "[";
-
-    using (IConnection c = new ConnectionFactory().CreateConnection(natsServerURL))
-    {
-        IJetStreamManagement jsm = c.CreateJetStreamManagementContext();
-        streamInfo = JsUtils.GetStreamInfoArray(jsm).ToList<StreamInfo>();
-
-        for (int i = 0; i < streamInfo.Count; i++)
-        {
-            json += JsonSerializer.Serialize(
-                new
-                {
-                    StreamInfo = streamInfo[i]
-                }
-            );
-            json = i < streamInfo.Count - 1 ? json + "," : json;
-        }
-    }
-
-    return json + "]";
-});
-/////////////////////////////////////////////////////////////
+app.MapGet("/StreamInfo", () => Streams.GetStreamInfo(natsServerURL));
 
 app.MapGet("/LastMessages", () => sub.GetLatestMessages());
 
-app.MapPost("/NewSubject", async (HttpRequest request) =>
+app.MapPost("/NewSubject", async (HttpRequest request) => //Move to subscriber.cs with httprequest as parameter?
 {
     string content = "";
     using (StreamReader stream = new StreamReader(request.Body))
