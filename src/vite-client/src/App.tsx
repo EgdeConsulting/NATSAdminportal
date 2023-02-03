@@ -2,6 +2,7 @@ import { useRef, useState, useEffect } from "react";
 import {
   ChakraProvider,
   Box,
+  Flex,
   theme,
   Card,
   Input,
@@ -10,8 +11,10 @@ import {
   CardBody,
   Text,
   Button,
+  VStack,
+  HStack,
 } from "@chakra-ui/react";
-import { Topbar, MessageView } from "./components";
+import { Topbar, MessageView, SubjectSidebar } from "./components";
 
 function App() {
   const subjectInputRef = useRef<any>(null);
@@ -105,49 +108,58 @@ function App() {
       <ColorModeProvider>
         <CSSReset />
         <Topbar />
-        <Card margin={2} variant={"outline"}>
-          <CardBody>
-            <Text fontSize={"lg"}>
-              Use "<b>&gt;</b>" to subscribe to all subjects:
-            </Text>
-            <Input
-              ref={subjectInputRef}
-              type={"text"}
-              placeholder={"Message Subject"}
-              marginTop={2}
-              marginRight={2}
-              width={500}
-            />
-            <Button onClick={postNewSubject} marginTop={-1}>
-              Change Message Subject
-            </Button>
-          </CardBody>
-        </Card>
-        <Card margin={2} variant={"outline"}>
-          <CardBody>
-            <Text fontSize={"lg"}>Publish a message onto the NATS queue:</Text>
-            <Input
-              ref={publishInputRef}
-              type={"text"}
-              placeholder={"Payload"}
-              marginTop={2}
-              marginRight={2}
-              width={500}
-            />
-            <Button onClick={postNewMessage} marginTop={-1}>
-              Publish Message
-            </Button>
-          </CardBody>
-        </Card>
-        <Card margin={2} variant={"outline"}>
-          <CardBody>
-            <Button onClick={manageAllMessagesInterval} marginBottom={6}>
-              {buttonText}
-            </Button>
-            <hr />
-            <MessageView messages={allMessages} />
-          </CardBody>
-        </Card>
+        <HStack align={"stretch"}>
+          <VStack align={"stretch"} margin={2} w={"80%"}>
+            <Card variant={"outline"}>
+              <CardBody>
+                <Text fontSize={"lg"}>
+                  Use "<b>&gt;</b>" to subscribe to all subjects:
+                </Text>
+                <Input
+                  ref={subjectInputRef}
+                  type={"text"}
+                  placeholder={"Message Subject"}
+                  marginTop={2}
+                  marginRight={2}
+                  width={500}
+                />
+                <Button onClick={postNewSubject} marginTop={-1}>
+                  Change Message Subject
+                </Button>
+              </CardBody>
+            </Card>
+
+            <Card variant={"outline"}>
+              <CardBody>
+                <Text fontSize={"lg"}>
+                  Publish a message onto the NATS queue:
+                </Text>
+                <Input
+                  ref={publishInputRef}
+                  type={"text"}
+                  placeholder={"Payload"}
+                  marginTop={2}
+                  marginRight={2}
+                  width={500}
+                />
+                <Button onClick={postNewMessage} marginTop={-1}>
+                  Publish Message
+                </Button>
+              </CardBody>
+            </Card>
+
+            <Card variant={"outline"}>
+              <CardBody>
+                <Button onClick={manageAllMessagesInterval} marginBottom={6}>
+                  {buttonText}
+                </Button>
+                <hr />
+                <MessageView messages={allMessages} />
+              </CardBody>
+            </Card>
+          </VStack>
+          <SubjectSidebar />
+        </HStack>
       </ColorModeProvider>
     </ChakraProvider>
   );
