@@ -6,6 +6,7 @@ import {
   useColorMode,
   Box,
 } from "@chakra-ui/react";
+import { ColorModeButton, AccountMenu } from "./";
 import natslogo from "../assets/nats-letter-icon.svg";
 
 function Topbar() {
@@ -18,9 +19,10 @@ function Topbar() {
         </Box>
         <Spacer />
         <Box>
-          <Button margin={2} size={"md"} onClick={() => toggleColorMode()}>
-            {colorMode == "light" ? "🌙" : "☀️"}
-          </Button>
+          <ColorModeButton />
+        </Box>
+        <Box>
+          <AccountMenu />
         </Box>
       </Flex>
       <hr />
