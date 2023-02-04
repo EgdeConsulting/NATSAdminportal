@@ -146,11 +146,24 @@ namespace Backend.Logic
                 Msg msg = latestMessages[i];
                 string timestamp = timestamps[i].ToString("MM/dd/yyyy HH:mm:ss");
                 
+                string headerData = "[";
+
                 var enu = msg.Header.GetEnumerator();
+                int index = 0;
+
                 while (enu.MoveNext()) {
-                    Console.WriteLine(enu.Current);
-                    Console.WriteLine(msg.Header[enu.Current.ToString()]);
+                    headerData += JsonSerializer.Serialize(
+                        new
+                        {
+                            name = enu.Current, 
+                            value = msg.Header[enu.Current.ToString()],
+                        }
+                    );
+                    headerData = index < msg.Header.Count - 1 ? headerData + "," : headerData;
+                    index++;
                 }
+
+                headerData += "]";
                 
                 json += JsonSerializer.Serialize(
                     new
@@ -158,7 +171,7 @@ namespace Backend.Logic
                         messageSubject = msg.Subject,
                         messageTimestamp = timestamp,
                         messageAck = msg.LastAck,
-                        messageHeader = msg.Header,
+                        messageHeaders = headerData,
                         // Checks if any characters are not ASCII.
                         messagePayload = msg.Data.All(b => b >= 32 && b <= 127) ? Encoding.ASCII.GetString(msg.Data) : msg.Data.ToString()
                     }
