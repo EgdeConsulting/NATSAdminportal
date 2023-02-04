@@ -20,7 +20,7 @@ if (app.Environment.IsDevelopment())
 
     natsServerURL = config["LOCAL_NATS_SERVER_URL"];
 }
-else 
+else
 {
     natsServerURL = Environment.GetEnvironmentVariable("AZURE_NATS_SERVER_URL");
 }
@@ -56,6 +56,8 @@ thread.Start();
 
 Publisher pub = new Publisher("EgdeTest", natsServerURL);
 
+app.MapGet("/StreamInfo", () => Streams.GetStreamNames(natsServerURL));
+app.MapGet("/ConsumerInfo", () => Consumers.GetConsumerNamesForAStream(natsServerURL, "stream1"));
 app.MapGet("/LastMessages", () => sub.GetLatestMessages());
 
 app.MapPost("/NewSubject", async (HttpRequest request) =>

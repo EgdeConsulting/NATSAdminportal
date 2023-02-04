@@ -13,9 +13,24 @@ import {
   VStack,
   Heading,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 function SubjectSidebar() {
+  const [streamNames, setStreamNames] = useState<[]>([]);
+
+  useEffect(() => {
+    getStreamNames(); //Denna står å går heila tio men finne jaffal rett amount of streams, men mest sannsynlig for performance heavy
+    console.log(streamNames);
+  }, []);
+
+  function getStreamNames() {
+    fetch("/StreamInfo")
+      .then((res) => res.json())
+      .then((data) => {
+        setStreamNames(data);
+      });
+  }
+
   const [checkedItems, setCheckedItems] = useState([false, false]);
 
   const allChecked = checkedItems.every(Boolean);
