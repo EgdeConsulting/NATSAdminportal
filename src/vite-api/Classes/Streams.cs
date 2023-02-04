@@ -39,23 +39,27 @@ namespace Backend.Logic
         public static string GetStreamSubjects(string? url)
         {
             List<StreamInfo> streamInfo;
+            List<string> subjects = new List<string>();
             string json = "[";
 
             using (IConnection c = new ConnectionFactory().CreateConnection(url))
             {
                 IJetStreamManagement jsm = c.CreateJetStreamManagementContext();
                 streamInfo = GetStreamInfoArray(jsm).ToList<StreamInfo>();
-                List<string> subjects = streamInfo[0].Config.Subjects;
 
-                for (int i = 0; i < subjects.Count; i++)
+                for (int i = 0; i < streamInfo.Count; i++)
+                {
+                    subjects.AddRange(streamInfo[i].Config.Subjects);
+                }
+                for (int j = 0; j < subjects.Count; j++)
                 {
                     json += JsonSerializer.Serialize(
                         new
                         {
-                            Subject = subjects[i]
+                            Subject = subjects[j]
                         }
                     );
-                    json = i < subjects.Count - 1 ? json + "," : json;
+                    json = j < subjects.Count - 1 ? json + "," : json;
                 }
             }
 

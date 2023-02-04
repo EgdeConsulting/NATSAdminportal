@@ -16,20 +16,36 @@ import {
 import { useState, useEffect } from "react";
 
 function SubjectSidebar() {
-  const [streamNames, setStreamNames] = useState<[]>([]);
+  const [subjects, setSubjects] = useState<string[]>([]);
 
   useEffect(() => {
-    getStreamNames(); //Denna står å går heila tio men finne jaffal rett amount of streams, men mest sannsynlig for performance heavy
-    console.log(streamNames);
+    getsubjects(); //Denna står å går heila tio men finne jaffal rett amount of streams, men mest sannsynlig for performance heavy
+    console.log(subjects);
   }, []);
 
-  function getStreamNames() {
-    fetch("/StreamInfo")
+  function getsubjects() {
+    fetch("/Subjects")
       .then((res) => res.json())
       .then((data) => {
-        setStreamNames(data);
+        setSubjects(data);
       });
   }
+
+  /////////////////////STREAM RELATED////////////////////////////
+  // const [streamNames, setStreamNames] = useState<[]>([]);
+
+  // useEffect(() => {
+  //   getStreamNames(); //Denna står å går heila tio men finne jaffal rett amount of streams, men mest sannsynlig for performance heavy
+  //   console.log(streamNames);
+  // }, []);
+
+  // function getStreamNames() {
+  //   fetch("/StreamInfo")
+  //     .then((res) => res.json())
+  //     .then((data) => {
+  //       setStreamNames(data);
+  //     });
+  // }
 
   const [checkedItems, setCheckedItems] = useState([false, false]);
 
