@@ -1,136 +1,45 @@
-import React, { ReactNode } from "react";
-import {
-  IconButton,
-  Box,
-  CloseButton,
-  Flex,
-  Icon,
-  useColorModeValue,
-  Link,
-  Drawer,
-  DrawerContent,
-  Text,
-  useDisclosure,
-  BoxProps,
-  FlexProps,
-} from "@chakra-ui/react";
-import {
-  FiHome,
-  FiTrendingUp,
-  FiCompass,
-  FiStar,
-  FiSettings,
-  FiMenu,
-} from "react-icons/fi";
-import { IconType } from "react-icons";
-import { ReactText } from "react";
+import { IconButton, Box, VStack } from "@chakra-ui/react";
+import { FiHome, FiSettings, FiArchive } from "react-icons/fi";
+import { HamburgerIcon } from "@chakra-ui/icons";
+import { useState } from "react";
+import { NavItem } from "./NavItem";
 
 function SideBar() {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  interface LinkItemProps {
-    name: string;
-    icon: IconType;
-  }
-  const LinkItems: Array<LinkItemProps> = [
-    { name: "Home", icon: FiHome },
-    { name: "Trending", icon: FiTrendingUp },
-    { name: "Explore", icon: FiCompass },
-    { name: "Favourites", icon: FiStar },
-    { name: "Settings", icon: FiSettings },
-  ];
-  interface SidebarProps extends BoxProps {
-    onClose: () => void;
-  }
-
-  const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
-    return (
-      <Box
-        bg={useColorModeValue("white", "gray.900")}
-        borderRight="1px"
-        borderRightColor={useColorModeValue("gray.200", "gray.700")}
-        w={{ base: "full", md: 60 }}
-        pos="fixed"
-        h="full"
-        {...rest}
-      >
-        <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
-          <Text fontSize="2xl" fontFamily="monospace" fontWeight="bold">
-            Logo
-          </Text>
-          <CloseButton
-            display={{ base: "flex", md: "none" }}
-            onClick={onClose}
-          />
-        </Flex>
-        {LinkItems.map((link) => (
-          <NavItem key={link.name} icon={link.icon}>
-            {link.name}
-          </NavItem>
-        ))}
-      </Box>
-    );
+  const [navSize, changeNavSize] = useState(200);
+  const [size, setSize] = useState(50);
+  const togglePanel = () => {
+    setSize(size == 170 ? 50 : 170);
+    changeNavSize(navSize == 50 ? 200 : 50);
   };
-
-  interface NavItemProps extends FlexProps {
-    icon: IconType;
-    children: ReactText;
-  }
-  const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
-    return (
-      <Link
-        href="#"
-        style={{ textDecoration: "none" }}
-        _focus={{ boxShadow: "none" }}
-      >
-        <Flex
-          align="center"
-          p="4"
-          mx="4"
-          borderRadius="lg"
-          role="group"
-          cursor="pointer"
-          _hover={{
-            bg: "cyan.400",
-            color: "white",
-          }}
-          {...rest}
-        >
-          {icon && (
-            <Icon
-              mr="4"
-              fontSize="16"
-              _groupHover={{
-                color: "white",
-              }}
-              as={icon}
-            />
-          )}
-          {children}
-        </Flex>
-      </Link>
-    );
-  };
-
   return (
-    <Box bg={useColorModeValue("gray.100", "gray.900")}>
-      <SidebarContent
-        onClose={() => onClose}
-        display={{ base: "none", md: "block" }}
-      />
-      <Drawer
-        autoFocus={false}
-        isOpen={isOpen}
-        placement="left"
-        onClose={onClose}
-        returnFocusOnClose={false}
-        onOverlayClick={onClose}
-        size="full"
-      >
-        <DrawerContent>
-          <SidebarContent onClose={onClose} />
-        </DrawerContent>
-      </Drawer>
-    </Box>
+    <VStack
+      borderRightRadius="sm"
+      h="100vh"
+      w={size + "px"}
+      style={{ minWidth: size + "px", maxWidth: size + "px" }}
+    >
+      <Box w="100%" h="40px" p="2">
+        <IconButton
+          _hover={{ textDecor: "none", backgroundColor: "gray.500" }}
+          bg="none"
+          borderRadius={8}
+          aria-label="Panel button"
+          onClick={() => {
+            togglePanel();
+          }}
+          size="sm"
+          icon={<HamburgerIcon />}
+        ></IconButton>
+      </Box>
+
+      <Box>
+        <VStack>
+          <NavItem navSize={navSize} icon={FiHome} title="Home" />
+          <NavItem navSize={navSize} icon={FiSettings} title="Settings" />
+          <NavItem navSize={navSize} icon={FiArchive} title="Log" />
+        </VStack>
+      </Box>
+    </VStack>
   );
 }
 
