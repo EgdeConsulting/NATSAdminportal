@@ -21,9 +21,9 @@ function MessageView(props: { messages: any[] }) {
           hideContent: "false",
         },
         {
-          Header: "Header",
-          accessor: "messageHeader",
-          hideContent: "false",
+          Header: "Headers",
+          accessor: "messageHeaders",
+          hideContent: "true",
         },
         {
           Header: "Payload",
