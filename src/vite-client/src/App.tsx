@@ -3,7 +3,6 @@ import { useRef, useState } from "react";
 import {
   ChakraProvider,
   Box,
-  theme,
   Flex,
   Card,
   Input,
@@ -17,6 +16,7 @@ import {
   StackDivider,
 } from "@chakra-ui/react";
 import { Topbar, MessageView, SideBar } from "./components";
+import { theme } from "./styles";
 
 function App() {
   const subjectInputRef = useRef<any>(null);
@@ -113,43 +113,25 @@ function App() {
         <HStack align="stretch">
           <SideBar />
           <VStack align="stretch" margin={2} w="80%" h="100%">
-            <Card variant={"outline"}>
+            <Card>
               <CardBody>
                 <Text fontSize={"lg"}>
                   Use "<b>&gt;</b>" to subscribe to all subjects:
                 </Text>
-                <Input
-                  ref={subjectInputRef}
-                  type={"text"}
-                  placeholder={"Message Subject"}
-                  marginTop={2}
-                  marginRight={2}
-                  width={500}
-                />
-                <Button onClick={postNewSubject} marginTop={-1}>
-                  Change Message Subject
-                </Button>
+                <Input ref={subjectInputRef} placeholder={"Message Subject"} />
+                <Button onClick={postNewSubject}>Change Message Subject</Button>
               </CardBody>
             </Card>
-            <Card variant={"outline"}>
+            <Card>
               <CardBody>
                 <Text fontSize={"lg"}>
                   Publish a message onto the NATS queue:
                 </Text>
-                <Input
-                  ref={publishInputRef}
-                  type={"text"}
-                  placeholder={"Payload"}
-                  marginTop={2}
-                  marginRight={2}
-                  width={500}
-                />
-                <Button onClick={postNewMessage} marginTop={-1}>
-                  Publish Message
-                </Button>
+                <Input ref={publishInputRef} placeholder={"Payload"} />
+                <Button onClick={postNewMessage}>Publish Message</Button>
               </CardBody>
             </Card>
-            <Card variant={"outline"}>
+            <Card>
               <CardBody>
                 <Button onClick={manageAllMessagesInterval} marginBottom={6}>
                   {buttonText}
