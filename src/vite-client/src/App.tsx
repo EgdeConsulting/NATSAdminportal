@@ -1,4 +1,5 @@
-import { useRef, useState, useEffect } from "react";
+import React from "react";
+import { useRef, useState } from "react";
 import {
   ChakraProvider,
   Box,
@@ -83,7 +84,7 @@ function App() {
 
   function getAllMessages() {
     fetch("/LastMessages") // "http://localhost:3000/message1"
-      .then((res) => res.json())
+      .then((res: any) => res.json())
       .then((data) => {
         setAllMessages(data);
       });
