@@ -36,10 +36,16 @@ namespace Backend.Logic
             return json + "]";
         }
 
-        public static string GetStreamSubjects(string? url)
+        public static string GetStreamSubjects(string? url) //Maybe better to collect the subjects from consumers?
         {
             List<StreamInfo> streamInfo;
             List<string> subjects = new List<string>();
+            List<string[]> listOfSubjectArray = new List<string[]>();
+            string[] subjectsArr;
+            List<string> numOfFirstOrderSub = new List<string>();
+            List<string> numOfSecondOrderSub = new List<string>();
+            List<string> numOfThirdOrderSub = new List<string>();
+            List<string> numOfFourthOrderSub = new List<string>();
             string json = "[";
 
             using (IConnection c = new ConnectionFactory().CreateConnection(url))
@@ -47,22 +53,97 @@ namespace Backend.Logic
                 IJetStreamManagement jsm = c.CreateJetStreamManagementContext();
                 streamInfo = GetStreamInfoArray(jsm).ToList<StreamInfo>();
 
-                for (int i = 0; i < streamInfo.Count; i++)
+                for (int i = 0; i < streamInfo.Count; i++)// Gets all subjects in form ["Subject.A.1", "Subject.A.2", ....]
                 {
                     subjects.AddRange(streamInfo[i].Config.Subjects);
                 }
-                for (int j = 0; j < subjects.Count; j++)
-                {
-                    json += JsonSerializer.Serialize(
-                        new
-                        {
-                            Subject = subjects[j]
-                        }
-                    );
-                    json = j < subjects.Count - 1 ? json + "," : json;
-                }
             }
 
+            for (int i = 0; i < subjects.Count; i++) // Gets all subjects in form [[Subject, A, 1], [Subject, A, 2], ....]
+            {
+                listOfSubjectArray.Add(subjects[i].Split("."));
+            }
+            Console.WriteLine(listOfSubjectArray.Count);
+
+            for (int i = 0; i < listOfSubjectArray.Count; i++)
+            {
+
+
+                // subjectsArr = listOfSubjectArray[i]; // this might be overkill. Can probably fix this with the above?
+
+                // for (int j = 0; j < subjectsArr.Length; j++)
+                // {
+                //     if (j == 0 && !numOfFirstOrderSub.Contains(subjectsArr[j]))
+                //     {
+                //         numOfFirstOrderSub.Add(subjectsArr[j]);
+                //     }
+                //     if (j == 1 && !numOfSecondOrderSub.Contains(subjectsArr[j]))
+                //     {
+                //         numOfSecondOrderSub.Add(subjectsArr[j]);
+                //     }
+                //     if (j == 2 && !numOfThirdOrderSub.Contains(subjectsArr[j]))
+                //     {
+                //         numOfThirdOrderSub.Add(subjectsArr[j]);
+                //     }
+
+                if (true) //potential
+                {
+                    // string fourthRoot = "[";
+                    // string thirdRoot = "[";
+                    // string secondRoot = "[";
+                    // string firstRoot = "[";
+                    // Console.WriteLine(j + ": " + subjectsArr[j]);
+                    // if (j == 0)
+                    // {
+                    //     firstRoot += JsonSerializer.Serialize(
+                    //     new
+                    //     {
+                    //         name = subjectsArr[j],
+                    //         subSubjects = secondRoot + "]"
+                    //     }
+                    //     );
+                    // }
+                    // if (j == 1)
+                    // {
+                    //     secondRoot += JsonSerializer.Serialize(
+                    //     new
+                    //     {
+                    //         name = subjectsArr[j],
+                    //         subSubjects = thirdRoot + "]"
+                    //     }
+                    //     );
+                    // }
+                    // if (j == 2)
+                    // {
+                    //     thirdRoot += JsonSerializer.Serialize(
+                    //     new
+                    //     {
+                    //         name = subjectsArr[j],
+                    //         subSubjects = fourthRoot + "]"
+                    //     }
+                    //     );
+                    // }
+                    // if (j == 3)
+                    // {
+                    //     fourthRoot += JsonSerializer.Serialize(
+                    //     new
+                    //     {
+                    //         name = subjectsArr[j]
+                    //     }
+                    //     );
+                    // }
+                    // Console.WriteLine("Firstroot " + firstRoot);
+                    // Console.WriteLine("secondroot " + secondRoot);
+                    // Console.WriteLine("thirdroot " + thirdRoot);
+                    // Console.WriteLine("fourthroot " + fourthRoot);
+                }
+                //}
+                for (int j = 0; j < numOfFirstOrderSub.Count; j++)
+                {
+                    // Console.WriteLine("COUNT: " + numOfFirstOrderSub.Count);
+                    // Console.WriteLine(i + "  " + j);
+                }
+            }
             return json + "]";
         }
 

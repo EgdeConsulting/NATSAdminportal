@@ -16,18 +16,18 @@ import {
 import { useState, useEffect } from "react";
 
 function SubjectSidebar() {
-  const [subjects, setSubjects] = useState<string[]>([]);
+  const [subjects, setSubjects] = useState<[]>([]);
 
   useEffect(() => {
-    getsubjects(); //Denna står å går heila tio men finne jaffal rett amount of streams, men mest sannsynlig for performance heavy
-    console.log(subjects);
-  }, []);
+    getSubjects();
+  }, [subjects.length != 0]);
 
-  function getsubjects() {
+  function getSubjects() {
     fetch("/Subjects")
       .then((res) => res.json())
       .then((data) => {
         setSubjects(data);
+        console.log(subjects);
       });
   }
 
@@ -47,7 +47,7 @@ function SubjectSidebar() {
   //     });
   // }
 
-  const [checkedItems, setCheckedItems] = useState([false, false]);
+  const [checkedItems, setCheckedItems] = useState<boolean[]>([]);
 
   const allChecked = checkedItems.every(Boolean);
   const isIndeterminate = checkedItems.some(Boolean) && !allChecked;
@@ -59,35 +59,18 @@ function SubjectSidebar() {
           <CardHeader>
             <Heading size={"md"}>Subject Hierarchy</Heading>
           </CardHeader>
-          <CardBody justifyContent={"center"}>
+          <Card margin={1} variant={"outline"}>
             <Checkbox
+              margin={1}
               isChecked={allChecked}
               isIndeterminate={isIndeterminate}
               onChange={(e) =>
                 setCheckedItems([e.target.checked, e.target.checked])
               }
             >
-              Subject
+              {}
             </Checkbox>
-            <Stack pl={6} mt={1} spacing={1}>
-              <Checkbox
-                isChecked={checkedItems[0]}
-                onChange={(e) =>
-                  setCheckedItems([e.target.checked, checkedItems[1]])
-                }
-              >
-                A
-              </Checkbox>
-              <Checkbox
-                isChecked={checkedItems[1]}
-                onChange={(e) =>
-                  setCheckedItems([checkedItems[0], e.target.checked])
-                }
-              >
-                B
-              </Checkbox>
-            </Stack>
-          </CardBody>
+          </Card>
         </Card>
       </VStack>
     </div>
