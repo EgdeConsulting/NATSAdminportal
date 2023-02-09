@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.Json;
 
 namespace Backend.Logic
 {
@@ -5,15 +8,59 @@ namespace Backend.Logic
     {
         public string SubjectName { get; }
 
-        public string? ParentSubject { get; }
+        public List<Subject> ParentLinks { get; set; }
 
-        public string? ChildSubject { get; }
+        public List<Subject> ChildrenLinks { get; set; }
 
-        public Subject(string subjectName, string parentName, string childSubject)
+        public Subject(string subjectName)
         {
             SubjectName = subjectName;
-            ParentSubject = parentName;
-            ChildSubject = childSubject;
+            ParentLinks = new List<Subject>();
+            ChildrenLinks = new List<Subject>();
+        }
+
+        public bool ParentLinkExists(Subject parent)
+        {
+            return ParentLinks.Any(x => x.SubjectName.Equals(parent.SubjectName));
+        } 
+
+        public bool ChildrenLinkExists(Subject child)
+        {
+            return ChildrenLinks.Any(x => x.SubjectName.Equals(child.SubjectName));
+        } 
+
+        public string ToJSON() 
+        {
+            string json = JsonSerializer.Serialize(
+                new
+                {
+                    name = SubjectName,
+                }
+            );
+
+            if (ChildrenLinks.Count == 0)
+            {
+                return json;
+            }
+            else if (ParentLinks.Count == 0)
+            {
+                
+                json = json.Substring(0, json.Length - 1) + ",";
+
+                string childrenJSON = "[";
+
+                foreach (Subject child in ChildrenLinks)
+                {
+                    childrenJSON += child.ToJSON() + ",";
+                }
+                childrenJSON = childrenJSON.Substring(0, childrenJSON.Length - 1) + "]";
+
+                return json + " subSubjects: " + childrenJSON + "}";
+            }
+            else 
+            {
+                return "mangler implementasjon";
+            }
         }
     }
 }

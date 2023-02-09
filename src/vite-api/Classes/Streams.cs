@@ -41,11 +41,11 @@ namespace Backend.Logic
             List<StreamInfo> streamInfo;
             List<string> subjects = new List<string>();
             List<string[]> listOfSubjectArray = new List<string[]>();
-            List<string> subjectsArr = new List<string>();
-            List<string> numOfFirstOrderSub = new List<string>();
-            List<string> numOfSecondOrderSub = new List<string>();
-            List<string> numOfThirdOrderSub = new List<string>();
-            List<string> numOfFourthOrderSub = new List<string>();
+            // List<string> subjectsArr = new List<string>();
+            // List<string> numOfFirstOrderSub = new List<string>();
+            // List<string> numOfSecondOrderSub = new List<string>();
+            // List<string> numOfThirdOrderSub = new List<string>();
+            // List<string> numOfFourthOrderSub = new List<string>();
             string json = "[";
 
             using (IConnection c = new ConnectionFactory().CreateConnection(url))
@@ -63,27 +63,44 @@ namespace Backend.Logic
             {
                 listOfSubjectArray.Add(subjects[i].Split(".")); // Gets all subjects in form [[Subject, A, 1], [Subject, A, 2], ....]
             }
-
-            string? secondLevel = null;
-            string? temp = null;
-            SubjectHierarchy.ClearSubjects();
+            
+            
+            SubjectManager.ClearSubjects();
             foreach (string[] element in listOfSubjectArray)
             {
-                secondLevel = element[1];
-                for (int i = 0; i < element.Length; i++)
+                for (int j = 0; j < 2; j++)
                 {
-                    string? parent = i - 1 < 0 ? null : element[i - 1];
-                    string? child = i + 1 > element.Length - 1 ? null : element[i + 1];
-                    Subject sub = new Subject(element[i], parent!, child!);
-                    // if (!SubjectHierarchy.SubjectExists(sub))
-                    // {
-                    SubjectHierarchy.AddSubject(sub);
-                    // }
+                    for (int i = 0; i < element.Length; i++)
+                    {
+                        string? parentName = i - 1 < 0 ? null : element[i - 1];
+                        string? childName = i + 1 > element.Length - 1 ? null : element[i + 1];
+                        SubjectManager.AddSubject(element[i], parentName, childName);
+                    }
                 }
-                //Console.WriteLine(temp == element[1] || temp == null ? secondLevel + element[2] : "");
-                temp = element[1];
             }
-            SubjectHierarchy.GetHierarchy();
+            
+            SubjectManager.GetHierarchy();
+
+            
+            // string? secondLevel = null;
+            // string? temp = null;
+            // foreach (string[] element in listOfSubjectArray)
+            // {
+            //     secondLevel = element[1];
+            //     for (int i = 0; i < element.Length; i++)
+            //     {
+            //         string? parent = i - 1 < 0 ? null : element[i - 1];
+            //         string? child = i + 1 > element.Length - 1 ? null : element[i + 1];
+            //         Subject sub = new Subject(element[i], parent!, child!);
+            //         // if (!SubjectHierarchy.SubjectExists(sub))
+            //         // {
+            //         SubjectHierarchy.AddSubject(sub);
+            //         // }
+            //     }
+            //     //Console.WriteLine(temp == element[1] || temp == null ? secondLevel + element[2] : "");
+            //     temp = element[1];
+            // }
+            // SubjectHierarchy.GetHierarchy();
 
 
             // foreach (string[] element in listOfSubjectArray) //j = 0 on first order, j = 1 on second order ....
