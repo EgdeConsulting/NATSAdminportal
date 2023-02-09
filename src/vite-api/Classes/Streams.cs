@@ -41,7 +41,7 @@ namespace Backend.Logic
             List<StreamInfo> streamInfo;
             List<string> subjects = new List<string>();
             List<string[]> listOfSubjectArray = new List<string[]>();
-            string[] subjectsArr;
+            List<string> subjectsArr = new List<string>();
             List<string> numOfFirstOrderSub = new List<string>();
             List<string> numOfSecondOrderSub = new List<string>();
             List<string> numOfThirdOrderSub = new List<string>();
@@ -53,97 +53,138 @@ namespace Backend.Logic
                 IJetStreamManagement jsm = c.CreateJetStreamManagementContext();
                 streamInfo = GetStreamInfoArray(jsm).ToList<StreamInfo>();
 
-                for (int i = 0; i < streamInfo.Count; i++)// Gets all subjects in form ["Subject.A.1", "Subject.A.2", ....]
+                for (int i = 0; i < streamInfo.Count; i++)
                 {
-                    subjects.AddRange(streamInfo[i].Config.Subjects);
+                    subjects.AddRange(streamInfo[i].Config.Subjects); // Gets all subjects in form ["Subject.A.1", "Subject.A.2", ....]
                 }
             }
 
-            for (int i = 0; i < subjects.Count; i++) // Gets all subjects in form [[Subject, A, 1], [Subject, A, 2], ....]
+            for (int i = 0; i < subjects.Count; i++)
             {
-                listOfSubjectArray.Add(subjects[i].Split("."));
+                listOfSubjectArray.Add(subjects[i].Split(".")); // Gets all subjects in form [[Subject, A, 1], [Subject, A, 2], ....]
             }
-            Console.WriteLine(listOfSubjectArray.Count);
 
-            for (int i = 0; i < listOfSubjectArray.Count; i++)
+            string? secondLevel = null;
+            string? temp = null;
+            SubjectHierarchy.ClearSubjects();
+            foreach (string[] element in listOfSubjectArray)
             {
-
-
-                // subjectsArr = listOfSubjectArray[i]; // this might be overkill. Can probably fix this with the above?
-
-                // for (int j = 0; j < subjectsArr.Length; j++)
-                // {
-                //     if (j == 0 && !numOfFirstOrderSub.Contains(subjectsArr[j]))
-                //     {
-                //         numOfFirstOrderSub.Add(subjectsArr[j]);
-                //     }
-                //     if (j == 1 && !numOfSecondOrderSub.Contains(subjectsArr[j]))
-                //     {
-                //         numOfSecondOrderSub.Add(subjectsArr[j]);
-                //     }
-                //     if (j == 2 && !numOfThirdOrderSub.Contains(subjectsArr[j]))
-                //     {
-                //         numOfThirdOrderSub.Add(subjectsArr[j]);
-                //     }
-
-                if (true) //potential
+                secondLevel = element[1];
+                for (int i = 0; i < element.Length; i++)
                 {
-                    // string fourthRoot = "[";
-                    // string thirdRoot = "[";
-                    // string secondRoot = "[";
-                    // string firstRoot = "[";
-                    // Console.WriteLine(j + ": " + subjectsArr[j]);
-                    // if (j == 0)
+                    string? parent = i - 1 < 0 ? null : element[i - 1];
+                    string? child = i + 1 > element.Length - 1 ? null : element[i + 1];
+                    Subject sub = new Subject(element[i], parent!, child!);
+                    // if (!SubjectHierarchy.SubjectExists(sub))
                     // {
-                    //     firstRoot += JsonSerializer.Serialize(
-                    //     new
-                    //     {
-                    //         name = subjectsArr[j],
-                    //         subSubjects = secondRoot + "]"
-                    //     }
-                    //     );
+                    SubjectHierarchy.AddSubject(sub);
                     // }
-                    // if (j == 1)
-                    // {
-                    //     secondRoot += JsonSerializer.Serialize(
-                    //     new
-                    //     {
-                    //         name = subjectsArr[j],
-                    //         subSubjects = thirdRoot + "]"
-                    //     }
-                    //     );
-                    // }
-                    // if (j == 2)
-                    // {
-                    //     thirdRoot += JsonSerializer.Serialize(
-                    //     new
-                    //     {
-                    //         name = subjectsArr[j],
-                    //         subSubjects = fourthRoot + "]"
-                    //     }
-                    //     );
-                    // }
-                    // if (j == 3)
-                    // {
-                    //     fourthRoot += JsonSerializer.Serialize(
-                    //     new
-                    //     {
-                    //         name = subjectsArr[j]
-                    //     }
-                    //     );
-                    // }
-                    // Console.WriteLine("Firstroot " + firstRoot);
-                    // Console.WriteLine("secondroot " + secondRoot);
-                    // Console.WriteLine("thirdroot " + thirdRoot);
-                    // Console.WriteLine("fourthroot " + fourthRoot);
                 }
-                //}
-                for (int j = 0; j < numOfFirstOrderSub.Count; j++)
-                {
-                    // Console.WriteLine("COUNT: " + numOfFirstOrderSub.Count);
-                    // Console.WriteLine(i + "  " + j);
-                }
+                //Console.WriteLine(temp == element[1] || temp == null ? secondLevel + element[2] : "");
+                temp = element[1];
             }
+            SubjectHierarchy.GetHierarchy();
+
+
+            // foreach (string[] element in listOfSubjectArray) //j = 0 on first order, j = 1 on second order ....
+            // {
+            //     if (!numOfFirstOrderSub.Contains(element[0]))
+            //     {
+            //         numOfFirstOrderSub.Add(element[0]);
+            //     }
+            // }
+
+            // foreach (string firstOrderSub in numOfFirstOrderSub)
+            // {
+            //     foreach (string[] element in listOfSubjectArray)
+            //     {
+            //         if (element[0].Equals(firstOrderSub))
+            //         {
+            //             if (!numOfSecondOrderSub.Contains(element[1]))
+            //             {
+            //                 numOfSecondOrderSub.Add(element[1]);
+            //             }
+            //         }
+            //     }
+            // }
+
+
+            // for (int i = 0; i < listOfSubjectArray.Count; i++)
+            // {
+            //     subjectsArr = listOfSubjectArray[i]; // [subject, A, 1, subject, A, 2, ....]
+
+            //     // Desired outcome? [[subject, [[A, [1, 2]], [B, [1, 2]]]], [subject2, [A, C], [1, 2]]]] ?? 1 array per first order: chain1, chain2
+
+            //     for (int j = 0; j < subjectsArr.Length; j++) //j = 0 on first order, j = 1 on second order ....
+            //     {
+            //         if (j == 0 && !numOfFirstOrderSub.Contains(subjectsArr[j]))
+            //         {
+            //             numOfFirstOrderSub.Add(subjectsArr[j]);
+            //         }
+            //         if (j == 1) //second order
+            //         {
+
+            //         }
+
+            //         if (true) //potential
+            //         {
+            //             // string fourthRoot = "[";
+            //             // string thirdRoot = "[";
+            //             // string secondRoot = "[";
+            //             // string firstRoot = "[";
+            //             // Console.WriteLine(j + ": " + subjectsArr[j]);
+            //             // if (j == 0)
+            //             // {
+            //             //     firstRoot += JsonSerializer.Serialize(
+            //             //     new
+            //             //     {
+            //             //         name = subjectsArr[j],
+            //             //         subSubjects = secondRoot + "]"
+            //             //     }
+            //             //     );
+            //             // }
+            //             // if (j == 1)
+            //             // {
+            //             //     secondRoot += JsonSerializer.Serialize(
+            //             //     new
+            //             //     {
+            //             //         name = subjectsArr[j],
+            //             //         subSubjects = thirdRoot + "]"
+            //             //     }
+            //             //     );
+            //             // }
+            //             // if (j == 2)
+            //             // {
+            //             //     thirdRoot += JsonSerializer.Serialize(
+            //             //     new
+            //             //     {
+            //             //         name = subjectsArr[j],
+            //             //         subSubjects = fourthRoot + "]"
+            //             //     }
+            //             //     );
+            //             // }
+            //             // if (j == 3)
+            //             // {
+            //             //     fourthRoot += JsonSerializer.Serialize(
+            //             //     new
+            //             //     {
+            //             //         name = subjectsArr[j]
+            //             //     }
+            //             //     );
+            //             // }
+            //             // Console.WriteLine("Firstroot " + firstRoot);
+            //             // Console.WriteLine("secondroot " + secondRoot);
+            //             // Console.WriteLine("thirdroot " + thirdRoot);
+            //             // Console.WriteLine("fourthroot " + fourthRoot);
+            //         }
+            //     }
+            //     for (int j = 0; j < numOfFirstOrderSub.Count; j++)
+            //     {
+            //         // Console.WriteLine("COUNT: " + numOfFirstOrderSub.Count);
+            //         // Console.WriteLine(i + "  " + j);
+            //     }
+            // }
+
             return json + "]";
         }
 
