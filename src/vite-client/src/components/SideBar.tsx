@@ -34,9 +34,19 @@ function SideBar() {
 
       <Box>
         <VStack>
-          <NavItem navSize={navSize} icon={FiHome} title="Home" />
-          <NavItem navSize={navSize} icon={FiSettings} title="Settings" />
-          <NavItem navSize={navSize} icon={FiArchive} title="Log" />
+          <NavItem navSize={navSize} icon={FiHome} title="Home" route="/" />
+          <NavItem
+            navSize={navSize}
+            icon={FiSettings}
+            title="Settings"
+            route="/settings"
+          />
+          <NavItem
+            navSize={navSize}
+            icon={FiArchive}
+            title="Log"
+            route="/log"
+          />
         </VStack>
       </Box>
     </VStack>
