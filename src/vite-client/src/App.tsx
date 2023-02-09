@@ -15,7 +15,7 @@ import {
   VStack,
   StackDivider,
 } from "@chakra-ui/react";
-import { Topbar, MessageView, SideBar } from "./components";
+import { Topbar, MessageView, Sidebar } from "./components";
 import { theme } from "./styles";
 
 function App() {
@@ -111,11 +111,11 @@ function App() {
         <CSSReset />
         <Topbar />
         <HStack align="stretch">
-          <SideBar />
+          <Sidebar />
           <VStack align="stretch" margin={2} w="80%" h="100%">
             <Card>
               <CardBody>
-                <Text fontSize={"lg"}>
+                <Text>
                   Use "<b>&gt;</b>" to subscribe to all subjects:
                 </Text>
                 <Input ref={subjectInputRef} placeholder={"Message Subject"} />
@@ -124,9 +124,7 @@ function App() {
             </Card>
             <Card>
               <CardBody>
-                <Text fontSize={"lg"}>
-                  Publish a message onto the NATS queue:
-                </Text>
+                <Text>Publish a message onto the NATS queue:</Text>
                 <Input ref={publishInputRef} placeholder={"Payload"} />
                 <Button onClick={postNewMessage}>Publish Message</Button>
               </CardBody>

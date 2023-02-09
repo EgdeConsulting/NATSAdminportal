@@ -25,7 +25,7 @@ function NavItem({
         >
           <MenuButton w="100%">
             <Flex>
-              <Icon as={icon} fontSize="xl" />
+              <Icon as={icon} fontSize="xl" marginTop={1} />
               <Text
                 ml={5}
                 align="center"

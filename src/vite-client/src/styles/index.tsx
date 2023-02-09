@@ -1,2 +1,5 @@
 export * from "./theme";
-export * from "./inputTheme";
+export * from "./inputStyles";
+export * from "./buttonStyles";
+export * from "./cardStyles";
+export * from "./textStyles";

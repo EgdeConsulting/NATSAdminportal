@@ -1,19 +1,15 @@
 import { extendTheme } from "@chakra-ui/react";
-import { inputTheme } from "./inputTheme";
+import { inputStyles } from "./inputStyles";
+import { buttonStyles } from "./buttonStyles";
+import { cardStyles } from "./cardStyles";
+import { textStyles } from "./textStyles";
 
 const theme = extendTheme({
   components: {
-    Button: {
-      baseStyle: {
-        marginTop: -1,
-      },
-    },
-    Card: {
-      defaultProps: {
-        variant: "outline",
-      },
-    },
-    Input: inputTheme,
+    Button: buttonStyles,
+    Card: cardStyles,
+    Text: textStyles,
+    Input: inputStyles,
   },
 });
 
