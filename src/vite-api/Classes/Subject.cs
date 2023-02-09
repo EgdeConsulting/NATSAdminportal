@@ -42,24 +42,20 @@ namespace Backend.Logic
             {
                 return json;
             }
-            else if (ParentLinks.Count == 0)
+            else 
             {
-                
+                // Include parent check here to prevent duplicates!
                 json = json.Substring(0, json.Length - 1) + ",";
 
                 string childrenJSON = "[";
 
                 foreach (Subject child in ChildrenLinks)
                 {
-                    childrenJSON += child.ToJSON() + ",";
+                    childrenJSON += child.ToJSON() + ", ";
                 }
-                childrenJSON = childrenJSON.Substring(0, childrenJSON.Length - 1) + "]";
+                childrenJSON = childrenJSON.Substring(0, childrenJSON.Length - 2) + "]";
 
                 return json + " subSubjects: " + childrenJSON + "}";
-            }
-            else 
-            {
-                return "mangler implementasjon";
             }
         }
     }

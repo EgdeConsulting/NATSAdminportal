@@ -68,6 +68,7 @@ namespace Backend.Logic
             SubjectManager.ClearSubjects();
             foreach (string[] element in listOfSubjectArray)
             {
+                Console.WriteLine(element[0] + " " + element[1] + " " + element[2]);
                 for (int j = 0; j < 2; j++)
                 {
                     for (int i = 0; i < element.Length; i++)
