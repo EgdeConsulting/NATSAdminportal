@@ -6,7 +6,7 @@ import {
   useColorMode,
   Box,
 } from "@chakra-ui/react";
-import { ColorModeButton, AccountMenu } from "./";
+import { ColorModeButton, AccountMenu, MessageModal } from "./";
 import natslogo from "../assets/nats-letter-icon.svg";
 
 function Topbar() {
@@ -18,6 +18,9 @@ function Topbar() {
           <Image src={natslogo} alt={"NATS Logo"} />
         </Box>
         <Spacer />
+        <Box>
+          <MessageModal />
+        </Box>
         <Box>
           <ColorModeButton />
         </Box>
