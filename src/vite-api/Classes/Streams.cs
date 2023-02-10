@@ -61,15 +61,21 @@ namespace Backend.Logic
             
             SubjectManager.ClearSubjects();
             for (int i = 0; i < listOfSubjectArray.Count; i++)
-            {
-                for (int j = 0; j < 2; j++)
+            {   
+                // Adding all unique subjects to SubjectManager.
+                for (int k = 0; k < listOfSubjectArray[i].Length; k++)
                 {
-                    for (int k = 0; k < listOfSubjectArray[i].Length; k++)
-                    {
-                        string? parentName = k - 1 < 0 ? null : listOfSubjectArray[i][k - 1];
-                        string? childName = k + 1 > listOfSubjectArray[i].Length - 1 ? null : listOfSubjectArray[i][k + 1];
-                        SubjectManager.AddSubject(listOfSubjectArray[i][k], parentName, childName, i);
-                    }
+                    string? parentName = k - 1 < 0 ? null : listOfSubjectArray[i][k - 1];
+                    string? childName = k + 1 > listOfSubjectArray[i].Length - 1 ? null : listOfSubjectArray[i][k + 1];
+                    SubjectManager.AddSubject(listOfSubjectArray[i][k]);
+                }
+
+                // Initializing the hierarchy links between all the subjects. 
+                for (int k = 0; k < listOfSubjectArray[i].Length; k++)
+                {
+                    string? parentName = k - 1 < 0 ? null : listOfSubjectArray[i][k - 1];
+                    string? childName = k + 1 > listOfSubjectArray[i].Length - 1 ? null : listOfSubjectArray[i][k + 1];
+                    SubjectManager.AddSubjectLinks(listOfSubjectArray[i][k], parentName, childName, i);
                 }
             }
             
