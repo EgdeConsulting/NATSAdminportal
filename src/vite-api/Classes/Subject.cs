@@ -8,28 +8,52 @@ namespace Backend.Logic
     {
         public string SubjectName { get; }
 
-        public List<Subject> ParentLinks { get; set; }
+        public List<Dictionary<int, Subject>> ParentLinks { get; set; }
 
-        public List<Subject> ChildrenLinks { get; set; }
+        public List<Dictionary<int, Subject>> ChildrenLinks { get; set; }
 
         public Subject(string subjectName)
         {
             SubjectName = subjectName;
-            ParentLinks = new List<Subject>();
-            ChildrenLinks = new List<Subject>();
+            ParentLinks = new List<Dictionary<int, Subject>>();
+            ChildrenLinks = new List<Dictionary<int, Subject>>();
         }
 
         public bool ParentLinkExists(Subject parent)
         {
-            return ParentLinks.Any(x => x.SubjectName.Equals(parent.SubjectName));
+            bool exists = false;
+            foreach (Dictionary<int, Subject> dict in ParentLinks)
+            {
+                foreach (KeyValuePair<int, Subject> entry in dict)
+                {
+                    if (entry.Value.SubjectName.Equals(parent.SubjectName)) 
+                    {
+                        exists = true;
+                        break;
+                    }
+                }
+            }
+            return exists;
         } 
 
         public bool ChildrenLinkExists(Subject child)
         {
-            return ChildrenLinks.Any(x => x.SubjectName.Equals(child.SubjectName));
+            bool exists = false;
+            foreach (Dictionary<int, Subject> dict in ChildrenLinks)
+            {
+                foreach (KeyValuePair<int, Subject> entry in dict)
+                {
+                    if (entry.Value.SubjectName.Equals(child.SubjectName)) 
+                    {
+                        exists = true;
+                        break;
+                    }
+                }
+            }
+            return exists;
         } 
 
-        public string ToJSON() 
+        public string ToJSON(int branchID, int childrenCount) 
         {
             string json = JsonSerializer.Serialize(
                 new
@@ -44,15 +68,21 @@ namespace Backend.Logic
             }
             else 
             {
-                // Include parent check here to prevent duplicates!
                 json = json.Substring(0, json.Length - 1) + ",";
 
                 string childrenJSON = "[";
 
-                foreach (Subject child in ChildrenLinks)
+                foreach (Dictionary<int, Subject> dict in ChildrenLinks)
                 {
-                    childrenJSON += child.ToJSON() + ", ";
+                    foreach (KeyValuePair<int, Subject> entry in dict)
+                    {
+                        if (branchID == -1 || Math.Abs(branchID - entry.Key) < childrenCount) 
+                        {
+                            childrenJSON += entry.Value.ToJSON(entry.Key, entry.Value.ChildrenLinks.Count) + ", ";
+                        }
+                    }
                 }
+
                 childrenJSON = childrenJSON.Substring(0, childrenJSON.Length - 2) + "]";
 
                 return json + " subSubjects: " + childrenJSON + "}";
