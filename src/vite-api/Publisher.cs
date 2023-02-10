@@ -27,17 +27,40 @@ namespace Backend.Logic
         string? url = Defaults.Url;
         string? creds = null;
 
-        public string MessageSubject
+        public string? MessageSubject
         {
             get; set;
         }
-
+        public Publisher(string? url)
+        {
+            this.url = url;
+        }
         public Publisher(string subject, string? url)
         {
             MessageSubject = subject;
             this.url = url;
         }
+        public void SendNewMessage(string payload, string header, string subject)
+        {
+            Options opts = ConnectionFactory.GetDefaultOptions();
+            opts.Url = url;
+            if (creds != null)
+            {
+                opts.SetUserCredentials(creds);
+            }
 
+            using (IConnection c = new ConnectionFactory().CreateConnection(opts))
+            {
+                MsgHeader msgHead = new MsgHeader();
+                msgHead.Add("header", header);
+                Msg msg = new Msg(subject, msgHead, Encoding.UTF8.GetBytes(payload));
+                for (int i = 0; i < count; i++)
+                {
+                    c.Publish(msg);
+                }
+                c.Flush();
+            }
+        }
         public void SendNewMessage(string payload)
         {
             Stopwatch? sw = null;

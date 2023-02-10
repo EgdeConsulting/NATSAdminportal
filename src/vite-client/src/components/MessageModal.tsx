@@ -11,10 +11,11 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { ChatIcon } from "@chakra-ui/icons";
-import { ModalForm } from "./";
+import { MessageForm } from "./";
 
 function MessageModal() {
   const { isOpen, onOpen, onClose } = useDisclosure();
+
   return (
     <>
       <IconButton
@@ -31,14 +32,11 @@ function MessageModal() {
           <ModalHeader>Message Content</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <ModalForm />
-          </ModalBody>
-          <ModalFooter>
-            <Button colorScheme="blue">Publish</Button>
+            <MessageForm />
             <Button variant="ghost" mr={3} onClick={onClose}>
               Close
             </Button>
-          </ModalFooter>
+          </ModalBody>
         </ModalContent>
       </Modal>
     </>

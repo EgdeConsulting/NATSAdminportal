@@ -20,7 +20,7 @@ if (app.Environment.IsDevelopment())
 
     natsServerURL = config["LOCAL_NATS_SERVER_URL"];
 }
-else 
+else
 {
     natsServerURL = Environment.GetEnvironmentVariable("AZURE_NATS_SERVER_URL");
 }
@@ -55,6 +55,7 @@ Thread thread = new Thread(sub.Run);
 thread.Start();
 
 Publisher pub = new Publisher("EgdeTest", natsServerURL);
+Publisher pub2 = new Publisher(natsServerURL);
 
 app.MapGet("/LastMessages", () => sub.GetLatestMessages());
 
@@ -74,6 +75,27 @@ app.MapPost("/NewSubject", async (HttpRequest request) =>
 
         if (subject != null && !string.IsNullOrWhiteSpace(subject.ToString()))
             sub.MessageSubject = subject.ToString();
+    }
+});
+
+app.MapPost("/PublishFullMessage", async (HttpRequest request) =>
+{
+    string content = "";
+    using (StreamReader stream = new StreamReader(request.Body))
+    {
+        content = await stream.ReadToEndAsync();
+    }
+
+    var jsonObject = JsonNode.Parse(content);
+
+    if (jsonObject != null && jsonObject["Payload"] != null)
+    {
+        var payload = jsonObject["Payload"];
+        var subject = jsonObject["Subject"];
+        var headers = jsonObject["Headers"];
+
+        if (payload != null && !string.IsNullOrWhiteSpace(payload.ToString()))
+            pub.SendNewMessage(payload.ToString(), headers!.ToString(), subject!.ToString());
     }
 });
 
