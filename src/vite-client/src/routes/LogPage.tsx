@@ -1,8 +1,8 @@
-import { Button, Card, CardBody, Box, Text, VStack } from "@chakra-ui/react";
+import { Button, Card, CardBody, VStack } from "@chakra-ui/react";
 import { MessageView } from "../components";
 import { useState } from "react";
 
-const Log = () => {
+function LogPage() {
   const [allMessages, setAllMessages] = useState<any[]>([]);
 
   function getAllMessages() {
@@ -41,6 +41,6 @@ const Log = () => {
       </Card>
     </VStack>
   );
-};
+}
 
-export { Log };
+export { LogPage };

@@ -8,10 +8,12 @@ function Sidebar() {
   const { colorMode, toggleColorMode } = useColorMode();
   const [navSize, changeNavSize] = useState(200);
   const [size, setSize] = useState(50);
-  const togglePanel = () => {
-    setSize(size == 170 ? 50 : 170);
+
+  function togglePanel() {
+    setSize(size == 135 ? 50 : 135);
     changeNavSize(navSize == 50 ? 200 : 50);
-  };
+  }
+
   return (
     <VStack
       h="100vh"
@@ -22,7 +24,7 @@ function Sidebar() {
     >
       <Box w="100%" h="40px" p="2">
         <IconButton
-          _hover={{ textDecor: "none", backgroundColor: "gray.500" }}
+          _hover={{ textDecor: "none", backgroundColor: "whiteAlpha.300" }}
           bg="none"
           borderRadius={8}
           aria-label="Panel button"
@@ -36,18 +38,26 @@ function Sidebar() {
 
       <Box>
         <VStack>
-          <NavItem navSize={navSize} icon={FiHome} title="Home" route="/" />
+          <NavItem
+            navSize={navSize}
+            icon={FiHome}
+            title="Home"
+            route="/"
+            width={size - 25}
+          />
           <NavItem
             navSize={navSize}
             icon={FiSettings}
             title="Settings"
             route="/settings"
+            width={size - 25}
           />
           <NavItem
             navSize={navSize}
             icon={FiArchive}
             title="Log"
             route="/log"
+            width={size - 25}
           />
         </VStack>
       </Box>
