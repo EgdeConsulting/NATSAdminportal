@@ -1,15 +1,7 @@
 import { useRef } from "react";
-import {
-  Card,
-  CardBody,
-  Button,
-  Text,
-  Input,
-  VStack,
-  Box,
-} from "@chakra-ui/react";
+import { Card, CardBody, Button, Text, Input, VStack } from "@chakra-ui/react";
 
-const Settings = () => {
+function SettingsPage() {
   const subjectInputRef = useRef<any>(null);
   const publishInputRef = useRef<any>(null);
 
@@ -83,6 +75,6 @@ const Settings = () => {
       </Card>
     </VStack>
   );
-};
+}
 
-export { Settings };
+export { SettingsPage };

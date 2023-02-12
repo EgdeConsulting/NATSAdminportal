@@ -1,19 +1,14 @@
 import {
   ChakraProvider,
-  Box,
-  Flex,
-  Card,
-  Input,
   ColorModeProvider,
   CSSReset,
   HStack,
 } from "@chakra-ui/react";
 
-import { Topbar, SideBar } from "./components";
+import { Topbar, Sidebar } from "./components";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { Settings, Log, Home } from "./routes";
+import { SettingsPage, LogPage, HomePage } from "./routes";
 import { theme } from "./styles";
-
 
 function App() {
   return (
@@ -23,11 +18,11 @@ function App() {
           <CSSReset />
           <Topbar />
           <HStack align="stretch">
-            <SideBar />
+            <Sidebar />
             <Routes>
-              <Route path="/log" element={<Log />} />
-              <Route path="/settings" element={<Settings />} />
-              <Route path="/" element={<Home />} />
+              <Route path="/log" element={<LogPage />} />
+              <Route path="/settings" element={<SettingsPage />} />
+              <Route path="/" element={<HomePage />} />
             </Routes>
           </HStack>
         </ColorModeProvider>

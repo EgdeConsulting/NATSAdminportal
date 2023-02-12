@@ -7,10 +7,10 @@ import {
   Button,
   Box,
 } from "@chakra-ui/react";
-import React, { useState, useRef } from "react";
+import { useState, useRef } from "react";
 import { MessageView } from "../components";
 
-const Home = () => {
+function HomePage() {
   const [allMessages, setAllMessages] = useState<any[]>([]);
 
   function getAllMessages() {
@@ -123,6 +123,6 @@ const Home = () => {
       </Box>
     </VStack>
   );
-};
+}
 
-export { Home };
+export { HomePage };
