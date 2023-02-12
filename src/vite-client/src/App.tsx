@@ -1,13 +1,19 @@
 import {
   ChakraProvider,
-  theme,
+  Box,
+  Flex,
+  Card,
+  Input,
   ColorModeProvider,
   CSSReset,
   HStack,
 } from "@chakra-ui/react";
+
 import { Topbar, SideBar } from "./components";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Settings, Log, Home } from "./routes";
+import { theme } from "./styles";
+
 
 function App() {
   return (

@@ -1,32 +1,26 @@
-import {
-  Image,
-  Button,
-  Flex,
-  Spacer,
-  useColorMode,
-  Box,
-} from "@chakra-ui/react";
+import { Image, Flex, Spacer, useColorMode, Box } from "@chakra-ui/react";
 import { ColorModeButton, AccountMenu } from "./";
 import natslogo from "../assets/nats-letter-icon.svg";
 
 function Topbar() {
   const { colorMode, toggleColorMode } = useColorMode();
   return (
-    <div>
-      <Flex maxH={"100px"} border={"thin"}>
-        <Box marginLeft={3}>
-          <Image src={natslogo} alt={"NATS Logo"} />
-        </Box>
-        <Spacer />
-        <Box>
-          <ColorModeButton />
-        </Box>
-        <Box>
-          <AccountMenu />
-        </Box>
-      </Flex>
-      <hr />
-    </div>
+    <Flex
+      maxH={"100px"}
+      borderBottom={"1px solid"}
+      borderColor={colorMode === "dark" ? "whiteAlpha.300" : "gray.200"}
+    >
+      <Box marginLeft={3}>
+        <Image src={natslogo} alt={"NATS Logo"} />
+      </Box>
+      <Spacer />
+      <Box>
+        <ColorModeButton />
+      </Box>
+      <Box>
+        <AccountMenu />
+      </Box>
+    </Flex>
   );
 }
 

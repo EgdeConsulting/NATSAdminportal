@@ -1,10 +1,11 @@
-import { IconButton, Box, VStack } from "@chakra-ui/react";
+import { IconButton, Box, VStack, useColorMode } from "@chakra-ui/react";
 import { FiHome, FiSettings, FiArchive } from "react-icons/fi";
 import { HamburgerIcon } from "@chakra-ui/icons";
 import { useState } from "react";
 import { NavItem } from "./NavItem";
 
-function SideBar() {
+function Sidebar() {
+  const { colorMode, toggleColorMode } = useColorMode();
   const [navSize, changeNavSize] = useState(200);
   const [size, setSize] = useState(50);
   const togglePanel = () => {
@@ -13,10 +14,11 @@ function SideBar() {
   };
   return (
     <VStack
-      borderRightRadius="sm"
       h="100vh"
       w={size + "px"}
       style={{ minWidth: size + "px", maxWidth: size + "px" }}
+      borderRight={"1px solid"}
+      borderColor={colorMode === "dark" ? "whiteAlpha.300" : "gray.200"}
     >
       <Box w="100%" h="40px" p="2">
         <IconButton
@@ -28,7 +30,7 @@ function SideBar() {
             togglePanel();
           }}
           size="sm"
-          icon={<HamburgerIcon />}
+          icon={<HamburgerIcon boxSize={6} />}
         ></IconButton>
       </Box>
 
@@ -53,4 +55,4 @@ function SideBar() {
   );
 }
 
-export { SideBar };
+export { Sidebar };
