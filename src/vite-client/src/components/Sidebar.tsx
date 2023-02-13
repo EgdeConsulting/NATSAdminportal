@@ -24,7 +24,11 @@ function Sidebar() {
     >
       <Box w="100%" h="40px" p="2">
         <IconButton
-          _hover={{ textDecor: "none", backgroundColor: "whiteAlpha.300" }}
+          _hover={{
+            textDecor: "none",
+            backgroundColor:
+              colorMode === "dark" ? "whiteAlpha.300" : "gray.200",
+          }}
           bg="none"
           borderRadius={8}
           aria-label="Panel button"
