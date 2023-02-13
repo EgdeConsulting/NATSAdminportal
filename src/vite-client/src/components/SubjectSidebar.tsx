@@ -27,7 +27,6 @@ function SubjectSidebar() {
       .then((res) => res.json())
       .then((data) => {
         setSubjects(data);
-        console.log(subjects);
       });
   }
 
@@ -47,33 +46,81 @@ function SubjectSidebar() {
   //     });
   // }
 
+  const [counter, setCounter] = useState<number>(0);
+
+  function getCounter() {
+    setCounter(counter + 1);
+    return counter;
+  }
+
+  function CreateCheckbox(subjectInfo: any): JSX.Element {
+    return (
+      <div>
+        {subjectInfo["subSubjects"] != undefined
+          ? subjectInfo["subSubjects"].map((subject: any) => {
+              CreateCheckbox(subject);
+            })
+          : () => {
+              console.log(getCounter());
+              return (
+                <Checkbox
+                  key={getCounter()}
+                  margin={1}
+                  isChecked={allChecked}
+                  isIndeterminate={isIndeterminate}
+                  onChange={(e) =>
+                    setCheckedItems([e.target.checked, e.target.checked])
+                  }
+                >
+                  {subjectInfo["name"]}
+                </Checkbox>
+              );
+            }}
+      </div>
+    );
+  }
+
+  const [subjectHierarchy, setSubjectHierarchy] = useState<any[]>([]);
+
+  function getSubjectHierarchy() {
+    fetch("/Subjects")
+      .then((res: any) => res.json())
+      .then((data) => {
+        setSubjectHierarchy(data);
+      });
+  }
+
+  useEffect(() => {
+    getSubjectHierarchy();
+  }, [subjectHierarchy.length != 0]);
+
   const [checkedItems, setCheckedItems] = useState<boolean[]>([]);
 
   const allChecked = checkedItems.every(Boolean);
   const isIndeterminate = checkedItems.some(Boolean) && !allChecked;
 
   return (
-    <div>
-      <VStack margin={2} w={"100%"} h={"100%"}>
-        <Card variant={"filled"} h={"100%"} w={"100%"}>
-          <CardHeader>
-            <Heading size={"md"}>Subject Hierarchy</Heading>
-          </CardHeader>
-          <Card margin={1} variant={"outline"}>
-            <Checkbox
-              margin={1}
-              isChecked={allChecked}
-              isIndeterminate={isIndeterminate}
-              onChange={(e) =>
-                setCheckedItems([e.target.checked, e.target.checked])
-              }
-            >
-              {}
-            </Checkbox>
-          </Card>
+    <VStack margin={2} w={"100%"} h={"100%"}>
+      <Card variant={"filled"} h={"100%"} w={"100%"}>
+        <CardHeader>
+          <Heading size={"md"}>Subject Hierarchy</Heading>
+        </CardHeader>
+        <Card margin={1} variant={"outline"}>
+          <Checkbox
+            margin={1}
+            isChecked={allChecked}
+            isIndeterminate={isIndeterminate}
+            onChange={(e) =>
+              setCheckedItems([e.target.checked, e.target.checked])
+            }
+          >
+            {subjectHierarchy.map((subject, index) => {
+              return <div key={index}>{CreateCheckbox(subject)}</div>;
+            })}
+          </Checkbox>
         </Card>
-      </VStack>
-    </div>
+      </Card>
+    </VStack>
   );
 }
 
