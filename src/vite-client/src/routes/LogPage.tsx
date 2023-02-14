@@ -1,5 +1,5 @@
-import { Button, Card, CardBody, VStack } from "@chakra-ui/react";
-import { MessageView } from "../components";
+import { Button, Card, CardBody, HStack } from "@chakra-ui/react";
+import { MessageView, SubjectSidebar } from "../components";
 import { useState } from "react";
 
 function LogPage() {
@@ -29,17 +29,17 @@ function LogPage() {
   }
 
   return (
-    <VStack align="stretch" margin={2} w="80%" h="100%">
+    <HStack align="stretch" margin={2} w="80%" h="100%">
       <Card variant={"outline"}>
         <CardBody>
           <Button onClick={manageAllMessagesInterval} marginBottom={6}>
             {buttonText}
           </Button>
-          <hr />
           <MessageView messages={allMessages} />
         </CardBody>
       </Card>
-    </VStack>
+      <SubjectSidebar />
+    </HStack>
   );
 }
 

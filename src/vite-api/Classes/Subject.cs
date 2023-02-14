@@ -26,7 +26,7 @@ namespace Backend.Logic
             {
                 foreach (KeyValuePair<int, Subject> entry in dict)
                 {
-                    if (entry.Value.SubjectName.Equals(parent.SubjectName)) 
+                    if (entry.Value.SubjectName.Equals(parent.SubjectName))
                     {
                         exists = true;
                         break;
@@ -34,7 +34,7 @@ namespace Backend.Logic
                 }
             }
             return exists;
-        } 
+        }
 
         public bool ChildrenLinkExists(Subject child)
         {
@@ -43,7 +43,7 @@ namespace Backend.Logic
             {
                 foreach (KeyValuePair<int, Subject> entry in dict)
                 {
-                    if (entry.Value.SubjectName.Equals(child.SubjectName)) 
+                    if (entry.Value.SubjectName.Equals(child.SubjectName))
                     {
                         exists = true;
                         break;
@@ -51,9 +51,9 @@ namespace Backend.Logic
                 }
             }
             return exists;
-        } 
+        }
 
-        public string ToJSON(int branchID, int childrenCount) 
+        public string ToJSON(int branchID, int childrenCount)
         {
             string json = JsonSerializer.Serialize(
                 new
@@ -66,7 +66,7 @@ namespace Backend.Logic
             {
                 return json;
             }
-            else 
+            else
             {
                 json = json.Substring(0, json.Length - 1) + ",";
 
@@ -76,7 +76,7 @@ namespace Backend.Logic
                 {
                     foreach (KeyValuePair<int, Subject> entry in dict)
                     {
-                        if (branchID == -1 || Math.Abs(branchID - entry.Key) < childrenCount) 
+                        if (branchID == -1 || Math.Abs(branchID - entry.Key) < childrenCount)
                         {
                             childrenJSON += entry.Value.ToJSON(entry.Key, entry.Value.ChildrenLinks.Count) + ", ";
                         }
@@ -85,7 +85,7 @@ namespace Backend.Logic
 
                 childrenJSON = childrenJSON.Substring(0, childrenJSON.Length - 2) + "]";
 
-                return json + " subSubjects: " + childrenJSON + "}";
+                return json + @"""subSubjects"": " + childrenJSON + "}";
             }
         }
     }
