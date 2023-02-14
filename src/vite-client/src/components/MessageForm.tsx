@@ -42,7 +42,11 @@ function MessageForm() {
       }),
     }).then((res) => {
       if (res.ok) {
-        alert(res.status);
+        //This doesnt actually check if the nats server has received the message... Need to find a way to do this
+        //Create a subscriber based on teh same subject that replies? Hard to do...
+        subjectInputRef.current.value = "";
+        headerInputRef.current.value = "";
+        payloadInputRef.current.value = "";
       }
     });
   }
