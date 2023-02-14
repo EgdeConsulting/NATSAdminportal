@@ -5,5 +5,4 @@ export * from "./PaginatedTable";
 export * from "./AccountMenu";
 export * from "./ColorModeButton";
 export * from "./Sidebar";
-export * from "./MessageModal";
-export * from "./MessageForm";
+export * from "./SubjectSidebar";
