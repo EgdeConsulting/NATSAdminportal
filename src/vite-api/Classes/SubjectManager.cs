@@ -10,7 +10,7 @@ namespace Backend.Logic
 
         public static void AddSubject(string subjectName)
         {
-            if (SubjectExists(subjectName) is null) 
+            if (SubjectExists(subjectName) is null)
             {
                 allSubjects.Add(new Subject(subjectName));
             }
@@ -23,18 +23,18 @@ namespace Backend.Logic
             if (parentName is Object)
             {
                 Subject? parent = SubjectExists(parentName);
-                if (parent is Object && !obj.ParentLinkExists(parent))
+                if (parent is Object && obj is Object && !obj.ParentLinkExists(parent))
                 {
-                    obj.ParentLinks.Add(new Dictionary<int, Subject>() {{ branchID, parent }});
+                    obj.ParentLinks.Add(new Dictionary<int, Subject>() { { branchID, parent } });
                 }
             }
 
             if (childName is Object)
             {
                 Subject? child = SubjectExists(childName);
-                if (child is Object && !obj.ChildrenLinkExists(child))
+                if (child is Object && obj is Object && !obj.ChildrenLinkExists(child))
                 {
-                    obj.ChildrenLinks.Add(new Dictionary<int, Subject>() {{ branchID, child }});
+                    obj.ChildrenLinks.Add(new Dictionary<int, Subject>() { { branchID, child } });
                 }
             }
         }

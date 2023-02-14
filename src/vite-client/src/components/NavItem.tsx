@@ -1,6 +1,15 @@
-import { Flex, Menu, MenuButton, Link, Icon, Text } from "@chakra-ui/react";
+import {
+  Flex,
+  Menu,
+  MenuButton,
+  Link,
+  Icon,
+  Text,
+  useColorMode,
+} from "@chakra-ui/react";
 import { IconType } from "react-icons";
 import { Link as RouteLink } from "react-router-dom";
+
 function NavItem({
   navSize,
   icon,
@@ -14,6 +23,7 @@ function NavItem({
   route: string;
   width: number;
 }) {
+  const { colorMode, toggleColorMode } = useColorMode();
   return (
     <Flex
       mt={30}
@@ -24,7 +34,11 @@ function NavItem({
         <Link
           as={RouteLink}
           to={route}
-          _hover={{ textDecor: "none", backgroundColor: "whiteAlpha.300" }}
+          _hover={{
+            textDecor: "none",
+            backgroundColor:
+              colorMode === "dark" ? "whiteAlpha.300" : "gray.200",
+          }}
           p={2}
           borderRadius={8}
         >
