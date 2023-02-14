@@ -13,16 +13,7 @@ function MessageForm() {
   const subjectInputRef = useRef<any>(null);
   const headerInputRef = useRef<any>(null);
   const payloadInputRef = useRef<any>(null);
-  function testPassingMethodWithRef() {
-    console.log(
-      "subj: " +
-        subjectInputRef.current.value +
-        ", head: " +
-        headerInputRef.current.value +
-        ",  payload: " +
-        payloadInputRef.current.value
-    );
-  }
+
   function postNewMessage() {
     //Fields cannot be empty... problem for another day.
     fetch("/PublishFullMessage", {

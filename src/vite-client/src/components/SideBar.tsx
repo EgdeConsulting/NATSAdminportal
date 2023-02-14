@@ -4,7 +4,7 @@ import { HamburgerIcon } from "@chakra-ui/icons";
 import { useState } from "react";
 import { NavItem } from "./NavItem";
 
-function SideBar() {
+function Sidebar() {
   const [navSize, changeNavSize] = useState(200);
   const [size, setSize] = useState(50);
   const togglePanel = () => {
@@ -43,4 +43,4 @@ function SideBar() {
   );
 }
 
-export { SideBar };
+export { Sidebar };

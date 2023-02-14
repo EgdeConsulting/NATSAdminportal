@@ -16,7 +16,7 @@ import {
   VStack,
   StackDivider,
 } from "@chakra-ui/react";
-import { Topbar, MessageView, SideBar } from "./components";
+import { Topbar, MessageView, Sidebar } from "./components";
 
 function App() {
   const subjectInputRef = useRef<any>(null);
@@ -111,7 +111,7 @@ function App() {
         <CSSReset />
         <Topbar />
         <HStack align="stretch">
-          <SideBar />
+          <Sidebar />
           <VStack align="stretch" margin={2} w="80%" h="100%">
             <Card variant={"outline"}>
               <CardBody>
