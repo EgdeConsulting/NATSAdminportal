@@ -41,7 +41,7 @@ namespace Backend.Logic
             List<StreamInfo> streamInfo;
             List<string> subjects = new List<string>();
             List<string[]> listOfSubjectArray = new List<string[]>();
-            
+
             using (IConnection c = new ConnectionFactory().CreateConnection(url))
             {
                 IJetStreamManagement jsm = c.CreateJetStreamManagementContext();
@@ -51,17 +51,17 @@ namespace Backend.Logic
                 {
                     subjects.AddRange(streamInfo[i].Config.Subjects); // Gets all subjects in form ["Subject.A.1", "Subject.A.2", ....]
                 }
+                subjects.Sort();
             }
 
             for (int i = 0; i < subjects.Count; i++)
             {
                 listOfSubjectArray.Add(subjects[i].Split(".")); // Gets all subjects in form [[Subject, A, 1], [Subject, A, 2], ....]
             }
-            
-            
+
             SubjectManager.ClearSubjects();
             for (int i = 0; i < listOfSubjectArray.Count; i++)
-            {   
+            {
                 // Adding all unique subjects to SubjectManager.
                 for (int k = 0; k < listOfSubjectArray[i].Length; k++)
                 {
@@ -76,7 +76,7 @@ namespace Backend.Logic
                     SubjectManager.AddSubjectLinks(listOfSubjectArray[i][k], parentName, childName, i);
                 }
             }
-            
+
             return SubjectManager.GetHierarchy();
         }
 
