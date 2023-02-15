@@ -47,6 +47,8 @@ function MessageForm() {
         subjectInputRef.current.value = "";
         headerInputRef.current.value = "";
         payloadInputRef.current.value = "";
+      } else {
+        alert("Network error: " + res.statusText);
       }
     });
   }
@@ -76,7 +78,7 @@ function MessageForm() {
           })}
         </Select>
         <FormHelperText>
-          Choose the subject you want to post your message on
+          Choose the subject you want to post your message to
         </FormHelperText>
 
         <FormLabel marginTop={3}>Headers</FormLabel>
