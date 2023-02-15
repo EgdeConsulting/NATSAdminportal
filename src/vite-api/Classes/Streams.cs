@@ -125,7 +125,7 @@ namespace Backend.Logic
 
                 for (int i = 0; i < streamInfo.Count; i++)
                 {
-                    streamNames.Add(streamInfo[i].Config.Name);
+                    streamNames.AddRange(streamInfo[i].Config.Subjects);
                 }
                 streamNames.Sort();
             }
@@ -137,7 +137,7 @@ namespace Backend.Logic
                         StreamName = streamNames[i]
                     }
                 );
-                json = i < streamInfo.Count - 1 ? json + "," : json;
+                json = i < streamNames.Count - 1 ? json + "," : json;
 
             }
             Print("test"); //Invalid json??????????????????
