@@ -7,7 +7,7 @@ import {
 
 import { Topbar, Sidebar } from "./components";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { SettingsPage, LogPage, HomePage } from "./routes";
+import { SettingsPage, LogPage, HomePage, StreamPage } from "./routes";
 import { theme } from "./styles";
 
 function App() {
@@ -20,6 +20,7 @@ function App() {
           <HStack align="stretch">
             <Sidebar />
             <Routes>
+              <Route path="/streams" element={<StreamPage />}></Route>
               <Route path="/log" element={<LogPage />} />
               <Route path="/settings" element={<SettingsPage />} />
               <Route path="/" element={<HomePage />} />

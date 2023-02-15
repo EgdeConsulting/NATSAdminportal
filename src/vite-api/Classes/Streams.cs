@@ -108,11 +108,15 @@ namespace Backend.Logic
 
             return SubjectManager.GetHierarchy();
         }
-
+        private static void Print(string printedstring)
+        {
+            Console.WriteLine(printedstring);
+        }
         public static string GetStreamInfo(string? url)
         {
-            List<StreamInfo> streamInfo;
             string json = "[";
+            List<string> streamNames = new List<string>();
+            List<StreamInfo> streamInfo;
 
             using (IConnection c = new ConnectionFactory().CreateConnection(url))
             {
@@ -121,15 +125,22 @@ namespace Backend.Logic
 
                 for (int i = 0; i < streamInfo.Count; i++)
                 {
-                    json += JsonSerializer.Serialize(
-                        new
-                        {
-                            StreamInfo = streamInfo[i]
-                        }
-                    );
-                    json = i < streamInfo.Count - 1 ? json + "," : json;
+                    streamNames.Add(streamInfo[i].Config.Name);
                 }
+                streamNames.Sort();
             }
+            for (int i = 0; i < streamNames.Count; i++)
+            {
+                json += JsonSerializer.Serialize(
+                    new
+                    {
+                        StreamName = streamNames[i]
+                    }
+                );
+                json = i < streamInfo.Count - 1 ? json + "," : json;
+
+            }
+            Print("test"); //Invalid json??????????????????
 
             return json + "]";
         }
