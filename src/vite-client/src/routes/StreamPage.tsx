@@ -1,5 +1,6 @@
-import { Button } from "@chakra-ui/react";
+import { Box, Card, CardBody } from "@chakra-ui/react";
 import { useRef, useEffect, useState } from "react";
+import { StreamView } from "../components";
 
 function StreamPage() {
   const [streams, setStreams] = useState<[]>([]);
@@ -13,10 +14,15 @@ function StreamPage() {
       .then((res) => res.json())
       .then((data) => {
         setStreams(data);
+        console.log(streams);
       });
   }
 
-  return <Button></Button>;
+  return (
+    <Box>
+      <StreamView content={streams} />
+    </Box>
+  );
 }
 
 export { StreamPage };

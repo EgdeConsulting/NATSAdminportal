@@ -115,7 +115,8 @@ namespace Backend.Logic
         public static string GetStreamInfo(string? url)
         {
             string json = "[";
-            List<string> streamNames = new List<string>();
+            List<string> streamConsumers = new List<string>();
+            List<string> streamMessages = new List<string>();
             List<StreamInfo> streamInfo;
 
             using (IConnection c = new ConnectionFactory().CreateConnection(url))
@@ -125,23 +126,20 @@ namespace Backend.Logic
 
                 for (int i = 0; i < streamInfo.Count; i++)
                 {
-                    streamNames.AddRange(streamInfo[i].Config.Subjects);
+                    json += JsonSerializer.Serialize(
+                        new
+                        {
+                            Name = streamInfo[i].Config.Name,
+                            SubjectsCount = streamInfo[i].State.SubjectCount,
+                            ConsumersCount = streamInfo[i].State.ConsumerCount,
+                            MessageCount = streamInfo[i].State.Messages,
+                            //DiscardPolicy = streamInfo[i].Config.DiscardPolicy.ToString()
+                        }
+                    );
+                    json = i < streamInfo.Count - 1 ? json + "," : json;
                 }
-                streamNames.Sort();
             }
-            for (int i = 0; i < streamNames.Count; i++)
-            {
-                json += JsonSerializer.Serialize(
-                    new
-                    {
-                        StreamName = streamNames[i]
-                    }
-                );
-                json = i < streamNames.Count - 1 ? json + "," : json;
-
-            }
-            Print("test"); //Invalid json??????????????????
-
+            Print(json);
             return json + "]";
         }
 

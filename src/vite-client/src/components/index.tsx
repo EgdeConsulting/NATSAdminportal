@@ -7,3 +7,4 @@ export * from "./ColorModeButton";
 export * from "./Sidebar";
 export * from "./SubjectSidebar";
 export * from "./MessageModal";
+export * from "./StreamView";
