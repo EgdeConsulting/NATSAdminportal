@@ -36,6 +36,35 @@ namespace Backend.Logic
             return json + "]";
         }
 
+        public static string GetSubjectNames(string? url)
+        {
+            string json = "[";
+            List<string> subjects = new List<string>();
+            List<StreamInfo> streamInfo;
+            using (IConnection c = new ConnectionFactory().CreateConnection(url))
+            {
+                IJetStreamManagement jsm = c.CreateJetStreamManagementContext();
+                streamInfo = GetStreamInfoArray(jsm).ToList<StreamInfo>();
+
+                for (int i = 0; i < streamInfo.Count; i++)
+                {
+                    subjects.AddRange(streamInfo[i].Config.Subjects); // Gets all subjects in form ["Subject.A.1", "Subject.A.2", ....]
+                }
+                subjects.Sort();
+            }
+            for (int i = 0; i < subjects.Count; i++)
+            {
+                json += JsonSerializer.Serialize(
+                    new
+                    {
+                        Subjects = subjects[i]
+                    }
+                );
+                json = i < subjects.Count - 1 ? json + "," : json;
+            }
+            return json + "]";
+        }
+
         public static string GetStreamSubjects(string? url) //Maybe better to collect the subjects from consumers?
         {
             List<StreamInfo> streamInfo;

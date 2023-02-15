@@ -29,7 +29,7 @@ function MessageModal() {
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Message Content</ModalHeader>
+          <ModalHeader>Publish message</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <MessageForm />

@@ -57,9 +57,11 @@ thread.Start();
 Publisher pub = new Publisher("EgdeTest", natsServerURL);
 Publisher pub2 = new Publisher(natsServerURL);
 
-app.MapGet("/StreamInfo", () => Streams.GetStreamNames(natsServerURL));
+//app.MapGet("/StreamInfo", () => Streams.GetStreamNames(natsServerURL));
+//app.MapGet("/ConsumerInfo", () => Consumers.GetConsumerNamesForAStream(natsServerURL, "stream1"));
+
 app.MapGet("/Subjects", () => Streams.GetStreamSubjects(natsServerURL));
-app.MapGet("/ConsumerInfo", () => Consumers.GetConsumerNamesForAStream(natsServerURL, "stream1"));
+app.MapGet("/SubjectNames", () => Streams.GetSubjectNames(natsServerURL));
 app.MapGet("/LastMessages", () => sub.GetLatestMessages());
 
 app.MapPost("/NewSubject", async (HttpRequest request) =>

@@ -6,3 +6,4 @@ export * from "./AccountMenu";
 export * from "./ColorModeButton";
 export * from "./Sidebar";
 export * from "./SubjectSidebar";
+export * from "./MessageModal";
