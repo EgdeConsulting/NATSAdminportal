@@ -1,4 +1,4 @@
-import { PaginatedTable } from "./";
+import { StreamTable } from "./";
 
 function StreamView(props: { content: any[] }) {
   //Make clickable a prop. Which then in paginatedtable returns a clickable cell?
@@ -34,6 +34,6 @@ function StreamView(props: { content: any[] }) {
       ],
     },
   ];
-  return <PaginatedTable columns={columns} data={props.content} />;
+  return <StreamTable columns={columns} data={props.content} />;
 }
 export { StreamView };

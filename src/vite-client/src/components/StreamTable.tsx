@@ -17,6 +17,9 @@ import {
   NumberInputStepper,
   NumberIncrementStepper,
   NumberDecrementStepper,
+  Button,
+  useDisclosure,
+  useStatStyles,
 } from "@chakra-ui/react";
 import {
   ArrowRightIcon,
@@ -24,7 +27,8 @@ import {
   ChevronRightIcon,
   ChevronLeftIcon,
 } from "@chakra-ui/icons";
-import { ContentHider } from "./";
+import { StreamModal } from "./";
+import { useState } from "react";
 
 {
   /*
@@ -33,10 +37,11 @@ import { ContentHider } from "./";
   */
 }
 
-function PaginatedTable(props: { columns: any[]; data: any[] }) {
+function StreamTable(props: { columns: any[]; data: any[] }) {
   const data = props.data;
   const columns = props.columns;
-
+  const { isOpen, onToggle, onClose } = useDisclosure();
+  const [streamName, setStreamName] = useState("");
   const {
     getTableProps,
     getTableBodyProps,
@@ -64,6 +69,7 @@ function PaginatedTable(props: { columns: any[]; data: any[] }) {
 
   return (
     <div>
+      <StreamModal name={streamName} isOpen={isOpen} onClose={onClose} />
       <TableContainer>
         <Table variant={"striped"} colorScheme={"gray"} {...getTableProps()}>
           <Thead>
@@ -84,13 +90,21 @@ function PaginatedTable(props: { columns: any[]; data: any[] }) {
                 <Tr {...row.getRowProps()}>
                   {row.cells.map((cell: any) => {
                     const cellContent =
-                      cell.render("Cell").props.column.hideContent ==
-                      "false" ? (
-                        <Td {...cell.getCellProps()}>{cell.render("Cell")}</Td>
-                      ) : (
+                      cell.render("Cell").props.column.clickable == "true" ? (
                         <Td {...cell.getCellProps()}>
-                          <ContentHider content={cell.render("Cell")} />
+                          <Button
+                            onClick={() => {
+                              setStreamName(cell.value);
+                              onToggle();
+                            }}
+                            variant={"outline"}
+                            width={"100%"}
+                          >
+                            {cell.render("Cell")}
+                          </Button>
                         </Td>
+                      ) : (
+                        <Td {...cell.getCellProps()}>{cell.render("Cell")}</Td>
                       );
                     return cellContent;
                   })}
@@ -100,7 +114,7 @@ function PaginatedTable(props: { columns: any[]; data: any[] }) {
           </Tbody>
         </Table>
       </TableContainer>
-      {/* 
+
       <Flex justifyContent="space-between" m={4} alignItems="center">
         <Flex>
           <Tooltip label="First Page">
@@ -186,9 +200,9 @@ function PaginatedTable(props: { columns: any[]; data: any[] }) {
             />
           </Tooltip>
         </Flex>
-      </Flex>*/}
+      </Flex>
     </div>
   );
 }
 
-export { PaginatedTable };
+export { StreamTable };

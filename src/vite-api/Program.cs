@@ -55,14 +55,26 @@ Thread thread = new Thread(sub.Run);
 thread.Start();
 
 Publisher pub = new Publisher("EgdeTest", natsServerURL);
-Publisher pub2 = new Publisher(natsServerURL);
 
-app.MapGet("/StreamInfo", () => Streams.GetStreamInfo(natsServerURL));
+app.MapGet("/StreamBasicInfo", () => Streams.GetBasicStreamInfo(natsServerURL));
 //app.MapGet("/ConsumerInfo", () => Consumers.GetConsumerNamesForAStream(natsServerURL, "stream1"));
 
 app.MapGet("/Subjects", () => Streams.GetStreamSubjects(natsServerURL));
 app.MapGet("/SubjectNames", () => Streams.GetSubjectNames(natsServerURL));
 app.MapGet("/LastMessages", () => sub.GetLatestMessages());
+
+app.MapPost("/StreamName", async (HttpRequest request) =>
+{
+    string streamName = "";
+
+    using (StreamReader stream = new StreamReader(request.Body))
+    {
+        streamName = await stream.ReadToEndAsync();
+    }
+    Console.WriteLine(Streams.GetExtendedStreamInfo(natsServerURL, streamName));
+    return Results.Json(Streams.GetExtendedStreamInfo(natsServerURL, streamName));
+});
+
 
 app.MapPost("/NewSubject", async (HttpRequest request) =>
 {

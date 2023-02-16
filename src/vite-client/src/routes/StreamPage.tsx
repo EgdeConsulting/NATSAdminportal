@@ -1,4 +1,17 @@
-import { Box, Card, CardBody } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Card,
+  CardBody,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  useDisclosure,
+} from "@chakra-ui/react";
 import { useRef, useEffect, useState } from "react";
 import { StreamView } from "../components";
 
@@ -10,11 +23,10 @@ function StreamPage() {
   }, [streams.length != 0]);
 
   function getStreams() {
-    fetch("/StreamInfo")
+    fetch("/StreamBasicInfo")
       .then((res) => res.json())
       .then((data) => {
         setStreams(data);
-        console.log(streams);
       });
   }
 

@@ -108,15 +108,10 @@ namespace Backend.Logic
 
             return SubjectManager.GetHierarchy();
         }
-        private static void Print(string printedstring)
-        {
-            Console.WriteLine(printedstring);
-        }
-        public static string GetStreamInfo(string? url)
+
+        public static string GetBasicStreamInfo(string? url)
         {
             string json = "[";
-            List<string> streamConsumers = new List<string>();
-            List<string> streamMessages = new List<string>();
             List<StreamInfo> streamInfo;
 
             using (IConnection c = new ConnectionFactory().CreateConnection(url))
@@ -139,10 +134,31 @@ namespace Backend.Logic
                     json = i < streamInfo.Count - 1 ? json + "," : json;
                 }
             }
-            Print(json);
             return json + "]";
         }
+        public static string GetExtendedStreamInfo(string? url, string streamName)
+        {
+            string json = "[";
+            StreamInfo streamInfo;
 
+            using (IConnection c = new ConnectionFactory().CreateConnection(url))
+            {
+                IJetStreamManagement jsm = c.CreateJetStreamManagementContext();
+                streamInfo = jsm.GetStreamInfo(streamName);
+            }
+            json += JsonSerializer.Serialize(
+                new
+                {
+                    Name = streamName,
+                    Subjects = streamInfo.Config.Subjects,
+                    Consumers = streamInfo.State.ConsumerCount, // NEED TO GET THIS FROM CONSUMER.CS
+                    Messages = streamInfo.State.Messages, //Also need to get this from somewhere..... CLI: nats stream view -s ip:port, check https://github.com/nats-io/nats.net/blob/master/src/Samples/JetStreamManageStreams/JetStreamManageStreams.cs
+
+                }
+            );
+
+            return json + "]";
+        }
         public async static void CreateStreamFromRequest(HttpRequest request, string? url)
         {
             string content = "";
