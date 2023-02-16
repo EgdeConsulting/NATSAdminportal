@@ -89,7 +89,10 @@ function PaginatedTable(props: { columns: any[]; data: any[] }) {
                         <Td {...cell.getCellProps()}>{cell.render("Cell")}</Td>
                       ) : (
                         <Td {...cell.getCellProps()}>
-                          <ContentHider content={cell.render("Cell")} />
+                          <ContentHider
+                            trackingData={row.values}
+                            content={cell.render("Cell")}
+                          />
                         </Td>
                       );
                     return cellContent;

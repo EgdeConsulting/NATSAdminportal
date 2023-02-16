@@ -13,6 +13,7 @@ import { useState } from "react";
 function AccountMenu() {
   const [activeAccount, setActiveAccount] = useState("Daniel");
   const [accounts, setAccounts] = useState(["Tobias", "Simen"]);
+  window.accountLayer = activeAccount;
 
   function changeAccount(index: number) {
     let newActiveAccount = accounts[index];
@@ -22,6 +23,7 @@ function AccountMenu() {
         .concat([activeAccount])
     );
     setActiveAccount(newActiveAccount);
+    window.accountLayer = newActiveAccount;
   }
 
   return (

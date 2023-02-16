@@ -17,25 +17,22 @@ function SubjectSidebar() {
       });
   }
 
-  const HierarchyCheckbox = ({
-    parent,
-    padding,
-  }: {
+  const HierarchyCheckbox = (props: {
     parent: any;
     padding: number;
   }): JSX.Element => {
     return (
       <div>
-        <Checkbox margin={1} paddingLeft={padding} defaultChecked>
-          {parent["name"]}
+        <Checkbox margin={1} paddingLeft={props.padding} defaultChecked>
+          {props.parent["name"]}
         </Checkbox>
-        {parent["subSubjects"] != undefined &&
-          parent["subSubjects"].map((child: any, index: number) => {
+        {props.parent["subSubjects"] != undefined &&
+          props.parent["subSubjects"].map((child: any) => {
             return (
               <HierarchyCheckbox
                 key={uuidv4()}
                 parent={child}
-                padding={padding + 5}
+                padding={props.padding + 5}
               />
             );
           })}
