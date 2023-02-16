@@ -71,7 +71,6 @@ app.MapPost("/StreamName", async (HttpRequest request) =>
     {
         streamName = await stream.ReadToEndAsync();
     }
-    Console.WriteLine(Streams.GetExtendedStreamInfo(natsServerURL, streamName));
     return Results.Json(Streams.GetExtendedStreamInfo(natsServerURL, streamName));
 });
 

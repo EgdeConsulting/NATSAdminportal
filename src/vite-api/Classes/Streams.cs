@@ -151,9 +151,12 @@ namespace Backend.Logic
                 {
                     Name = streamName,
                     Subjects = streamInfo.Config.Subjects,
-                    Consumers = streamInfo.State.ConsumerCount, // NEED TO GET THIS FROM CONSUMER.CS
+                    Consumers = Consumers.GetConsumerNamesForAStream(url, streamName), // NEED TO GET THIS FROM CONSUMER.CS
+                    Description = streamInfo.Config.Description,
                     Messages = streamInfo.State.Messages, //Also need to get this from somewhere..... CLI: nats stream view -s ip:port, check https://github.com/nats-io/nats.net/blob/master/src/Samples/JetStreamManageStreams/JetStreamManageStreams.cs
-
+                    Deleted = streamInfo.State.DeletedCount,
+                    DiscardPolicy = streamInfo.Config.DiscardPolicy,
+                    RetentionPolicy = streamInfo.Config.RetentionPolicy,
                 }
             );
 
