@@ -1,65 +1,123 @@
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using System.Text.Json;
+using NATS.Client.JetStream;
+using NATS.Client;
 
 namespace Backend.Logic
 {
-    public static class SubjectManager
+    public sealed class SubjectManager
     {
-        private static List<Subject> allSubjects = new List<Subject>();
+        private List<Subject> allSubjects;
 
-        public static void AddSubject(string subjectName)
+        public SubjectManager(string? url)
         {
-            if (SubjectExists(subjectName) is null)
+            allSubjects = new List<Subject>();
+            InitializeSubjects(url);
+        }
+
+        private void InitializeSubjects(string? url)
+        {
+            List<string> rawSubjects = new List<string>();
+            List<string[]> refinedSubjects = new List<string[]>();
+
+            using (IConnection c = new ConnectionFactory().CreateConnection(url))
             {
-                allSubjects.Add(new Subject(subjectName));
+                List<StreamInfo> streamInfo = c.CreateJetStreamManagementContext().GetStreams().ToList<StreamInfo>();
+
+                // Gets all subjects in form ["Subject.A.1", "Subject.A.2", ....]
+                streamInfo.ForEach(a => rawSubjects.AddRange(a.Config.Subjects));
+            }
+
+            rawSubjects.Sort();
+            rawSubjects.ForEach(a => refinedSubjects.Add(a.Split(".")));
+
+            for (int i = 0; i < refinedSubjects.Count; i++)
+            {
+                // Adding all unique subjects to list.
+                for (int k = 0; k < refinedSubjects[i].Length; k++)
+                {
+                    string subjectName = refinedSubjects[i][k];
+                    if (allSubjects.FirstOrDefault(x => x.SubjectName.Equals(subjectName)) is null)
+                        allSubjects.Add(new Subject(subjectName));
+                }
+
+                // Initializing the hierarchy links between all the subjects. 
+                for (int k = 0; k < refinedSubjects[i].Length; k++)
+                {
+                    string? parentName = k - 1 < 0 ? null : refinedSubjects[i][k - 1];
+                    string? childName = k + 1 > refinedSubjects[i].Length - 1 ? null : refinedSubjects[i][k + 1];
+                    AddSubjectLinks(refinedSubjects[i][k], parentName, childName, i);
+                }
             }
         }
 
-        public static void AddSubjectLinks(string subjectName, string? parentName, string? childName, int branchID)
+        private void AddSubjectLinks(string subjectName, string? parentName, string? childName, int branchID)
         {
-            Subject? obj = SubjectExists(subjectName);
-
+            Subject? obj = SubjectObjectExists(subjectName);
             if (parentName is Object)
             {
-                Subject? parent = SubjectExists(parentName);
+                Subject? parent = SubjectObjectExists(parentName);
                 if (parent is Object && obj is Object && !obj.ParentLinkExists(parent))
-                {
                     obj.ParentLinks.Add(new Dictionary<int, Subject>() { { branchID, parent } });
-                }
             }
 
             if (childName is Object)
             {
-                Subject? child = SubjectExists(childName);
+                Subject? child = SubjectObjectExists(childName);
                 if (child is Object && obj is Object && !obj.ChildrenLinkExists(child))
-                {
                     obj.ChildrenLinks.Add(new Dictionary<int, Subject>() { { branchID, child } });
-                }
             }
         }
 
-
-        public static void ClearSubjects()
-        {
-            allSubjects.Clear();
-        }
-
-        public static Subject? SubjectExists(string subjectName)
+        private Subject? SubjectObjectExists(string subjectName)
         {
             return allSubjects.FirstOrDefault(x => x.SubjectName.Equals(subjectName));
         }
 
-        public static string GetHierarchy()
+        public string GetSubjectNames()
+        {
+            string json = "[";
+            allSubjects.Where(a => a.ParentLinks.Count == 0).ToList().
+                ForEach(b =>
+                {
+                    List<string> subjects = b.ToString(-1, b.ChildrenLinks.Count).Split(",").ToList();
+                    for (int i = 0; i < subjects.Count; i++)
+                    {
+                        json += JsonSerializer.Serialize(
+                            new
+                            {
+                                name = subjects[i]
+                            }
+                        );
+                        json = i < subjects.Count - 1 ? json + "," : json;
+                    }
+                    json += ",";   
+                });
+            return json.Substring(0, json.Length - 1) + "]";
+        }
+
+        public bool SubjectExists(string subjectName)
+        {
+            List<string> matches = new List<string>();
+            allSubjects.Where(a => a.ParentLinks.Count == 0).ToList().
+                ForEach(b =>
+                {
+                    List<string> subjects = b.ToString(-1, b.ChildrenLinks.Count).Split(",").ToList();
+                    matches = Enumerable.Concat(matches, subjects.Where(c => c.Equals(subjectName)).ToList()).ToList();
+                });
+            return matches.Count > 0;
+        }
+
+        public string GetSubjectHierarchy()
         {
             string hierarchyJSON = "[";
-
             allSubjects.Where(a => a.ParentLinks.Count == 0).ToList().
                 ForEach(b =>
                 {
                     hierarchyJSON += b.ToJSON(-1, b.ChildrenLinks.Count) + ", ";
                 });
-
             return hierarchyJSON.Substring(0, hierarchyJSON.Length - 2) + "]";
         }
     }

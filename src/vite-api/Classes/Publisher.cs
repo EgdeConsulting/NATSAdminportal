@@ -19,13 +19,11 @@ using NATS.Client;
 
 namespace Backend.Logic
 {
-    class Publisher
+    public class Publisher
     {
-        Dictionary<string, string> parsedArgs = new Dictionary<string, string>();
-
-        int count = 1;
-        string? url = Defaults.Url;
-        string? creds = null;
+        private int count = 1;
+        private string? url = Defaults.Url;
+        private string? creds = null;
 
         public string? MessageSubject
         {

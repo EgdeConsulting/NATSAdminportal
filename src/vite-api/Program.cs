@@ -1,6 +1,10 @@
 using System.Text.Json.Nodes;
 using Backend.Logic;
 
+//////////////////////
+// Building the app //
+//////////////////////
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSpaStaticFiles(config =>
@@ -9,6 +13,10 @@ builder.Services.AddSpaStaticFiles(config =>
 });
 
 var app = builder.Build();
+
+///////////////////////////////
+// Loading data from secrets //
+///////////////////////////////
 
 string? natsServerURL;
 
@@ -25,44 +33,44 @@ else
     natsServerURL = Environment.GetEnvironmentVariable("AZURE_NATS_SERVER_URL");
 }
 
-//var policyName = "enableCORS";
-
-// builder.Services.AddCors(options =>
-// {
-//     options.AddPolicy(policyName,
-//                           policy =>
-//                           {
-//                               policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
-//                           });
-// });
-
-// app.UseCors(policyName);
+/////////////////////////
+// Configuring the app //
+/////////////////////////
 
 app.UseRouting();
-
 app.UseEndpoints(_ => { });
-
 app.UseSpaStaticFiles();
-
 app.UseSpa(builder =>
 {
     if (app.Environment.IsDevelopment())
         builder.UseProxyToSpaDevelopmentServer("http://localhost:5173/");
 });
 
-Subscriber sub = new Subscriber(natsServerURL);
+//////////////////////////////////
+// Initializing crucial objects //
+//////////////////////////////////
+
+SubjectManager subjectManager = new SubjectManager(natsServerURL);
+StreamManager streamManager = new StreamManager(natsServerURL);
+
+Subscriber sub = new Subscriber(natsServerURL, subjectManager);
 Thread thread = new Thread(sub.Run);
 thread.Start();
 
 Publisher pub = new Publisher("EgdeTest", natsServerURL);
 Publisher pub2 = new Publisher(natsServerURL);
 
-//app.MapGet("/StreamInfo", () => Streams.GetStreamNames(natsServerURL));
-//app.MapGet("/ConsumerInfo", () => Consumers.GetConsumerNamesForAStream(natsServerURL, "stream1"));
+///////////////////////////////////////////////////
+// Adding API-endpoints for data retrieval (GET) //
+///////////////////////////////////////////////////
 
-app.MapGet("/Subjects", () => Streams.GetStreamSubjects(natsServerURL));
-app.MapGet("/SubjectNames", () => Streams.GetSubjectNames(natsServerURL));
+app.MapGet("/Subjects", () => subjectManager.GetSubjectHierarchy());
+app.MapGet("/SubjectNames", () => subjectManager.GetSubjectNames());
 app.MapGet("/LastMessages", () => sub.GetLatestMessages());
+
+///////////////////////////////////////////////////
+// Adding API-endpoints for data delivery (POST) //
+///////////////////////////////////////////////////
 
 app.MapPost("/NewSubject", async (HttpRequest request) =>
 {
@@ -123,5 +131,28 @@ app.MapPost("/PublishMessage", async (HttpRequest request) =>
     }
 });
 
-app.Run();
+app.MapPost("/DeleteMessage", async (HttpRequest request) =>
+{
+    string content = "";
+    using (StreamReader stream = new StreamReader(request.Body))
+    {
+        content = await stream.ReadToEndAsync();
+    }
 
+    var jsonObject = JsonNode.Parse(content);
+
+    if (jsonObject != null && jsonObject["streamName"] != null && jsonObject["sequenceNumber"] != null)
+    {
+        string streamName = jsonObject["streamName"]!.ToString();
+        ulong sequenceNumber = ulong.Parse(jsonObject["sequenceNumber"]!.ToString());
+        bool erase = jsonObject["erase"]!.ToString() == "true";
+
+        streamManager.DeleteMessage(streamName, sequenceNumber, erase);
+    }
+});
+
+//////////////////////
+// Starting the app //
+//////////////////////
+
+app.Run();
