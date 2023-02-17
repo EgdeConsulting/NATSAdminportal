@@ -21,74 +21,46 @@ using NATS.Client;
 
 namespace Backend.Logic
 {
-    class Subscriber
+    public class Subscriber
     {
-        Dictionary<string, string> parsedArgs = new Dictionary<string, string>();
-
         // Use > to subscribe to all subjects
         public string subject = ">";
-        int count = 1000000;
-        string? url;
-        bool sync = true;
-        int received = 0;
-        bool verbose = true;
-        string? creds = null;
-        List<Msg> latestMessages;
-        List<DateTime> timestamps;
+        private int count = 1000000;
+        private string? url = Defaults.Url;
+        private SubjectManager subjectManager;
+        private bool sync = true;
+        private int received = 0;
+        private bool verbose = true;
+        private string? creds = null;
+        private List<Msg> latestMessages;
+        private List<DateTime> timestamps;
 
         public string MessageSubject
         {
             get; set;
         }
 
-        public Subscriber(string? url)
+        public Subscriber(string? url, SubjectManager subjectManager)
         {
             latestMessages = new List<Msg>();
             timestamps = new List<DateTime>();
             MessageSubject = ">";
             this.url = url;
+            this.subjectManager = subjectManager;
         }
 
         public void Run()
         {
-            //parseArgs(args);
-            //banner();
-
             Options opts = ConnectionFactory.GetDefaultOptions();
             opts.Url = url;
             if (creds != null)
-            {
                 opts.SetUserCredentials(creds);
-            }
 
             using (IConnection c = new ConnectionFactory().CreateConnection(opts))
             {
-                TimeSpan elapsed;
-
-                if (sync)
-                {
-                    elapsed = receiveSyncSubscriber(c);
-                }
-                else
-                {
-                    elapsed = receiveAsyncSubscriber(c);
-                }
-
-                // Console.Write("Received {0} msgs in {1} seconds ", received, elapsed.TotalSeconds);
-                // Console.WriteLine("({0} msgs/second).",
-                //     (int)(received / elapsed.TotalSeconds));
-                // printStats(c);
-
+                TimeSpan elapsed = sync ? receiveSyncSubscriber(c) : receiveAsyncSubscriber(c);
             }
         }
-
-        // private void printStats(IConnection c)
-        // {
-        //     IStatistics s = c.Stats;
-        //     Console.WriteLine("Statistics:  ");
-        //     Console.WriteLine("   Incoming Payload Bytes: {0}", s.InBytes);
-        //     Console.WriteLine("   Incoming Messages: {0}", s.InMsgs);
-        // }
 
         private TimeSpan receiveAsyncSubscriber(IConnection c)
         {
@@ -109,9 +81,7 @@ namespace Backend.Logic
                 {
                     sw.Stop();
                     lock (testLock)
-                    {
                         Monitor.Pulse(testLock);
-                    }
                 }
             };
 
@@ -119,9 +89,7 @@ namespace Backend.Logic
             {
                 // just wait until we are done.
                 lock (testLock)
-                {
                     Monitor.Wait(testLock);
-                }
             }
 
             return sw.Elapsed;
@@ -129,13 +97,11 @@ namespace Backend.Logic
 
         private void AddMessage(Msg lastMessage)
         {
-            if (latestMessages.Count == 100)
+            if (subjectManager.SubjectExists(lastMessage.Subject))
             {
-                latestMessages.RemoveAt(latestMessages.Count - 1);
-                timestamps.RemoveAt(timestamps.Count - 1);
+                latestMessages.Insert(0, lastMessage);
+                timestamps.Insert(0, DateTime.Now);
             }
-            latestMessages.Insert(0, lastMessage);
-            timestamps.Insert(0, DateTime.Now);
         }
 
         public string GetLatestMessages()
@@ -145,17 +111,18 @@ namespace Backend.Logic
             {
                 Msg msg = latestMessages[i];
                 string timestamp = timestamps[i].ToString("MM/dd/yyyy HH:mm:ss");
-                
+
                 string headerData = "[";
 
                 var enu = msg.Header.GetEnumerator();
                 int index = 0;
 
-                while (enu.MoveNext()) {
+                while (enu.MoveNext())
+                {
                     headerData += JsonSerializer.Serialize(
                         new
                         {
-                            name = enu.Current, 
+                            name = enu.Current,
                             value = msg.Header[enu.Current.ToString()],
                         }
                     );
@@ -164,7 +131,7 @@ namespace Backend.Logic
                 }
 
                 headerData += "]";
-                
+
                 json += JsonSerializer.Serialize(
                     new
                     {
@@ -199,9 +166,6 @@ namespace Backend.Logic
 
                     if (string.Equals(MessageSubject, ">") || string.Equals(MessageSubject, m.Subject))
                         AddMessage(m);
-
-                    // if (verbose)
-                    //     Console.WriteLine("Received MSG on Subject: " + m.Subject + ", with Payload: " + Encoding.UTF8.GetString(m.Data));
                 }
 
                 sw.Stop();
@@ -209,66 +173,5 @@ namespace Backend.Logic
                 return sw.Elapsed;
             }
         }
-
-        // private void usage()
-        // {
-        //     Console.Error.WriteLine(
-        //         "Usage:  Subscribe [-url url] [-subject subject] " +
-        //         "[-count count] [-creds file] [-sync] [-verbose]");
-
-        //     Environment.Exit(-1);
-        // }
-
-        // private void parseArgs(string[] args)
-        // {
-        //     if (args == null)
-        //         return;
-
-        //     for (int i = 0; i < args.Length; i++)
-        //     {
-        //         if (args[i].Equals("-sync") ||
-        //             args[i].Equals("-verbose"))
-        //         {
-        //             parsedArgs.Add(args[i], "true");
-        //         }
-        //         else
-        //         {
-        //             if (i + 1 == args.Length)
-        //                 usage();
-
-        //             parsedArgs.Add(args[i], args[i + 1]);
-        //             i++;
-        //         }
-
-        //     }
-
-        //     if (parsedArgs.ContainsKey("-count"))
-        //         count = Convert.ToInt32(parsedArgs["-count"]);
-
-        //     if (parsedArgs.ContainsKey("-url"))
-        //         url = parsedArgs["-url"];
-
-        //     if (parsedArgs.ContainsKey("-subject"))
-        //         subject = parsedArgs["-subject"];
-
-        //     if (parsedArgs.ContainsKey("-sync"))
-        //         sync = true;
-
-        //     if (parsedArgs.ContainsKey("-verbose"))
-        //         verbose = true;
-
-        //     if (parsedArgs.ContainsKey("-creds"))
-        //         creds = parsedArgs["-creds"];
-        // }
-
-        // private void banner()
-        // {
-        //     Console.WriteLine("Receiving {0} messages on subject {1}",
-        //         count, subject);
-        //     Console.WriteLine("  Url: {0}", url);
-        //     Console.WriteLine("  Subject: {0}", subject);
-        //     Console.WriteLine("  Receiving: {0}",
-        //         sync ? "Synchronously" : "Asynchronously");
-        // }
     }
 }

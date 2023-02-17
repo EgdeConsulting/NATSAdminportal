@@ -73,8 +73,8 @@ function MessageForm() {
           placeholder="Select a subject"
           onChange={checkInputs}
         >
-          {subjects.map((subjectName: any, index: number) => {
-            return <option key={index}>{subjectName["Subjects"]}</option>;
+          {subjects.map((subject: any, index: number) => {
+            return <option key={index}>{subject["name"]}</option>;
           })}
         </Select>
         <FormHelperText>
