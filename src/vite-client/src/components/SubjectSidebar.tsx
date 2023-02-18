@@ -44,15 +44,15 @@ function SubjectSidebar() {
   };
 
   return (
-    <VStack margin={2} w={"250px"} h={"100%"}>
-      <Card variant={"filled"} h={"100%"} w={"100%"}>
+    <VStack margin={2} w={"245px"} h={"100%"}>
+      <Card variant={"outline"} h={"100%"} w={"100%"}>
         <CardHeader>
           <Heading size={"md"}>Subject Hierarchy</Heading>
         </CardHeader>
 
         {subjects.map((subject: any, index: number) => {
           return (
-            <Card key={index} margin={1} variant={"outline"}>
+            <Card key={index} marginLeft={4} marginBottom={3} border={"none"}>
               <HierarchyCheckbox key={uuidv4()} parent={subject} padding={0} />
             </Card>
           );
