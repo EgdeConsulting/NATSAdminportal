@@ -72,7 +72,7 @@ namespace Backend.Logic
                     json += JsonSerializer.Serialize(
                         new
                         {
-                            StreamName = streamNames[i]
+                            name = streamNames[i]
                         }
                     );
                     json = i < streamNames.Count - 1 ? json + "," : json;
@@ -96,7 +96,7 @@ namespace Backend.Logic
                     json += JsonSerializer.Serialize(
                         new
                         {
-                            StreamInfo = streamInfo[i]
+                            info = streamInfo[i]
                         }
                     );
                     json = i < streamInfo.Count - 1 ? json + "," : json;
@@ -117,9 +117,9 @@ namespace Backend.Logic
 
             var jsonObject = JsonNode.Parse(content);
 
-            if (jsonObject != null && jsonObject["StreamName"] != null)
+            if (jsonObject != null && jsonObject["name"] != null)
             {
-                var streamName = jsonObject["StreamName"];
+                var streamName = jsonObject["name"];
                 //var subject = jsonObject["Subject"]!;
 
                 if (streamName != null && !string.IsNullOrWhiteSpace(streamName.ToString()))
