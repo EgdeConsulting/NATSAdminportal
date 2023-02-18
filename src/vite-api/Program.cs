@@ -58,11 +58,13 @@ Thread thread = new Thread(sub.Run);
 thread.Start();
 
 Publisher pub = new Publisher("EgdeTest", natsServerURL);
-Publisher pub2 = new Publisher(natsServerURL);
 
 ///////////////////////////////////////////////////
 // Adding API-endpoints for data retrieval (GET) //
 ///////////////////////////////////////////////////
+
+app.MapGet("/StreamBasicInfo", () => streamManager.GetBasicStreamInfo());
+//app.MapGet("/ConsumerInfo", () => Consumers.GetConsumerNamesForAStream(natsServerURL, "stream1"));
 
 app.MapGet("/api/subjectHierarchy", () => subjectManager.GetSubjectHierarchy());
 app.MapGet("/api/subjectNames", () => subjectManager.GetSubjectNames());
@@ -71,6 +73,17 @@ app.MapGet("/api/messages", () => sub.GetMessages());
 ///////////////////////////////////////////////////
 // Adding API-endpoints for data delivery (POST) //
 ///////////////////////////////////////////////////
+
+app.MapPost("/StreamName", async (HttpRequest request) =>
+{
+    string streamName = "";
+
+    using (StreamReader stream = new StreamReader(request.Body))
+    {
+        streamName = await stream.ReadToEndAsync();
+    }
+    return Results.Json(streamManager.GetExtendedStreamInfo(streamName));
+});
 
 app.MapPost("/api/newSubject", async (HttpRequest request) =>
 {

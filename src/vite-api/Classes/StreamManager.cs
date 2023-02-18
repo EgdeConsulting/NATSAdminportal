@@ -10,7 +10,7 @@ using NATS.Client.JetStream;
 
 namespace Backend.Logic
 {
-    public sealed class StreamManager
+    public class StreamManager
     {
         private string? url = Defaults.Url;
 
@@ -81,10 +81,10 @@ namespace Backend.Logic
             return json + "]";
         }
 
-        public string GetStreamInfo()
+        public string GetBasicStreamInfo()
         {
-            List<StreamInfo> streamInfo;
             string json = "[";
+            List<StreamInfo> streamInfo;
 
             using (IConnection c = new ConnectionFactory().CreateConnection(url))
             {
@@ -96,16 +96,43 @@ namespace Backend.Logic
                     json += JsonSerializer.Serialize(
                         new
                         {
-                            info = streamInfo[i]
+                            name = streamInfo[i].Config.Name,
+                            subjectsCount = streamInfo[i].State.SubjectCount,
+                            consumersCount = streamInfo[i].State.ConsumerCount,
+                            messageCount = streamInfo[i].State.Messages,
+                            //discardPolicy = streamInfo[i].Config.DiscardPolicy.ToString()
                         }
                     );
                     json = i < streamInfo.Count - 1 ? json + "," : json;
                 }
             }
-
             return json + "]";
         }
+        public string GetExtendedStreamInfo(string streamName)
+        {
+            string json = "[";
+            StreamInfo streamInfo;
 
+            using (IConnection c = new ConnectionFactory().CreateConnection(url))
+            {
+                IJetStreamManagement jsm = c.CreateJetStreamManagementContext();
+                streamInfo = jsm.GetStreamInfo(streamName);
+            }
+            json += JsonSerializer.Serialize(
+                new
+                {
+                    Name = streamName,
+                    Subjects = streamInfo.Config.Subjects,
+                    Consumers = Consumers.GetConsumerNamesForAStream(url, streamName), // NEED TO GET THIS FROM CONSUMER.CS
+                    Description = streamInfo.Config.Description,
+                    Messages = streamInfo.State.Messages, //Also need to get this from somewhere..... CLI: nats stream view -s ip:port, check https://github.com/nats-io/nats.net/blob/master/src/Samples/JetStreamManageStreams/JetStreamManageStreams.cs
+                    Deleted = streamInfo.State.DeletedCount,
+                    DiscardPolicy = streamInfo.Config.DiscardPolicy,
+                    RetentionPolicy = streamInfo.Config.RetentionPolicy,
+                }
+            );
+            return json + "]";
+        }
         public async void CreateStreamFromRequest(HttpRequest request)
         {
             string content = "";
@@ -127,13 +154,13 @@ namespace Backend.Logic
                     using (IConnection c = new ConnectionFactory().CreateConnection(url))
                     {
                         IJetStreamManagement jsm = c.CreateJetStreamManagementContext();
-                        StreamManager.CreateStreamWhenDoesNotExist(jsm, StorageType.File, streamName.ToString(), "Daniel");
+                        CreateStreamWhenDoesNotExist(jsm, StorageType.File, streamName.ToString(), "Daniel");
                     }
                 }
             }
         }
 
-        public static StreamInfo? GetStreamInfoOrNullWhenNotExist(IJetStreamManagement jsm, string streamName)
+        public StreamInfo? GetStreamInfoOrNullWhenNotExist(IJetStreamManagement jsm, string streamName)
         {
             try
             {
@@ -154,12 +181,12 @@ namespace Backend.Logic
         //     return GetStreamInfoOrNullWhenNotExist(c.CreateJetStreamManagementContext(), streamName) != null;
         // }
 
-        public static bool StreamExists(IJetStreamManagement jsm, string streamName)
+        public bool StreamExists(IJetStreamManagement jsm, string streamName)
         {
             return GetStreamInfoOrNullWhenNotExist(jsm, streamName) != null;
         }
 
-        public static void ExitIfStreamExists(IJetStreamManagement jsm, string streamName)
+        public void ExitIfStreamExists(IJetStreamManagement jsm, string streamName)
         {
             if (StreamExists(jsm, streamName))
             {
@@ -180,7 +207,7 @@ namespace Backend.Logic
         //     }
         // }
 
-        public static StreamInfo CreateStream(IJetStreamManagement jsm, string streamName, StorageType storageType, params string[] subjects)
+        public StreamInfo CreateStream(IJetStreamManagement jsm, string streamName, StorageType storageType, params string[] subjects)
         {
             // Create a stream, here will use a file storage type, and one subject,
             // the passed subject.
@@ -217,7 +244,7 @@ namespace Backend.Logic
         //     return CreateStream(jsm, streamName, StorageType.Memory, subjects);
         // }
 
-        public static void CreateStreamWhenDoesNotExist(IJetStreamManagement jsm, StorageType storageType, string stream, params string[] subjects)
+        public void CreateStreamWhenDoesNotExist(IJetStreamManagement jsm, StorageType storageType, string stream, params string[] subjects)
         {
             try
             {
@@ -243,7 +270,7 @@ namespace Backend.Logic
         //     CreateStreamWhenDoesNotExist(c.CreateJetStreamManagementContext(), stream, subjects);
         // }
 
-        public static StreamInfo CreateStreamOrUpdateSubjects(IJetStreamManagement jsm, string streamName, StorageType storageType, params string[] subjects)
+        public StreamInfo CreateStreamOrUpdateSubjects(IJetStreamManagement jsm, string streamName, StorageType storageType, params string[] subjects)
         {
 
             StreamInfo? si = GetStreamInfoOrNullWhenNotExist(jsm, streamName);
@@ -280,11 +307,11 @@ namespace Backend.Logic
             return si;
         }
 
-        public static IList<string> GetStreamNamesArray(IJetStreamManagement jsm)
+        public IList<string> GetStreamNamesArray(IJetStreamManagement jsm)
         {
             return jsm.GetStreamNames();
         }
-        public static IList<StreamInfo> GetStreamInfoArray(IJetStreamManagement jsm)
+        public IList<StreamInfo> GetStreamInfoArray(IJetStreamManagement jsm)
         {
             return jsm.GetStreams();
         }

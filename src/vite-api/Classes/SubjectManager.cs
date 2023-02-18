@@ -7,7 +7,7 @@ using NATS.Client;
 
 namespace Backend.Logic
 {
-    public sealed class SubjectManager
+    public class SubjectManager
     {
         private List<Subject> allSubjects;
 
