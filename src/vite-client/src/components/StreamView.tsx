@@ -1,39 +1,38 @@
-import { StreamTable } from "./";
+import { PaginatedTable, StreamModal } from "./";
 
-function StreamView(props: { content: any[] }) {
-  //Make clickable a prop. Which then in paginatedtable returns a clickable cell?
-  //Make new table component
+function StreamView(props: { streamInfo: any[] }) {
   const columns = [
     {
       Header: "All Streams",
       columns: [
         {
           Header: "Name",
-          accessor: "Name",
-          hideContent: "false",
-          clickable: "true",
+          accessor: "name",
+          appendChildren: "true",
         },
         {
           Header: "No. Subjects",
-          accessor: "SubjectsCount",
-          hideContent: "false",
-          clickable: "false",
+          accessor: "subjectsCount",
+          appendChildren: "false",
         },
         {
           Header: "No. Consumers",
-          accessor: "ConsumersCount",
-          hideContent: "false",
-          clickable: "false",
+          accessor: "consumersCount",
+          appendChildren: "false",
         },
         {
           Header: "No. Messages",
-          accessor: "MessageCount",
-          hideContent: "false",
-          clickable: "false",
+          accessor: "messageCount",
+          appendChildren: "false",
         },
       ],
     },
   ];
-  return <StreamTable columns={columns} data={props.content} />;
+
+  return (
+    <PaginatedTable columns={columns} data={props.streamInfo}>
+      <StreamModal content={""} />
+    </PaginatedTable>
+  );
 }
 export { StreamView };

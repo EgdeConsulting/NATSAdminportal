@@ -63,7 +63,7 @@ Publisher pub = new Publisher("EgdeTest", natsServerURL);
 // Adding API-endpoints for data retrieval (GET) //
 ///////////////////////////////////////////////////
 
-app.MapGet("/StreamBasicInfo", () => streamManager.GetBasicStreamInfo());
+app.MapGet("/api/streamBasicInfo", () => streamManager.GetBasicStreamInfo());
 //app.MapGet("/ConsumerInfo", () => Consumers.GetConsumerNamesForAStream(natsServerURL, "stream1"));
 
 app.MapGet("/api/subjectHierarchy", () => subjectManager.GetSubjectHierarchy());
@@ -74,7 +74,7 @@ app.MapGet("/api/messages", () => sub.GetMessages());
 // Adding API-endpoints for data delivery (POST) //
 ///////////////////////////////////////////////////
 
-app.MapPost("/StreamName", async (HttpRequest request) =>
+app.MapPost("/api/streamName", async (HttpRequest request) =>
 {
     string streamName = "";
 

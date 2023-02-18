@@ -10,23 +10,17 @@ import {
   Card,
   CardHeader,
   CardBody,
-  List,
-  ListItem,
-  ListIcon,
-  OrderedList,
-  UnorderedList,
-  useStatStyles,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { useState } from "react";
 
-function StreamModal(props: {
-  isOpen: boolean;
-  onClose: () => void;
-  name: string;
-}) {
+function StreamModal(props: { content: string }) {
+  const { isOpen, onToggle, onClose } = useDisclosure();
+  const [streamName, setStreamName] = useState("");
   const [data, setData] = useState({});
+
   function sendStreamName(name: string) {
-    fetch("/StreamName", {
+    fetch("/api/streamName", {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -40,16 +34,26 @@ function StreamModal(props: {
       });
   }
 
-  if (props.isOpen) {
-    sendStreamName(props.name);
+  if (isOpen) {
+    sendStreamName(props.content);
   }
 
   return (
     <>
-      <Modal size={"5xl"} isOpen={props.isOpen} onClose={props.onClose}>
+      <Button
+        onClick={() => {
+          setStreamName(props.content);
+          onToggle();
+        }}
+        variant={"outline"}
+        width={"100%"}
+      >
+        {props.content}
+      </Button>
+      <Modal size={"5xl"} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Details for "{props.name}"</ModalHeader>
+          <ModalHeader>Details for "{props.content}"</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <Card>
@@ -63,7 +67,7 @@ function StreamModal(props: {
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={props.onClose}>
+            <Button colorScheme="blue" mr={3} onClick={onClose}>
               Close
             </Button>
           </ModalFooter>
