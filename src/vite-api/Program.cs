@@ -64,15 +64,15 @@ Publisher pub2 = new Publisher(natsServerURL);
 // Adding API-endpoints for data retrieval (GET) //
 ///////////////////////////////////////////////////
 
-app.MapGet("/Subjects", () => subjectManager.GetSubjectHierarchy());
-app.MapGet("/SubjectNames", () => subjectManager.GetSubjectNames());
-app.MapGet("/LastMessages", () => sub.GetLatestMessages());
+app.MapGet("/api/subjectHierarchy", () => subjectManager.GetSubjectHierarchy());
+app.MapGet("/api/subjectNames", () => subjectManager.GetSubjectNames());
+app.MapGet("/api/messages", () => sub.GetMessages());
 
 ///////////////////////////////////////////////////
 // Adding API-endpoints for data delivery (POST) //
 ///////////////////////////////////////////////////
 
-app.MapPost("/NewSubject", async (HttpRequest request) =>
+app.MapPost("/api/newSubject", async (HttpRequest request) =>
 {
     string content = "";
     using (StreamReader stream = new StreamReader(request.Body))
@@ -91,7 +91,7 @@ app.MapPost("/NewSubject", async (HttpRequest request) =>
     }
 });
 
-app.MapPost("/PublishFullMessage", async (HttpRequest request) =>
+app.MapPost("/api/publishFullMessage", async (HttpRequest request) =>
 {
     string content = "";
     using (StreamReader stream = new StreamReader(request.Body))
@@ -112,7 +112,7 @@ app.MapPost("/PublishFullMessage", async (HttpRequest request) =>
     }
 });
 
-app.MapPost("/PublishMessage", async (HttpRequest request) =>
+app.MapPost("/api/publishMessage", async (HttpRequest request) =>
 {
     string content = "";
     using (StreamReader stream = new StreamReader(request.Body))
@@ -131,7 +131,7 @@ app.MapPost("/PublishMessage", async (HttpRequest request) =>
     }
 });
 
-app.MapPost("/DeleteMessage", async (HttpRequest request) =>
+app.MapPost("/api/deleteMessage", async (HttpRequest request) =>
 {
     string content = "";
     using (StreamReader stream = new StreamReader(request.Body))

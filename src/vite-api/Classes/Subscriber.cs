@@ -32,7 +32,7 @@ namespace Backend.Logic
         private int received = 0;
         private bool verbose = true;
         private string? creds = null;
-        private List<Msg> latestMessages;
+        private List<Msg> allMessages;
         private List<DateTime> timestamps;
 
         public string MessageSubject
@@ -42,7 +42,7 @@ namespace Backend.Logic
 
         public Subscriber(string? url, SubjectManager subjectManager)
         {
-            latestMessages = new List<Msg>();
+            allMessages = new List<Msg>();
             timestamps = new List<DateTime>();
             MessageSubject = ">";
             this.url = url;
@@ -99,17 +99,17 @@ namespace Backend.Logic
         {
             if (subjectManager.SubjectExists(lastMessage.Subject))
             {
-                latestMessages.Insert(0, lastMessage);
+                allMessages.Insert(0, lastMessage);
                 timestamps.Insert(0, DateTime.Now);
             }
         }
 
-        public string GetLatestMessages()
+        public string GetMessages()
         {
             string json = "[";
-            for (int i = 0; i < latestMessages.Count; i++)
+            for (int i = 0; i < allMessages.Count; i++)
             {
-                Msg msg = latestMessages[i];
+                Msg msg = allMessages[i];
                 string timestamp = timestamps[i].ToString("MM/dd/yyyy HH:mm:ss");
 
                 string headerData = "[";
@@ -144,7 +144,7 @@ namespace Backend.Logic
                     }
                 );
 
-                json = i < latestMessages.Count - 1 ? json + "," : json;
+                json = i < allMessages.Count - 1 ? json + "," : json;
             }
 
             return json + "]";

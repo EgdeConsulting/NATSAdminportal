@@ -21,7 +21,7 @@ function MessageForm() {
   }, [subjects.length != 0]);
 
   function getSubjects() {
-    fetch("/SubjectNames")
+    fetch("/api/subjectNames")
       .then((res) => res.json())
       .then((data) => {
         setSubjects(data); //Should consider removing stars from subjects?
@@ -29,7 +29,7 @@ function MessageForm() {
   }
 
   function postNewMessage() {
-    fetch("/PublishFullMessage", {
+    fetch("/api/publishFullMessage", {
       method: "POST",
       headers: {
         Accept: "application/json",

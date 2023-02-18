@@ -10,7 +10,7 @@ function SubjectSidebar() {
   }, []);
 
   function getSubjects() {
-    fetch("/Subjects")
+    fetch("/api/subjectHierarchy")
       .then((res) => res.json())
       .then((data) => {
         setSubjects(data);
