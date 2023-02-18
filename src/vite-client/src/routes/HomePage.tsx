@@ -46,7 +46,7 @@ function HomePage() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        Subject:
+        subject:
           subjectInputRef.current != null
             ? subjectInputRef.current.value
             : "error",
@@ -62,7 +62,7 @@ function HomePage() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        Payload:
+        payload:
           publishInputRef.current != null
             ? publishInputRef.current.value
             : "empty",

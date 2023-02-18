@@ -7,27 +7,27 @@ function MessageView(props: { messages: any[] }) {
       columns: [
         {
           Header: "Timestamp",
-          accessor: "messageTimestamp",
+          accessor: "timestamp",
           appendChildren: "false",
         },
         {
           Header: "Subject",
-          accessor: "messageSubject",
+          accessor: "subject",
           appendChildren: "false",
         },
         {
           Header: "Acknowledgement",
-          accessor: "messageAcknowledgement",
+          accessor: "acknowledgement",
           appendChildren: "false",
         },
         {
           Header: "Headers",
-          accessor: "messageHeaders",
+          accessor: "headers",
           appendChildren: "true",
         },
         {
           Header: "Payload",
-          accessor: "messagePayload",
+          accessor: "payload",
           appendChildren: "true",
         },
       ],

@@ -135,12 +135,12 @@ namespace Backend.Logic
                 json += JsonSerializer.Serialize(
                     new
                     {
-                        messageSubject = msg.Subject,
-                        messageTimestamp = timestamp,
-                        messageAck = msg.LastAck,
-                        messageHeaders = headerData,
+                        subject = msg.Subject,
+                        timestamp = timestamp,
+                        acknowledgement = msg.LastAck,
+                        headers = headerData,
                         // Checks if any characters are not ASCII.
-                        messagePayload = msg.Data.All(b => b >= 32 && b <= 127) ? Encoding.ASCII.GetString(msg.Data) : msg.Data.ToString()
+                        payload = msg.Data.All(b => b >= 32 && b <= 127) ? Encoding.ASCII.GetString(msg.Data) : msg.Data.ToString()
                     }
                 );
 
