@@ -6,7 +6,7 @@ function LogPage() {
   const [allMessages, setAllMessages] = useState<any[]>([]);
 
   function getAllMessages() {
-    fetch("/LastMessages") // "http://localhost:3000/message1"
+    fetch("/api/messages") // "http://localhost:3000/message1"
       .then((res: any) => res.json())
       .then((data) => {
         setAllMessages(data);

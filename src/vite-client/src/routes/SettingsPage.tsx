@@ -6,7 +6,7 @@ function SettingsPage() {
   const publishInputRef = useRef<any>(null);
 
   function postNewSubject() {
-    fetch("/NewSubject", {
+    fetch("/api/newSubject", {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -22,7 +22,7 @@ function SettingsPage() {
   }
 
   function postNewMessage() {
-    fetch("/PublishMessage", {
+    fetch("/api/publishMessage", {
       method: "POST",
       headers: {
         Accept: "application/json",

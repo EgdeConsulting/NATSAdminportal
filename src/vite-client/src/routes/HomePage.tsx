@@ -14,7 +14,7 @@ function HomePage() {
   const [allMessages, setAllMessages] = useState<any[]>([]);
 
   function getAllMessages() {
-    fetch("/LastMessages") // "http://localhost:3000/message1"
+    fetch("/api/messages") // "http://localhost:3000/message1"
       .then((res: any) => res.json())
       .then((data) => {
         setAllMessages(data);
@@ -39,7 +39,7 @@ function HomePage() {
   const publishInputRef = useRef<any>(null);
 
   function postNewSubject() {
-    fetch("/NewSubject", {
+    fetch("/api/newSubject", {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -55,7 +55,7 @@ function HomePage() {
   }
 
   function postNewMessage() {
-    fetch("/PublishMessage", {
+    fetch("/api/publishMessage", {
       method: "POST",
       headers: {
         Accept: "application/json",
