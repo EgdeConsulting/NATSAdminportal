@@ -1,6 +1,10 @@
 using System.Text.Json.Nodes;
 using Backend.Logic;
 
+//////////////////////
+// Building the app //
+//////////////////////
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSpaStaticFiles(config =>
@@ -9,6 +13,10 @@ builder.Services.AddSpaStaticFiles(config =>
 });
 
 var app = builder.Build();
+
+///////////////////////////////
+// Loading data from secrets //
+///////////////////////////////
 
 string? natsServerURL;
 
@@ -25,43 +33,46 @@ else
     natsServerURL = Environment.GetEnvironmentVariable("AZURE_NATS_SERVER_URL");
 }
 
-//var policyName = "enableCORS";
-
-// builder.Services.AddCors(options =>
-// {
-//     options.AddPolicy(policyName,
-//                           policy =>
-//                           {
-//                               policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
-//                           });
-// });
-
-// app.UseCors(policyName);
+/////////////////////////
+// Configuring the app //
+/////////////////////////
 
 app.UseRouting();
-
 app.UseEndpoints(_ => { });
-
 app.UseSpaStaticFiles();
-
 app.UseSpa(builder =>
 {
     if (app.Environment.IsDevelopment())
         builder.UseProxyToSpaDevelopmentServer("http://localhost:5173/");
 });
 
-Subscriber sub = new Subscriber(natsServerURL);
+//////////////////////////////////
+// Initializing crucial objects //
+//////////////////////////////////
+
+SubjectManager subjectManager = new SubjectManager(natsServerURL);
+StreamManager streamManager = new StreamManager(natsServerURL);
+
+Subscriber sub = new Subscriber(natsServerURL, subjectManager);
 Thread thread = new Thread(sub.Run);
 thread.Start();
 
 Publisher pub = new Publisher("EgdeTest", natsServerURL);
 
-app.MapGet("/StreamBasicInfo", () => Streams.GetBasicStreamInfo(natsServerURL));
+///////////////////////////////////////////////////
+// Adding API-endpoints for data retrieval (GET) //
+///////////////////////////////////////////////////
+
+app.MapGet("/StreamBasicInfo", () => streamManager.GetBasicStreamInfo());
 //app.MapGet("/ConsumerInfo", () => Consumers.GetConsumerNamesForAStream(natsServerURL, "stream1"));
 
-app.MapGet("/Subjects", () => Streams.GetStreamSubjects(natsServerURL));
-app.MapGet("/SubjectNames", () => Streams.GetSubjectNames(natsServerURL));
-app.MapGet("/LastMessages", () => sub.GetLatestMessages());
+app.MapGet("/api/subjectHierarchy", () => subjectManager.GetSubjectHierarchy());
+app.MapGet("/api/subjectNames", () => subjectManager.GetSubjectNames());
+app.MapGet("/api/messages", () => sub.GetMessages());
+
+///////////////////////////////////////////////////
+// Adding API-endpoints for data delivery (POST) //
+///////////////////////////////////////////////////
 
 app.MapPost("/StreamName", async (HttpRequest request) =>
 {
@@ -71,11 +82,10 @@ app.MapPost("/StreamName", async (HttpRequest request) =>
     {
         streamName = await stream.ReadToEndAsync();
     }
-    return Results.Json(Streams.GetExtendedStreamInfo(natsServerURL, streamName));
+    return Results.Json(streamManager.GetExtendedStreamInfo(streamName));
 });
 
-
-app.MapPost("/NewSubject", async (HttpRequest request) =>
+app.MapPost("/api/newSubject", async (HttpRequest request) =>
 {
     string content = "";
     using (StreamReader stream = new StreamReader(request.Body))
@@ -85,16 +95,16 @@ app.MapPost("/NewSubject", async (HttpRequest request) =>
 
     var jsonObject = JsonNode.Parse(content);
 
-    if (jsonObject != null && jsonObject["Subject"] != null)
+    if (jsonObject != null && jsonObject["subject"] != null)
     {
-        var subject = jsonObject["Subject"];
+        var subject = jsonObject["subject"];
 
         if (subject != null && !string.IsNullOrWhiteSpace(subject.ToString()))
             sub.MessageSubject = subject.ToString();
     }
 });
 
-app.MapPost("/PublishFullMessage", async (HttpRequest request) =>
+app.MapPost("/api/publishFullMessage", async (HttpRequest request) =>
 {
     string content = "";
     using (StreamReader stream = new StreamReader(request.Body))
@@ -104,18 +114,18 @@ app.MapPost("/PublishFullMessage", async (HttpRequest request) =>
 
     var jsonObject = JsonNode.Parse(content);
 
-    if (jsonObject != null && jsonObject["Payload"] != null)
+    if (jsonObject != null && jsonObject["payload"] != null)
     {
-        var payload = jsonObject["Payload"];
-        var subject = jsonObject["Subject"];
-        var headers = jsonObject["Headers"];
+        var payload = jsonObject["payload"];
+        var subject = jsonObject["subject"];
+        var headers = jsonObject["headers"];
 
         if (payload != null && !string.IsNullOrWhiteSpace(payload.ToString()))
             pub.SendNewMessage(payload.ToString(), headers!.ToString(), subject!.ToString());
     }
 });
 
-app.MapPost("/PublishMessage", async (HttpRequest request) =>
+app.MapPost("/api/publishMessage", async (HttpRequest request) =>
 {
     string content = "";
     using (StreamReader stream = new StreamReader(request.Body))
@@ -125,14 +135,37 @@ app.MapPost("/PublishMessage", async (HttpRequest request) =>
 
     var jsonObject = JsonNode.Parse(content);
 
-    if (jsonObject != null && jsonObject["Payload"] != null)
+    if (jsonObject != null && jsonObject["payload"] != null)
     {
-        var payload = jsonObject["Payload"];
+        var payload = jsonObject["payload"];
 
         if (payload != null && !string.IsNullOrWhiteSpace(payload.ToString()))
             pub.SendNewMessage(payload.ToString());
     }
 });
 
-app.Run();
+app.MapPost("/api/deleteMessage", async (HttpRequest request) =>
+{
+    string content = "";
+    using (StreamReader stream = new StreamReader(request.Body))
+    {
+        content = await stream.ReadToEndAsync();
+    }
 
+    var jsonObject = JsonNode.Parse(content);
+
+    if (jsonObject != null && jsonObject["name"] != null && jsonObject["sequenceNumber"] != null)
+    {
+        string streamName = jsonObject["name"]!.ToString();
+        ulong sequenceNumber = ulong.Parse(jsonObject["number"]!.ToString());
+        bool erase = jsonObject["erase"]!.ToString() == "true";
+
+        streamManager.DeleteMessage(streamName, sequenceNumber, erase);
+    }
+});
+
+//////////////////////
+// Starting the app //
+//////////////////////
+
+app.Run();

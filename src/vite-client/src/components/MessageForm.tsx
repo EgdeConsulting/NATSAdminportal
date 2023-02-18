@@ -21,7 +21,7 @@ function MessageForm() {
   }, [subjects.length != 0]);
 
   function getSubjects() {
-    fetch("/SubjectNames")
+    fetch("/api/subjectNames")
       .then((res) => res.json())
       .then((data) => {
         setSubjects(data); //Should consider removing stars from subjects?
@@ -29,16 +29,16 @@ function MessageForm() {
   }
 
   function postNewMessage() {
-    fetch("/PublishFullMessage", {
+    fetch("/api/publishFullMessage", {
       method: "POST",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        Subject: subjectInputRef.current.value,
-        Headers: headerInputRef.current.value,
-        Payload: payloadInputRef.current.value,
+        subject: subjectInputRef.current.value,
+        headers: headerInputRef.current.value,
+        payload: payloadInputRef.current.value,
       }),
     }).then((res) => {
       if (res.ok) {
@@ -73,8 +73,8 @@ function MessageForm() {
           placeholder="Select a subject"
           onChange={checkInputs}
         >
-          {subjects.map((subjectName: any, index: number) => {
-            return <option key={index}>{subjectName["Subjects"]}</option>;
+          {subjects.map((subject: any, index: number) => {
+            return <option key={index}>{subject["name"]}</option>;
           })}
         </Select>
         <FormHelperText>

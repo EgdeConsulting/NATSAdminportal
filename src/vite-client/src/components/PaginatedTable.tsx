@@ -1,3 +1,4 @@
+import React from "react";
 import { useTable, usePagination } from "react-table";
 import {
   Table,
@@ -33,7 +34,11 @@ import { ContentHider } from "./";
   */
 }
 
-function PaginatedTable(props: { columns: any[]; data: any[] }) {
+function PaginatedTable(props: {
+  columns: any[];
+  data: any[];
+  children: JSX.Element;
+}) {
   const data = props.data;
   const columns = props.columns;
 
@@ -84,12 +89,14 @@ function PaginatedTable(props: { columns: any[]; data: any[] }) {
                 <Tr {...row.getRowProps()}>
                   {row.cells.map((cell: any) => {
                     const cellContent =
-                      cell.render("Cell").props.column.hideContent ==
+                      cell.render("Cell").props.column.appendChildren ==
                       "false" ? (
                         <Td {...cell.getCellProps()}>{cell.render("Cell")}</Td>
                       ) : (
                         <Td {...cell.getCellProps()}>
-                          <ContentHider content={cell.render("Cell")} />
+                          {React.cloneElement(props.children, {
+                            content: cell.value,
+                          })}
                         </Td>
                       );
                     return cellContent;

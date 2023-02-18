@@ -1,18 +1,5 @@
-import {
-  Checkbox,
-  CheckboxGroup,
-  Drawer,
-  Flex,
-  Spacer,
-  Box,
-  Divider,
-  Card,
-  CardHeader,
-  CardBody,
-  Stack,
-  VStack,
-  Heading,
-} from "@chakra-ui/react";
+import { Checkbox, Card, CardHeader, VStack, Heading } from "@chakra-ui/react";
+import { v4 as uuidv4 } from "uuid";
 import { useState, useEffect } from "react";
 
 function SubjectSidebar() {
@@ -20,105 +7,56 @@ function SubjectSidebar() {
 
   useEffect(() => {
     getSubjects();
-  }, [subjects.length != 0]);
+  }, []);
 
   function getSubjects() {
-    fetch("/Subjects")
+    fetch("/api/subjectHierarchy")
       .then((res) => res.json())
       .then((data) => {
         setSubjects(data);
       });
   }
 
-  /////////////////////STREAM RELATED////////////////////////////
-  // const [streamNames, setStreamNames] = useState<[]>([]);
-
-  // useEffect(() => {
-  //   getStreamNames(); //Denna står å går heila tio men finne jaffal rett amount of streams, men mest sannsynlig for performance heavy
-  //   console.log(streamNames);
-  // }, []);
-
-  // function getStreamNames() {
-  //   fetch("/StreamInfo")
-  //     .then((res) => res.json())
-  //     .then((data) => {
-  //       setStreamNames(data);
-  //     });
-  // }
-
-  const [counter, setCounter] = useState<number>(0);
-
-  function getCounter() {
-    setCounter(counter + 1);
-    return counter;
-  }
-
-  function CreateCheckbox(subjectInfo: any): JSX.Element {
+  const HierarchyCheckbox = ({
+    parent,
+    padding,
+  }: {
+    parent: any;
+    padding: number;
+  }): JSX.Element => {
     return (
       <div>
-        {subjectInfo["subSubjects"] != undefined
-          ? subjectInfo["subSubjects"].map((subject: any) => {
-              CreateCheckbox(subject);
-            })
-          : () => {
-              console.log(getCounter());
-              return (
-                <Checkbox
-                  key={getCounter()}
-                  margin={1}
-                  isChecked={allChecked}
-                  isIndeterminate={isIndeterminate}
-                  onChange={(e) =>
-                    setCheckedItems([e.target.checked, e.target.checked])
-                  }
-                >
-                  {subjectInfo["name"]}
-                </Checkbox>
-              );
-            }}
+        <Checkbox margin={1} paddingLeft={padding} defaultChecked>
+          {parent["name"]}
+        </Checkbox>
+        {parent["subSubjects"] != undefined &&
+          parent["subSubjects"].map((child: any, index: number) => {
+            return (
+              <HierarchyCheckbox
+                key={uuidv4()}
+                parent={child}
+                padding={padding + 5}
+              />
+            );
+          })}
       </div>
     );
-  }
-
-  const [subjectHierarchy, setSubjectHierarchy] = useState<any[]>([]);
-
-  function getSubjectHierarchy() {
-    fetch("/Subjects")
-      .then((res: any) => res.json())
-      .then((data) => {
-        setSubjectHierarchy(data);
-      });
-  }
-
-  useEffect(() => {
-    getSubjectHierarchy();
-  }, [subjectHierarchy.length != 0]);
-
-  const [checkedItems, setCheckedItems] = useState<boolean[]>([]);
-
-  const allChecked = checkedItems.every(Boolean);
-  const isIndeterminate = checkedItems.some(Boolean) && !allChecked;
+  };
 
   return (
-    <VStack margin={2} w={"100%"} h={"100%"}>
-      <Card variant={"filled"} h={"100%"} w={"100%"}>
+    <VStack margin={2} w={"245px"} h={"100%"}>
+      <Card variant={"outline"} h={"100%"} w={"100%"}>
         <CardHeader>
           <Heading size={"md"}>Subject Hierarchy</Heading>
         </CardHeader>
-        <Card margin={1} variant={"outline"}>
-          <Checkbox
-            margin={1}
-            isChecked={allChecked}
-            isIndeterminate={isIndeterminate}
-            onChange={(e) =>
-              setCheckedItems([e.target.checked, e.target.checked])
-            }
-          >
-            {subjectHierarchy.map((subject, index) => {
-              return <div key={index}>{CreateCheckbox(subject)}</div>;
-            })}
-          </Checkbox>
-        </Card>
+
+        {subjects.map((subject: any, index: number) => {
+          return (
+            <Card key={index} marginLeft={4} marginBottom={3} border={"none"}>
+              <HierarchyCheckbox key={uuidv4()} parent={subject} padding={0} />
+            </Card>
+          );
+        })}
       </Card>
     </VStack>
   );

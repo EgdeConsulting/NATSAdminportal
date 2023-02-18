@@ -10,9 +10,54 @@ using NATS.Client.JetStream;
 
 namespace Backend.Logic
 {
-    public static class Streams
+    public class StreamManager
     {
-        public static string GetStreamNames(string? url)
+        private string? url = Defaults.Url;
+
+        public StreamManager(string? url)
+        {
+            this.url = url;
+        }
+
+        public List<string[]> GetStreamSubjects()
+        {
+            List<StreamInfo> streamInfo;
+            List<string> subjects = new List<string>();
+            List<string[]> listOfSubjectArray = new List<string[]>();
+
+            using (IConnection c = new ConnectionFactory().CreateConnection(url))
+            {
+                IJetStreamManagement jsm = c.CreateJetStreamManagementContext();
+                streamInfo = GetStreamInfoArray(jsm).ToList<StreamInfo>();
+
+                for (int i = 0; i < streamInfo.Count; i++)
+                    // Gets all subjects in form ["Subject.A.1", "Subject.A.2", ....]
+                    subjects.AddRange(streamInfo[i].Config.Subjects);
+                
+                subjects.Sort();
+            }
+
+            for (int i = 0; i < subjects.Count; i++)
+                // Gets all subjects in form [[Subject, A, 1], [Subject, A, 2], ....]
+                listOfSubjectArray.Add(subjects[i].Split(".")); 
+
+            return listOfSubjectArray;
+        }
+
+        public bool DeleteMessage(string streamName, ulong sequenceNumber, bool erase)
+        {
+            using (IConnection c = new ConnectionFactory().CreateConnection(url))
+            {
+                IJetStreamManagement jsm = c.CreateJetStreamManagementContext();
+                return jsm.DeleteMessage(streamName, sequenceNumber, erase);
+            }
+        }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        public string GetStreamNames()
         {
             List<string> streamNames;
             string json = "[";
@@ -27,7 +72,7 @@ namespace Backend.Logic
                     json += JsonSerializer.Serialize(
                         new
                         {
-                            StreamName = streamNames[i]
+                            name = streamNames[i]
                         }
                     );
                     json = i < streamNames.Count - 1 ? json + "," : json;
@@ -36,80 +81,7 @@ namespace Backend.Logic
             return json + "]";
         }
 
-        public static string GetSubjectNames(string? url)
-        {
-            string json = "[";
-            List<string> subjects = new List<string>();
-            List<StreamInfo> streamInfo;
-            using (IConnection c = new ConnectionFactory().CreateConnection(url))
-            {
-                IJetStreamManagement jsm = c.CreateJetStreamManagementContext();
-                streamInfo = GetStreamInfoArray(jsm).ToList<StreamInfo>();
-
-                for (int i = 0; i < streamInfo.Count; i++)
-                {
-                    subjects.AddRange(streamInfo[i].Config.Subjects); // Gets all subjects in form ["Subject.A.1", "Subject.A.2", ....]
-                }
-                subjects.Sort();
-            }
-            for (int i = 0; i < subjects.Count; i++)
-            {
-                json += JsonSerializer.Serialize(
-                    new
-                    {
-                        Subjects = subjects[i]
-                    }
-                );
-                json = i < subjects.Count - 1 ? json + "," : json;
-            }
-            return json + "]";
-        }
-
-        public static string GetStreamSubjects(string? url) //Maybe better to collect the subjects from consumers?
-        {
-            List<StreamInfo> streamInfo;
-            List<string> subjects = new List<string>();
-            List<string[]> listOfSubjectArray = new List<string[]>();
-
-            using (IConnection c = new ConnectionFactory().CreateConnection(url))
-            {
-                IJetStreamManagement jsm = c.CreateJetStreamManagementContext();
-                streamInfo = GetStreamInfoArray(jsm).ToList<StreamInfo>();
-
-                for (int i = 0; i < streamInfo.Count; i++)
-                {
-                    subjects.AddRange(streamInfo[i].Config.Subjects); // Gets all subjects in form ["Subject.A.1", "Subject.A.2", ....]
-                }
-                subjects.Sort();
-            }
-
-            for (int i = 0; i < subjects.Count; i++)
-            {
-                listOfSubjectArray.Add(subjects[i].Split(".")); // Gets all subjects in form [[Subject, A, 1], [Subject, A, 2], ....]
-            }
-
-            SubjectManager.ClearSubjects();
-            for (int i = 0; i < listOfSubjectArray.Count; i++)
-            {
-                // Adding all unique subjects to SubjectManager.
-                for (int k = 0; k < listOfSubjectArray[i].Length; k++)
-                {
-                    SubjectManager.AddSubject(listOfSubjectArray[i][k]);
-                }
-
-                // Initializing the hierarchy links between all the subjects. 
-                for (int k = 0; k < listOfSubjectArray[i].Length; k++)
-                {
-                    string? parentName = k - 1 < 0 ? null : listOfSubjectArray[i][k - 1];
-                    string? childName = k + 1 > listOfSubjectArray[i].Length - 1 ? null : listOfSubjectArray[i][k + 1];
-                    SubjectManager.AddSubjectLinks(listOfSubjectArray[i][k], parentName, childName, i);
-                }
-            }
-
-            return SubjectManager.GetHierarchy();
-        }
-
-        public static string GetBasicStreamInfo(string? url)
+        public string GetBasicStreamInfo()
         {
             string json = "[";
             List<StreamInfo> streamInfo;
@@ -124,11 +96,11 @@ namespace Backend.Logic
                     json += JsonSerializer.Serialize(
                         new
                         {
-                            Name = streamInfo[i].Config.Name,
-                            SubjectsCount = streamInfo[i].State.SubjectCount,
-                            ConsumersCount = streamInfo[i].State.ConsumerCount,
-                            MessageCount = streamInfo[i].State.Messages,
-                            //DiscardPolicy = streamInfo[i].Config.DiscardPolicy.ToString()
+                            name = streamInfo[i].Config.Name,
+                            subjectsCount = streamInfo[i].State.SubjectCount,
+                            consumersCount = streamInfo[i].State.ConsumerCount,
+                            messageCount = streamInfo[i].State.Messages,
+                            //discardPolicy = streamInfo[i].Config.DiscardPolicy.ToString()
                         }
                     );
                     json = i < streamInfo.Count - 1 ? json + "," : json;
@@ -136,7 +108,7 @@ namespace Backend.Logic
             }
             return json + "]";
         }
-        public static string GetExtendedStreamInfo(string? url, string streamName)
+        public string GetExtendedStreamInfo(string streamName)
         {
             string json = "[";
             StreamInfo streamInfo;
@@ -159,10 +131,9 @@ namespace Backend.Logic
                     RetentionPolicy = streamInfo.Config.RetentionPolicy,
                 }
             );
-
             return json + "]";
         }
-        public async static void CreateStreamFromRequest(HttpRequest request, string? url)
+        public async void CreateStreamFromRequest(HttpRequest request)
         {
             string content = "";
 
@@ -173,9 +144,9 @@ namespace Backend.Logic
 
             var jsonObject = JsonNode.Parse(content);
 
-            if (jsonObject != null && jsonObject["StreamName"] != null)
+            if (jsonObject != null && jsonObject["name"] != null)
             {
-                var streamName = jsonObject["StreamName"];
+                var streamName = jsonObject["name"];
                 //var subject = jsonObject["Subject"]!;
 
                 if (streamName != null && !string.IsNullOrWhiteSpace(streamName.ToString()))
@@ -183,12 +154,13 @@ namespace Backend.Logic
                     using (IConnection c = new ConnectionFactory().CreateConnection(url))
                     {
                         IJetStreamManagement jsm = c.CreateJetStreamManagementContext();
-                        Streams.CreateStreamWhenDoesNotExist(jsm, StorageType.File, streamName.ToString(), "Daniel");
+                        CreateStreamWhenDoesNotExist(jsm, StorageType.File, streamName.ToString(), "Daniel");
                     }
                 }
             }
         }
-        public static StreamInfo? GetStreamInfoOrNullWhenNotExist(IJetStreamManagement jsm, string streamName)
+
+        public StreamInfo? GetStreamInfoOrNullWhenNotExist(IJetStreamManagement jsm, string streamName)
         {
             try
             {
@@ -209,12 +181,12 @@ namespace Backend.Logic
         //     return GetStreamInfoOrNullWhenNotExist(c.CreateJetStreamManagementContext(), streamName) != null;
         // }
 
-        public static bool StreamExists(IJetStreamManagement jsm, string streamName)
+        public bool StreamExists(IJetStreamManagement jsm, string streamName)
         {
             return GetStreamInfoOrNullWhenNotExist(jsm, streamName) != null;
         }
 
-        public static void ExitIfStreamExists(IJetStreamManagement jsm, string streamName)
+        public void ExitIfStreamExists(IJetStreamManagement jsm, string streamName)
         {
             if (StreamExists(jsm, streamName))
             {
@@ -235,7 +207,7 @@ namespace Backend.Logic
         //     }
         // }
 
-        public static StreamInfo CreateStream(IJetStreamManagement jsm, string streamName, StorageType storageType, params string[] subjects)
+        public StreamInfo CreateStream(IJetStreamManagement jsm, string streamName, StorageType storageType, params string[] subjects)
         {
             // Create a stream, here will use a file storage type, and one subject,
             // the passed subject.
@@ -272,7 +244,7 @@ namespace Backend.Logic
         //     return CreateStream(jsm, streamName, StorageType.Memory, subjects);
         // }
 
-        public static void CreateStreamWhenDoesNotExist(IJetStreamManagement jsm, StorageType storageType, string stream, params string[] subjects)
+        public void CreateStreamWhenDoesNotExist(IJetStreamManagement jsm, StorageType storageType, string stream, params string[] subjects)
         {
             try
             {
@@ -298,7 +270,7 @@ namespace Backend.Logic
         //     CreateStreamWhenDoesNotExist(c.CreateJetStreamManagementContext(), stream, subjects);
         // }
 
-        public static StreamInfo CreateStreamOrUpdateSubjects(IJetStreamManagement jsm, string streamName, StorageType storageType, params string[] subjects)
+        public StreamInfo CreateStreamOrUpdateSubjects(IJetStreamManagement jsm, string streamName, StorageType storageType, params string[] subjects)
         {
 
             StreamInfo? si = GetStreamInfoOrNullWhenNotExist(jsm, streamName);
@@ -335,11 +307,11 @@ namespace Backend.Logic
             return si;
         }
 
-        public static IList<string> GetStreamNamesArray(IJetStreamManagement jsm)
+        public IList<string> GetStreamNamesArray(IJetStreamManagement jsm)
         {
             return jsm.GetStreamNames();
         }
-        public static IList<StreamInfo> GetStreamInfoArray(IJetStreamManagement jsm)
+        public IList<StreamInfo> GetStreamInfoArray(IJetStreamManagement jsm)
         {
             return jsm.GetStreams();
         }

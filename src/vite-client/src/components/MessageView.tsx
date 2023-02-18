@@ -1,4 +1,4 @@
-import { PaginatedTable } from "./";
+import { PaginatedTable, ContentHider } from "./";
 
 function MessageView(props: { messages: any[] }) {
   const columns = [
@@ -7,34 +7,38 @@ function MessageView(props: { messages: any[] }) {
       columns: [
         {
           Header: "Timestamp",
-          accessor: "messageTimestamp",
-          hideContent: "false",
+          accessor: "timestamp",
+          appendChildren: "false",
         },
         {
           Header: "Subject",
-          accessor: "messageSubject",
-          hideContent: "false",
+          accessor: "subject",
+          appendChildren: "false",
         },
         {
           Header: "Acknowledgement",
-          accessor: "messageAcknowledgement",
-          hideContent: "false",
+          accessor: "acknowledgement",
+          appendChildren: "false",
         },
         {
           Header: "Headers",
-          accessor: "messageHeaders",
-          hideContent: "true",
+          accessor: "headers",
+          appendChildren: "true",
         },
         {
           Header: "Payload",
-          accessor: "messagePayload",
-          hideContent: "true",
+          accessor: "payload",
+          appendChildren: "true",
         },
       ],
     },
   ];
 
-  return <PaginatedTable columns={columns} data={props.messages} />;
+  return (
+    <PaginatedTable columns={columns} data={props.messages}>
+      <ContentHider content={""} />
+    </PaginatedTable>
+  );
 }
 
 export { MessageView };
