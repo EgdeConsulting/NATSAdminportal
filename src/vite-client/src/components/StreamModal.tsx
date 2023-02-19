@@ -26,7 +26,7 @@ function StreamModal(props: {
 }) {
   const [data, setData] = useState({});
   function sendStreamName(name: string) {
-    fetch("/StreamName", {
+    fetch("/api/streamName", {
       method: "POST",
       headers: {
         Accept: "application/json",

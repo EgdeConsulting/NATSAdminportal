@@ -74,7 +74,7 @@ app.MapGet("/api/messages", () => sub.GetMessages());
 // Adding API-endpoints for data delivery (POST) //
 ///////////////////////////////////////////////////
 
-app.MapPost("/StreamName", async (HttpRequest request) =>
+app.MapPost("/api/streamName", async (HttpRequest request) =>
 {
     string streamName = "";
 
@@ -122,25 +122,6 @@ app.MapPost("/api/publishFullMessage", async (HttpRequest request) =>
 
         if (payload != null && !string.IsNullOrWhiteSpace(payload.ToString()))
             pub.SendNewMessage(payload.ToString(), headers!.ToString(), subject!.ToString());
-    }
-});
-
-app.MapPost("/api/publishMessage", async (HttpRequest request) =>
-{
-    string content = "";
-    using (StreamReader stream = new StreamReader(request.Body))
-    {
-        content = await stream.ReadToEndAsync();
-    }
-
-    var jsonObject = JsonNode.Parse(content);
-
-    if (jsonObject != null && jsonObject["payload"] != null)
-    {
-        var payload = jsonObject["payload"];
-
-        if (payload != null && !string.IsNullOrWhiteSpace(payload.ToString()))
-            pub.SendNewMessage(payload.ToString());
     }
 });
 
