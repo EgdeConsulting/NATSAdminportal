@@ -10,3 +10,4 @@ export * from "./MessageModal";
 export * from "./StreamView";
 export * from "./StreamTable";
 export * from "./StreamModal";
+export * from "./MessageConfirmation";
