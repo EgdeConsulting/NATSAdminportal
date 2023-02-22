@@ -2,7 +2,7 @@ import { IconButton, Box, VStack, useColorMode } from "@chakra-ui/react";
 import { FiHome, FiSettings, FiArchive, FiLayers } from "react-icons/fi";
 import { HamburgerIcon } from "@chakra-ui/icons";
 import { useState } from "react";
-import { NavItem } from "./NavItem";
+import { NavItem } from "components";
 
 function Sidebar() {
   const { colorMode, toggleColorMode } = useColorMode();

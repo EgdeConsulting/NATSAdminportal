@@ -27,7 +27,7 @@ import {
   ChevronRightIcon,
   ChevronLeftIcon,
 } from "@chakra-ui/icons";
-import { StreamModal } from "./";
+import { StreamModal } from "components";
 import { useState } from "react";
 
 {

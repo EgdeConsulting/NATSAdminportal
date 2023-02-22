@@ -1,5 +1,5 @@
 import { Image, Flex, Spacer, useColorMode, Box } from "@chakra-ui/react";
-import { ColorModeButton, AccountMenu } from "./";
+import { ColorModeButton, AccountMenu } from "components";
 import natslogo from "../assets/nats-letter-icon.svg";
 
 function Topbar() {
