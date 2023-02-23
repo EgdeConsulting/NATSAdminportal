@@ -4,12 +4,11 @@ import {
   Button,
   FormControl,
   FormLabel,
-  FormErrorMessage,
   FormHelperText,
 } from "@chakra-ui/react";
 import { useRef, useEffect, useState } from "react";
 
-function MessageForm() {
+function PublishMsgForm() {
   const subjectInputRef = useRef<any>(null);
   const headerInputRef = useRef<any>(null);
   const payloadInputRef = useRef<any>(null);
@@ -112,4 +111,4 @@ function MessageForm() {
   );
 }
 
-export { MessageForm };
+export { PublishMsgForm };

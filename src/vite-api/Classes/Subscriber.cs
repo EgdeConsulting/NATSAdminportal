@@ -132,6 +132,7 @@ namespace Backend.Logic
 
                 headerData += "]";
 
+                Console.WriteLine(msg.MetaData);
                 json += JsonSerializer.Serialize(
                     new
                     {

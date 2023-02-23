@@ -10,10 +10,10 @@ import {
   ModalCloseButton,
   useDisclosure,
 } from "@chakra-ui/react";
-import { ChatIcon } from "@chakra-ui/icons";
-import { MessageForm } from "./MessageForm";
+import { DeleteIcon } from "@chakra-ui/icons";
+import { DeleteMsgForm } from "./";
 
-function MessageModal() {
+function DeleteMsgModal() {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
@@ -22,25 +22,26 @@ function MessageModal() {
         margin={2}
         size={"md"}
         onClick={onOpen}
-        aria-label="Publish a message"
-        icon={<ChatIcon />}
+        aria-label="Delete a message"
+        icon={<DeleteIcon />}
       />
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Publish message</ModalHeader>
+          <ModalHeader>Delete message</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <MessageForm />
+            <DeleteMsgForm />
             <Button variant="ghost" mr={3} onClick={onClose}>
               Close
             </Button>
           </ModalBody>
+          <ModalFooter />
         </ModalContent>
       </Modal>
     </>
   );
 }
 
-export { MessageModal };
+export { DeleteMsgModal };
