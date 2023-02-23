@@ -33,13 +33,13 @@ namespace Backend.Logic
                 for (int i = 0; i < streamInfo.Count; i++)
                     // Gets all subjects in form ["Subject.A.1", "Subject.A.2", ....]
                     subjects.AddRange(streamInfo[i].Config.Subjects);
-                
+
                 subjects.Sort();
             }
 
             for (int i = 0; i < subjects.Count; i++)
                 // Gets all subjects in form [[Subject, A, 1], [Subject, A, 2], ....]
-                listOfSubjectArray.Add(subjects[i].Split(".")); 
+                listOfSubjectArray.Add(subjects[i].Split("."));
 
             return listOfSubjectArray;
         }
@@ -53,9 +53,9 @@ namespace Backend.Logic
             }
         }
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         public string GetStreamNames()
         {
@@ -100,7 +100,7 @@ namespace Backend.Logic
                             subjectsCount = streamInfo[i].State.SubjectCount,
                             consumersCount = streamInfo[i].State.ConsumerCount,
                             messageCount = streamInfo[i].State.Messages,
-                            //discardPolicy = streamInfo[i].Config.DiscardPolicy.ToString()
+
                         }
                     );
                     json = i < streamInfo.Count - 1 ? json + "," : json;
@@ -111,12 +111,19 @@ namespace Backend.Logic
         public string GetExtendedStreamInfo(string streamName)
         {
             string json = "[";
+            List<Dictionary<string, string>> policies = new List<Dictionary<string, string>>();
+            Dictionary<string, string> discPol = new Dictionary<string, string>();
+            Dictionary<string, string> retPol = new Dictionary<string, string>();
             StreamInfo streamInfo;
 
             using (IConnection c = new ConnectionFactory().CreateConnection(url))
             {
                 IJetStreamManagement jsm = c.CreateJetStreamManagementContext();
                 streamInfo = jsm.GetStreamInfo(streamName);
+                discPol.Add("DiscardPolicy", streamInfo.Config.DiscardPolicy.GetString());
+                retPol.Add("RetentionPolicy", streamInfo.Config.RetentionPolicy.GetString());
+                policies.Add(new Dictionary<string, string>(discPol));
+                policies.Add(new Dictionary<string, string>(retPol));
             }
             json += JsonSerializer.Serialize(
                 new
@@ -127,8 +134,7 @@ namespace Backend.Logic
                     Description = streamInfo.Config.Description,
                     Messages = streamInfo.State.Messages, //Also need to get this from somewhere..... CLI: nats stream view -s ip:port, check https://github.com/nats-io/nats.net/blob/master/src/Samples/JetStreamManageStreams/JetStreamManageStreams.cs
                     Deleted = streamInfo.State.DeletedCount,
-                    DiscardPolicy = streamInfo.Config.DiscardPolicy,
-                    RetentionPolicy = streamInfo.Config.RetentionPolicy,
+                    Policies = policies,
                 }
             );
             return json + "]";
