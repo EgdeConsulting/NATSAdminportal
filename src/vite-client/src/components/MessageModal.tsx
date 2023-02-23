@@ -11,7 +11,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { ChatIcon } from "@chakra-ui/icons";
-import { MessageForm } from "./MessageForm";
+import { MessageForm } from "components";
 
 function MessageModal() {
   const { isOpen, onOpen, onClose } = useDisclosure();

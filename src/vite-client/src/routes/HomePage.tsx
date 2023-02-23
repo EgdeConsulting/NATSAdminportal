@@ -1,6 +1,6 @@
 import { Card, CardBody, Text, HStack, Input, Button } from "@chakra-ui/react";
 import { useState, useRef } from "react";
-import { MessageView, SubjectSidebar, MessageModal } from "../components";
+import { MessageView, SubjectSidebar, MessageModal } from "components";
 
 function HomePage() {
   const [allMessages, setAllMessages] = useState<any[]>([]);

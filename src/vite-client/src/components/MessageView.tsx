@@ -1,4 +1,4 @@
-import { PaginatedTable, ContentHider } from "./";
+import { PaginatedTable, ContentHider } from "components";
 
 function MessageView(props: { messages: any[] }) {
   const columns = [
