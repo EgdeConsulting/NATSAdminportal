@@ -10,13 +10,7 @@ import {
 import { IconType } from "react-icons";
 import { Link as RouteLink } from "react-router-dom";
 
-function NavItem({
-  navSize,
-  icon,
-  title,
-  route,
-  width,
-}: {
+function NavItem(props: {
   navSize: number;
   icon: IconType;
   title: string;
@@ -28,12 +22,12 @@ function NavItem({
     <Flex
       mt={30}
       flexDir="column"
-      alignItems={navSize == 200 ? "center" : "flex-start"}
+      alignItems={props.navSize == 200 ? "center" : "flex-start"}
     >
       <Menu placement="right">
         <Link
           as={RouteLink}
-          to={route}
+          to={props.route}
           _hover={{
             textDecor: "none",
             backgroundColor:
@@ -42,15 +36,20 @@ function NavItem({
           p={2}
           borderRadius={8}
         >
-          <MenuButton w={width}>
+          <MenuButton w={props.width}>
             <Flex>
-              <Icon as={icon} fontSize="xl" marginTop={1} marginLeft={0.5} />
+              <Icon
+                as={props.icon}
+                fontSize="xl"
+                marginTop={1}
+                marginLeft={0.5}
+              />
               <Text
                 ml={5}
                 align="center"
-                display={navSize == 200 ? "none" : "flex-start"}
+                display={props.navSize == 200 ? "none" : "flex-start"}
               >
-                {title}
+                {props.title}
               </Text>
             </Flex>
           </MenuButton>
