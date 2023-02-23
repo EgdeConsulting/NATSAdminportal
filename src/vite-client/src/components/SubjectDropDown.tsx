@@ -3,7 +3,7 @@ import { LegacyRef, useEffect, useState } from "react";
 
 function SubjectDropDown(props: {
   subjectInputRef: LegacyRef<HTMLSelectElement>;
-  checkInputs: () => void;
+  checkEmptyInputs: () => void;
 }) {
   const [subjects, setSubjects] = useState<[]>([]);
 
@@ -23,7 +23,9 @@ function SubjectDropDown(props: {
     <Select
       ref={props.subjectInputRef}
       placeholder="Select a subject"
-      onChange={props.checkInputs}
+      onChange={() => {
+        props.checkEmptyInputs();
+      }}
     >
       {subjects.map((subject: any, index: number) => {
         return <option key={index}>{subject["name"]}</option>;

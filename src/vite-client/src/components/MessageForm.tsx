@@ -40,8 +40,8 @@ function MessageForm() {
       }
     });
   }
-
-  function checkInputs() {
+  const isAscii = (str: string) => /^[\x00-\x7F]+$/.test(str);
+  function checkEmptyInputs() {
     if (
       payloadInputRef.current.value != "" &&
       headerInputRef.current.value != "" &&
@@ -58,27 +58,33 @@ function MessageForm() {
         <FormLabel>Subject</FormLabel>
         <SubjectDropDown
           subjectInputRef={subjectInputRef}
-          checkInputs={checkInputs}
+          checkEmptyInputs={checkEmptyInputs}
         />
         <FormHelperText>
           Choose the subject you want to post your message to
         </FormHelperText>
 
-        <FormLabel marginTop={3}>Headers</FormLabel>
+        <FormLabel mt={3}>Headers</FormLabel>
         <Input
           type={"text"}
           ref={headerInputRef}
           width={"100%"}
-          onChange={checkInputs}
+          onChange={() => {
+            checkEmptyInputs();
+            isAscii(headerInputRef.current.value);
+          }}
           placeholder={"Headers..."}
         />
 
-        <FormLabel marginTop={3}>Payload</FormLabel>
+        <FormLabel mt={3}>Payload</FormLabel>
         <Input
-          marginBottom={5}
+          mb={5}
           type={"text"}
           width={"100%"}
-          onChange={checkInputs}
+          onChange={() => {
+            checkEmptyInputs();
+            isAscii(headerInputRef.current.value); //returns true/false. Use in checkEmptyInputs?
+          }}
           ref={payloadInputRef}
           placeholder={"Enter your message..."}
         />
