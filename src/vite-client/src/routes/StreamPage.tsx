@@ -1,6 +1,6 @@
 import { Card, CardBody, VStack } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { StreamView } from "../components";
+import { StreamView } from "components";
 
 function StreamPage() {
   const [streams, setStreams] = useState<[]>([]);

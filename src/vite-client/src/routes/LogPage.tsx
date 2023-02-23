@@ -1,5 +1,5 @@
 import { VStack } from "@chakra-ui/react";
-import { PaginatedTable } from "../components";
+import { PaginatedTable } from "components";
 
 function LogPage() {
   const columns = [

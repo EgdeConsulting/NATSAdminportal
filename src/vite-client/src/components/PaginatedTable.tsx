@@ -25,7 +25,6 @@ import {
   ChevronRightIcon,
   ChevronLeftIcon,
 } from "@chakra-ui/icons";
-import { ContentHider } from "./";
 
 {
   /*
