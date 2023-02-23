@@ -35,7 +35,7 @@ function LogPage() {
     },
   ];
 
-  return <VStack align="stretch" margin={2} w="80%" h="100%"></VStack>;
+  return <VStack align="stretch" paddingTop={2}></VStack>;
 }
 
 export { LogPage };

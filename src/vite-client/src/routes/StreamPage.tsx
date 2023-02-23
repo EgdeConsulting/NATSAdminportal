@@ -1,18 +1,5 @@
-import {
-  Box,
-  Button,
-  Card,
-  CardBody,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  useDisclosure,
-} from "@chakra-ui/react";
-import { useRef, useEffect, useState } from "react";
+import { Card, CardBody, VStack } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
 import { StreamView } from "components";
 
 function StreamPage() {
@@ -23,7 +10,7 @@ function StreamPage() {
   }, [streams.length != 0]);
 
   function getStreams() {
-    fetch("/StreamBasicInfo")
+    fetch("/api/streamBasicInfo")
       .then((res) => res.json())
       .then((data) => {
         setStreams(data);
@@ -31,9 +18,13 @@ function StreamPage() {
   }
 
   return (
-    <Box>
-      <StreamView content={streams} />
-    </Box>
+    <VStack align="stretch" paddingTop={2}>
+      <Card variant={"outline"} width={"1115px"} padding={2}>
+        <CardBody>
+          <StreamView streamInfo={streams} />
+        </CardBody>
+      </Card>
+    </VStack>
   );
 }
 

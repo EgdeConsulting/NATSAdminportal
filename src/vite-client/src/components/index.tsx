@@ -9,6 +9,5 @@ export * from "./SubjectSidebar";
 export * from "./MessageModal";
 export * from "./MessageForm";
 export * from "./StreamView";
-export * from "./StreamTable";
 export * from "./StreamModal";
 export * from "./NavItem";
