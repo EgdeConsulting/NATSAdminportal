@@ -12,3 +12,4 @@ export * from "./StreamView";
 export * from "./StreamModal";
 export * from "./NavItem";
 export * from "./ActionConfirmation";
+export * from "./SubjectDropDown";

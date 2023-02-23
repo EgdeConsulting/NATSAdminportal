@@ -1,8 +1,5 @@
 import { extendTheme } from "@chakra-ui/react";
-import { inputStyles } from "styles";
-import { buttonStyles } from "styles";
-import { cardStyles } from "styles";
-import { textStyles } from "styles";
+import { inputStyles, buttonStyles, cardStyles, textStyles } from "styles";
 
 const theme = extendTheme({
   components: {

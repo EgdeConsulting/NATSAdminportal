@@ -1,5 +1,4 @@
 import {
-  Select,
   Input,
   Button,
   FormControl,
@@ -7,28 +6,15 @@ import {
   FormHelperText,
   useDisclosure,
 } from "@chakra-ui/react";
-import { useRef, useEffect, useState } from "react";
-import { ActionConfirmation } from "./";
+import { useRef, useState } from "react";
+import { ActionConfirmation, SubjectDropDown } from "components";
 
 function MessageForm() {
   const subjectInputRef = useRef<any>(null);
   const headerInputRef = useRef<any>(null);
   const payloadInputRef = useRef<any>(null);
-  const [subjects, setSubjects] = useState<[]>([]);
   const [buttonDisable, toggleButtonDisable] = useState<boolean>(true);
   const { isOpen, onOpen, onClose } = useDisclosure();
-
-  useEffect(() => {
-    getSubjects();
-  }, [subjects.length != 0]);
-
-  function getSubjects() {
-    fetch("/api/subjectNames")
-      .then((res) => res.json())
-      .then((data) => {
-        setSubjects(data); //Should consider removing stars from subjects?
-      });
-  }
 
   function postNewMessage() {
     fetch("/api/publishFullMessage", {
@@ -70,15 +56,10 @@ function MessageForm() {
     <>
       <FormControl isRequired>
         <FormLabel>Subject</FormLabel>
-        <Select
-          ref={subjectInputRef}
-          placeholder="Select a subject"
-          onChange={checkInputs}
-        >
-          {subjects.map((subject: any, index: number) => {
-            return <option key={index}>{subject["name"]}</option>;
-          })}
-        </Select>
+        <SubjectDropDown
+          subjectInputRef={subjectInputRef}
+          checkInputs={checkInputs}
+        />
         <FormHelperText>
           Choose the subject you want to post your message to
         </FormHelperText>
@@ -102,7 +83,12 @@ function MessageForm() {
           placeholder={"Enter your message..."}
         />
       </FormControl>
-      <Button isDisabled={buttonDisable} colorScheme="blue" onClick={onOpen}>
+      <Button
+        mb={2}
+        isDisabled={buttonDisable}
+        colorScheme="blue"
+        onClick={onOpen}
+      >
         Publish
       </Button>
       <ActionConfirmation

@@ -5,7 +5,6 @@ import {
   ModalOverlay,
   ModalContent,
   ModalHeader,
-  ModalFooter,
   ModalBody,
   ModalCloseButton,
   useDisclosure,
@@ -33,7 +32,7 @@ function MessageModal() {
           <ModalCloseButton />
           <ModalBody>
             <MessageForm />
-            <Button variant="ghost" mr={3} onClick={onClose}>
+            <Button variant="ghost" mb={2} mr={3} onClick={onClose}>
               Close
             </Button>
           </ModalBody>
