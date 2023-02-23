@@ -1,4 +1,4 @@
-import { PaginatedTable, StreamModal } from "./";
+import { PaginatedTable, StreamModal } from "components";
 
 function StreamView(props: { streamInfo: any[] }) {
   const columns = [

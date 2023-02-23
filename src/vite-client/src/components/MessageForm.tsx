@@ -8,7 +8,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { useRef, useEffect, useState } from "react";
-import { ActionConfirmation } from "./";
+import { ActionConfirmation } from "components";
 
 function MessageForm() {
   const subjectInputRef = useRef<any>(null);
