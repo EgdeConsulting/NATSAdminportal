@@ -32,6 +32,7 @@ function MessageConfirmation(props: {
         isOpen={isOpen}
         leastDestructiveRef={cancelRef}
         onClose={onClose}
+        isCentered={true}
       >
         <AlertDialogOverlay>
           <AlertDialogContent>
