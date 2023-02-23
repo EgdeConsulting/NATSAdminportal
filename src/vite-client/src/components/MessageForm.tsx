@@ -6,8 +6,10 @@ import {
   FormLabel,
   FormErrorMessage,
   FormHelperText,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { useRef, useEffect, useState } from "react";
+import { MessageConfirmation } from "./";
 
 function MessageForm() {
   const subjectInputRef = useRef<any>(null);
@@ -100,14 +102,11 @@ function MessageForm() {
           placeholder={"Enter your message..."}
         />
       </FormControl>
-      <Button
-        onClick={postNewMessage}
-        isDisabled={buttonDisable}
-        marginRight={2}
-        colorScheme="blue"
-      >
-        Publish
-      </Button>
+      <MessageConfirmation
+        publishMessage={postNewMessage}
+        buttonDisable={buttonDisable}
+        toggleButtonDisable={toggleButtonDisable}
+      />
     </>
   );
 }
