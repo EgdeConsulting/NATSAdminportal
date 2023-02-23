@@ -9,3 +9,4 @@ export * from "./SubjectSidebar";
 export * from "./MessageModal";
 export * from "./StreamView";
 export * from "./StreamModal";
+export * from "./MessageConfirmation";
