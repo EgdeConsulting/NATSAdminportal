@@ -12,4 +12,5 @@ export * from "./StreamView";
 export * from "./StreamModal";
 export * from "./NavItem";
 export * from "./MessageConfirmation";
+export * from "./ActionConfirmation";
 
