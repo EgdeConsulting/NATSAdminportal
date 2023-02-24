@@ -138,7 +138,7 @@ namespace Backend.Logic
                         subject = msg.Subject,
                         timestamp = timestamp,
                         acknowledgement = msg.LastAck,
-                        headers = headerData,
+                        headers = headerData, //msg.MetaData has potential but throws objectreference error
                         // Checks if any characters are not ASCII.
                         payload = msg.Data.All(b => b >= 32 && b <= 127) ? Encoding.ASCII.GetString(msg.Data) : msg.Data.ToString()
                     }

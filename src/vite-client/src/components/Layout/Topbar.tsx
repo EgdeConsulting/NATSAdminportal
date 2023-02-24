@@ -1,4 +1,4 @@
-import { Image, Flex, Spacer, useColorMode, Box } from "@chakra-ui/react";
+import { Flex, Spacer, useColorMode, Box } from "@chakra-ui/react";
 import { ColorModeButton, AccountMenu } from "components";
 import { NatsLetterIcon } from "assets";
 
