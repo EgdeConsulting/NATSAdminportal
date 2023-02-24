@@ -46,18 +46,32 @@ app.UseSpa(builder =>
         builder.UseProxyToSpaDevelopmentServer("http://localhost:5173/");
 });
 
+////////////////////////////////////////
+// Setting up and configuring Loggers //
+////////////////////////////////////////
+
+ILoggerFactory loggerFactory = LoggerFactory.Create(builder => 
+{
+    builder.AddConsole();
+    builder.AddEventLog();
+});
+
+ILogger<Subscriber> subLogger = loggerFactory.CreateLogger<Subscriber>();
+ILogger<Publisher> pubLogger = loggerFactory.CreateLogger<Publisher>();
+ILogger<StreamManager> streamLogger = loggerFactory.CreateLogger<StreamManager>();
+
 //////////////////////////////////
 // Initializing crucial objects //
 //////////////////////////////////
 
 SubjectManager subjectManager = new SubjectManager(natsServerURL);
-StreamManager streamManager = new StreamManager(natsServerURL);
+StreamManager streamManager = new StreamManager(streamLogger, natsServerURL);
 
-Subscriber sub = new Subscriber(natsServerURL, subjectManager);
+Subscriber sub = new Subscriber(subLogger, natsServerURL, subjectManager);
 Thread thread = new Thread(sub.Run);
 thread.Start();
 
-Publisher pub = new Publisher("EgdeTest", natsServerURL);
+Publisher pub = new Publisher(pubLogger, natsServerURL);
 
 ///////////////////////////////////////////////////
 // Adding API-endpoints for data retrieval (GET) //
@@ -143,6 +157,16 @@ app.MapPost("/api/deleteMessage", async (HttpRequest request) =>
 
         streamManager.DeleteMessage(streamName, sequenceNumber, erase);
     }
+});
+
+app.MapPost("/api/newUserAccount", async (HttpRequest request) =>
+{
+    string content = "";
+    using (StreamReader stream = new StreamReader(request.Body))
+    {
+        content = await stream.ReadToEndAsync();
+    }
+    UserAccount.Name = JsonNode.Parse(content)!["name"]!.ToString();
 });
 
 //////////////////////

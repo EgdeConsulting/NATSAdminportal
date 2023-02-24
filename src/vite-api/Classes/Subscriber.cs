@@ -23,6 +23,7 @@ namespace Backend.Logic
 {
     public class Subscriber
     {
+        private readonly ILogger logger;
         // Use > to subscribe to all subjects
         public string subject = ">";
         private int count = 1000000;
@@ -40,8 +41,9 @@ namespace Backend.Logic
             get; set;
         }
 
-        public Subscriber(string? url, SubjectManager subjectManager)
+        public Subscriber(ILogger<Subscriber> logger, string? url, SubjectManager subjectManager)
         {
+            this.logger = logger;
             allMessages = new List<Msg>();
             timestamps = new List<DateTime>();
             MessageSubject = ">";
@@ -106,6 +108,9 @@ namespace Backend.Logic
 
         public string GetMessages()
         {
+            logger.LogInformation("{} > {} viewed all messages", 
+            DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), UserAccount.Name);
+
             string json = "[";
             for (int i = 0; i < allMessages.Count; i++)
             {
@@ -146,7 +151,7 @@ namespace Backend.Logic
 
                 json = i < allMessages.Count - 1 ? json + "," : json;
             }
-
+            
             return json + "]";
         }
 

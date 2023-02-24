@@ -16,6 +16,18 @@ function AccountMenu() {
 
   function changeAccount(index: number) {
     let newActiveAccount = accounts[index];
+
+    fetch("/api/newUserAccount", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: newActiveAccount,
+      }),
+    });
+
     setAccounts(
       accounts
         .filter((item) => item !== accounts[index])

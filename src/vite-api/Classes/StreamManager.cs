@@ -12,10 +12,12 @@ namespace Backend.Logic
 {
     public class StreamManager
     {
+        private readonly ILogger logger;
         private string? url = Defaults.Url;
 
-        public StreamManager(string? url)
+        public StreamManager(ILogger<StreamManager> logger, string? url)
         {
+            this.logger = logger;
             this.url = url;
         }
 
@@ -46,6 +48,9 @@ namespace Backend.Logic
 
         public bool DeleteMessage(string streamName, ulong sequenceNumber, bool erase)
         {
+            logger.LogInformation("{} > {} deleted message (stream name, sequence number): {}, {}", 
+            DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), UserAccount.Name, streamName, sequenceNumber);
+
             using (IConnection c = new ConnectionFactory().CreateConnection(url))
             {
                 IJetStreamManagement jsm = c.CreateJetStreamManagementContext();
