@@ -1,10 +1,20 @@
-import { PaginatedTable, ContentHider } from "components";
+import { PaginatedTable, MsgModal } from "components";
 
 function MsgView(props: { messages: any[] }) {
   const columns = [
     {
       Header: "All Messages",
       columns: [
+        {
+          Header: "Stream",
+          accessor: "stream",
+          appendChildren: "false",
+        },
+        {
+          Header: "Sequence Number",
+          accessor: "sequenceNumber",
+          appendChildren: "false",
+        },
         {
           Header: "Timestamp",
           accessor: "timestamp",
@@ -20,23 +30,13 @@ function MsgView(props: { messages: any[] }) {
           accessor: "acknowledgement",
           appendChildren: "false",
         },
-        {
-          Header: "Headers",
-          accessor: "headers",
-          appendChildren: "true",
-        },
-        {
-          Header: "Payload",
-          accessor: "payload",
-          appendChildren: "true",
-        },
       ],
     },
   ];
 
   return (
     <PaginatedTable columns={columns} data={props.messages}>
-      <ContentHider content={""} />
+      <MsgModal></MsgModal>
     </PaginatedTable>
   );
 }
