@@ -1,6 +1,6 @@
 import { PaginatedTable, ContentHider } from "components";
 
-function MessageView(props: { messages: any[] }) {
+function MsgView(props: { messages: any[] }) {
   const columns = [
     {
       Header: "All Messages",
@@ -41,4 +41,4 @@ function MessageView(props: { messages: any[] }) {
   );
 }
 
-export { MessageView };
+export { MsgView };

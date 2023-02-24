@@ -1,6 +1,6 @@
 import { Image, Flex, Spacer, useColorMode, Box } from "@chakra-ui/react";
 import { ColorModeButton, AccountMenu } from "components";
-import natslogo from "../assets/nats-letter-icon.svg";
+import { NatsLetterIcon } from "assets";
 
 function Topbar() {
   const { colorMode, toggleColorMode } = useColorMode();
@@ -11,7 +11,7 @@ function Topbar() {
       borderColor={colorMode === "dark" ? "whiteAlpha.300" : "gray.200"}
     >
       <Box marginLeft={3}>
-        <Image src={natslogo} alt={"NATS Logo"} />
+        <NatsLetterIcon />
       </Box>
       <Spacer />
       <Box>
