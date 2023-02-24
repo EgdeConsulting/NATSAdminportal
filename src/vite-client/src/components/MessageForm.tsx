@@ -40,11 +40,21 @@ function MessageForm() {
       }
     });
   }
-  const isAscii = (str: string) => /^[\x00-\x7F]+$/.test(str);
-  function checkEmptyInputs() {
+
+  function isAscii(str: string) {
+    if (/\S/.test(str) && /^[\x00-\x7F]+$/.test(str)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  function checkInputs() {
     if (
       payloadInputRef.current.value != "" &&
+      isAscii(payloadInputRef.current.value) &&
       headerInputRef.current.value != "" &&
+      isAscii(headerInputRef.current.value) &&
       subjectInputRef.current.value != ""
     ) {
       toggleButtonDisable(false);
@@ -52,13 +62,14 @@ function MessageForm() {
       toggleButtonDisable(true);
     }
   }
+
   return (
     <>
       <FormControl isRequired>
         <FormLabel>Subject</FormLabel>
         <SubjectDropDown
           subjectInputRef={subjectInputRef}
-          checkEmptyInputs={checkEmptyInputs}
+          checkInputs={checkInputs}
         />
         <FormHelperText>
           Choose the subject you want to post your message to
@@ -70,8 +81,7 @@ function MessageForm() {
           ref={headerInputRef}
           width={"100%"}
           onChange={() => {
-            checkEmptyInputs();
-            isAscii(headerInputRef.current.value);
+            checkInputs();
           }}
           placeholder={"Headers..."}
         />
@@ -82,8 +92,7 @@ function MessageForm() {
           type={"text"}
           width={"100%"}
           onChange={() => {
-            checkEmptyInputs();
-            isAscii(headerInputRef.current.value); //returns true/false. Use in checkEmptyInputs?
+            checkInputs();
           }}
           ref={payloadInputRef}
           placeholder={"Enter your message..."}
