@@ -9,7 +9,7 @@ import {
 import { useRef, useState } from "react";
 import { ActionConfirmation, SubjectDropDown } from "components";
 
-function MessageForm() {
+function MsgPublishForm() {
   const subjectInputRef = useRef<any>(null);
   const headerInputRef = useRef<any>(null);
   const payloadInputRef = useRef<any>(null);
@@ -119,4 +119,4 @@ function MessageForm() {
   );
 }
 
-export { MessageForm };
+export { MsgPublishForm };
