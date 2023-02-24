@@ -65,7 +65,7 @@ namespace Backend.Logic
         }
 
         /// <summary>
-        /// Gets the name of all streams on the server. (JSON-string)
+        /// Gets the name of all streams on the server. Returns JSON.
         /// </summary>
         public string GetStreamNames()
         {
@@ -92,7 +92,7 @@ namespace Backend.Logic
         }
 
         /// <summary>
-        /// Gets basic information about all streams on the server. (JSON-string)
+        /// Gets basic information about all streams on the server. Returns JSON.
         /// </summary>
         public string GetBasicStreamInfo()
         {
@@ -123,7 +123,7 @@ namespace Backend.Logic
         }
 
         /// <summary>
-        /// Gets extended information about all streams on the server. (JSON-string)
+        /// Gets extended information about a specific stream on the server. Returns JSON.
         /// </summary>
         public string GetExtendedStreamInfo(string streamName)
         {
@@ -161,7 +161,6 @@ namespace Backend.Logic
         /// Creates a stream from a HttpRequest.         
         /// </summary>
         /// <param name="request">This request contains the name of the stream and its subjects.</param>
-
         public async void CreateStreamFromRequest(HttpRequest request)
         {
             string content = "";
