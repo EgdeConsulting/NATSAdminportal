@@ -21,6 +21,9 @@ namespace Backend.Logic
             this.url = url;
         }
 
+        /// <summary>
+        /// Gets the subject names of all subjects that reside within all streams.
+        /// </summary>
         public List<string[]> GetStreamSubjects()
         {
             List<StreamInfo> streamInfo;
@@ -46,9 +49,12 @@ namespace Backend.Logic
             return listOfSubjectArray;
         }
 
+        /// <summary>
+        /// Deletes a message from a stream based on the message sequence number.
+        /// </summary>
         public bool DeleteMessage(string streamName, ulong sequenceNumber, bool erase)
         {
-            logger.LogInformation("{} > {} deleted message (stream name, sequence number): {}, {}", 
+            logger.LogInformation("{} > {} deleted message (stream name, sequence number): {}, {}",
             DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), UserAccount.Name, streamName, sequenceNumber);
 
             using (IConnection c = new ConnectionFactory().CreateConnection(url))
@@ -58,10 +64,9 @@ namespace Backend.Logic
             }
         }
 
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+        /// <summary>
+        /// Gets the name of all streams on the server. (JSON-string)
+        /// </summary>
         public string GetStreamNames()
         {
             List<string> streamNames;
@@ -86,6 +91,9 @@ namespace Backend.Logic
             return json + "]";
         }
 
+        /// <summary>
+        /// Gets basic information about all streams on the server. (JSON-string)
+        /// </summary>
         public string GetBasicStreamInfo()
         {
             string json = "[";
@@ -113,6 +121,10 @@ namespace Backend.Logic
             }
             return json + "]";
         }
+
+        /// <summary>
+        /// Gets extended information about all streams on the server. (JSON-string)
+        /// </summary>
         public string GetExtendedStreamInfo(string streamName)
         {
             string json = "[";
@@ -144,6 +156,12 @@ namespace Backend.Logic
             );
             return json + "]";
         }
+
+        /// <summary>
+        /// Creates a stream from a HttpRequest.         
+        /// </summary>
+        /// <param name="request">This request contains the name of the stream and its subjects.</param>
+
         public async void CreateStreamFromRequest(HttpRequest request)
         {
             string content = "";
