@@ -23,7 +23,9 @@ function SubjectDropDown(props: {
     <Select
       ref={props.subjectInputRef}
       placeholder="Select a subject"
-      onChange={props.checkInputs}
+      onChange={() => {
+        props.checkInputs();
+      }}
     >
       {subjects.map((subject: any, index: number) => {
         return <option key={index}>{subject["name"]}</option>;
