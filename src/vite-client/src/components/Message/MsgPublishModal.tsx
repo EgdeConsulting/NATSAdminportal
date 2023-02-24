@@ -10,9 +10,9 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { ChatIcon } from "@chakra-ui/icons";
-import { MessageForm } from "components";
+import { MsgPublishForm } from "components";
 
-function MessageModal() {
+function MsgPublishModal() {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
@@ -31,7 +31,7 @@ function MessageModal() {
           <ModalHeader>Publish message</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <MessageForm />
+            <MsgPublishForm />
             <Button variant="ghost" mb={2} mr={3} onClick={onClose}>
               Close
             </Button>
@@ -42,4 +42,4 @@ function MessageModal() {
   );
 }
 
-export { MessageModal };
+export { MsgPublishModal };
