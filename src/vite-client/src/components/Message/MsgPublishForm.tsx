@@ -9,7 +9,7 @@ import {
 import { useRef, useState } from "react";
 import { ActionConfirmation, SubjectDropDown } from "components";
 
-function MessageForm() {
+function MsgPublishForm() {
   const subjectInputRef = useRef<any>(null);
   const headerInputRef = useRef<any>(null);
   const payloadInputRef = useRef<any>(null);
@@ -41,10 +41,20 @@ function MessageForm() {
     });
   }
 
+  function isAscii(str: string) {
+    if (/\S/.test(str) && /^[\x00-\x7F]+$/.test(str)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   function checkInputs() {
     if (
       payloadInputRef.current.value != "" &&
+      isAscii(payloadInputRef.current.value) &&
       headerInputRef.current.value != "" &&
+      isAscii(headerInputRef.current.value) &&
       subjectInputRef.current.value != ""
     ) {
       toggleButtonDisable(false);
@@ -52,6 +62,7 @@ function MessageForm() {
       toggleButtonDisable(true);
     }
   }
+
   return (
     <>
       <FormControl isRequired>
@@ -64,21 +75,25 @@ function MessageForm() {
           Choose the subject you want to post your message to
         </FormHelperText>
 
-        <FormLabel marginTop={3}>Headers</FormLabel>
+        <FormLabel mt={3}>Headers</FormLabel>
         <Input
           type={"text"}
           ref={headerInputRef}
           width={"100%"}
-          onChange={checkInputs}
+          onChange={() => {
+            checkInputs();
+          }}
           placeholder={"Headers..."}
         />
 
-        <FormLabel marginTop={3}>Payload</FormLabel>
+        <FormLabel mt={3}>Payload</FormLabel>
         <Input
-          marginBottom={5}
+          mb={5}
           type={"text"}
           width={"100%"}
-          onChange={checkInputs}
+          onChange={() => {
+            checkInputs();
+          }}
           ref={payloadInputRef}
           placeholder={"Enter your message..."}
         />
@@ -104,4 +119,4 @@ function MessageForm() {
   );
 }
 
-export { MessageForm };
+export { MsgPublishForm };
