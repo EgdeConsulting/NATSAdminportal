@@ -53,7 +53,6 @@ app.UseSpa(builder =>
 ILoggerFactory loggerFactory = LoggerFactory.Create(builder => 
 {
     builder.AddConsole();
-    builder.AddEventLog();
 });
 
 ILogger<Subscriber> subLogger = loggerFactory.CreateLogger<Subscriber>();
@@ -67,7 +66,7 @@ ILogger<StreamManager> streamLogger = loggerFactory.CreateLogger<StreamManager>(
 SubjectManager subjectManager = new SubjectManager(natsServerURL);
 StreamManager streamManager = new StreamManager(streamLogger, natsServerURL);
 
-Subscriber sub = new Subscriber(subLogger, natsServerURL, subjectManager);
+JetStreamSubscriber sub = new JetStreamSubscriber(subLogger, natsServerURL, "stream3", new string[2] {"subject.C.1", "subject.C.2"});
 Thread thread = new Thread(sub.Run);
 thread.Start();
 
@@ -99,24 +98,24 @@ app.MapPost("/api/streamName", async (HttpRequest request) =>
     return Results.Json(streamManager.GetExtendedStreamInfo(streamName));
 });
 
-app.MapPost("/api/newSubject", async (HttpRequest request) =>
-{
-    string content = "";
-    using (StreamReader stream = new StreamReader(request.Body))
-    {
-        content = await stream.ReadToEndAsync();
-    }
+// app.MapPost("/api/newSubject", async (HttpRequest request) =>
+// {
+//     string content = "";
+//     using (StreamReader stream = new StreamReader(request.Body))
+//     {
+//         content = await stream.ReadToEndAsync();
+//     }
 
-    var jsonObject = JsonNode.Parse(content);
+//     var jsonObject = JsonNode.Parse(content);
 
-    if (jsonObject != null && jsonObject["subject"] != null)
-    {
-        var subject = jsonObject["subject"];
+//     if (jsonObject != null && jsonObject["subject"] != null)
+//     {
+//         var subject = jsonObject["subject"];
 
-        if (subject != null && !string.IsNullOrWhiteSpace(subject.ToString()))
-            sub.MessageSubject = subject.ToString();
-    }
-});
+//         if (subject != null && !string.IsNullOrWhiteSpace(subject.ToString()))
+//             sub.MessageSubject = subject.ToString();
+//     }
+// });
 
 app.MapPost("/api/publishFullMessage", async (HttpRequest request) =>
 {

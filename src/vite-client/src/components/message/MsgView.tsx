@@ -6,11 +6,6 @@ function MsgView(props: { messages: any[] }) {
       Header: "All Messages",
       columns: [
         {
-          Header: "Stream",
-          accessor: "stream",
-          appendChildren: "false",
-        },
-        {
           Header: "Sequence Number",
           accessor: "sequenceNumber",
           appendChildren: "false",
@@ -21,14 +16,19 @@ function MsgView(props: { messages: any[] }) {
           appendChildren: "false",
         },
         {
+          Header: "Stream",
+          accessor: "stream",
+          appendChildren: "false",
+        },
+        {
           Header: "Subject",
           accessor: "subject",
           appendChildren: "false",
         },
         {
-          Header: "Acknowledgement",
-          accessor: "acknowledgement",
-          appendChildren: "false",
+          Header: "Data",
+          accessor: "data",
+          appendChildren: "true",
         },
       ],
     },

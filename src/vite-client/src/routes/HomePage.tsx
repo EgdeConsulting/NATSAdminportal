@@ -19,7 +19,7 @@ function HomePage() {
 
   function manageAllMessagesInterval() {
     if (intervalState == -1) {
-      setIntervalState(setInterval(getAllMessages, 1000));
+      setIntervalState(setInterval(getAllMessages, 10000));
       setButtonText("Stop");
     } else {
       clearInterval(intervalState);
@@ -27,48 +27,12 @@ function HomePage() {
       setButtonText(initialButtonText);
     }
   }
-  const subjectInputRef = useRef<any>(null);
-  const publishInputRef = useRef<any>(null);
-
-  function postNewSubject() {
-    fetch("/api/newSubject", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        subject:
-          subjectInputRef.current != null
-            ? subjectInputRef.current.value
-            : "error",
-      }),
-    });
-  }
 
   return (
     <HStack align={"stretch"} paddingTop={2}>
       <Card variant={"outline"} width={"1115px"}>
         <CardBody>
           <HStack>
-            <Card border={"none"} marginLeft={-3}>
-              <CardBody marginTop={-5}>
-                <Text fontSize={"lg"}>
-                  Use "<b>&gt;</b>" to subscribe to all subjects:
-                </Text>
-                <Input
-                  ref={subjectInputRef}
-                  type={"text"}
-                  placeholder={"Message Subject"}
-                  marginTop={2}
-                  marginRight={2}
-                  width={280}
-                />
-                <Button onClick={postNewSubject} marginTop={-1}>
-                  Change Message Subject
-                </Button>
-              </CardBody>
-            </Card>
             <Card border={"none"}>
               <CardBody marginTop={5}>
                 <Button onClick={manageAllMessagesInterval}>
