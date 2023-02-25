@@ -55,7 +55,7 @@ ILoggerFactory loggerFactory = LoggerFactory.Create(builder =>
     builder.AddConsole();
 });
 
-ILogger<Subscriber> subLogger = loggerFactory.CreateLogger<Subscriber>();
+ILogger<JetStreamSubscriber> subLogger = loggerFactory.CreateLogger<JetStreamSubscriber>();
 ILogger<Publisher> pubLogger = loggerFactory.CreateLogger<Publisher>();
 ILogger<StreamManager> streamLogger = loggerFactory.CreateLogger<StreamManager>();
 
@@ -65,10 +65,7 @@ ILogger<StreamManager> streamLogger = loggerFactory.CreateLogger<StreamManager>(
 
 SubjectManager subjectManager = new SubjectManager(natsServerURL);
 StreamManager streamManager = new StreamManager(streamLogger, natsServerURL);
-
-JetStreamSubscriber sub = new JetStreamSubscriber(subLogger, natsServerURL, "stream3", new string[2] {"subject.C.1", "subject.C.2"});
-Thread thread = new Thread(sub.Run);
-thread.Start();
+SubscriberManager subscriberManager = new SubscriberManager(subLogger, natsServerURL);
 
 Publisher pub = new Publisher(pubLogger, natsServerURL);
 
@@ -81,7 +78,7 @@ app.MapGet("/api/streamBasicInfo", () => streamManager.GetBasicStreamInfo());
 
 app.MapGet("/api/subjectHierarchy", () => subjectManager.GetSubjectHierarchy());
 app.MapGet("/api/subjectNames", () => subjectManager.GetSubjectNames());
-app.MapGet("/api/messages", () => sub.GetMessages());
+app.MapGet("/api/messages", () => subscriberManager.GetAllMessages());
 
 ///////////////////////////////////////////////////
 // Adding API-endpoints for data delivery (POST) //

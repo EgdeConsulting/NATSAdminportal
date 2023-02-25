@@ -12,7 +12,7 @@ namespace Backend.Logic
     public class JetStreamSubscriber
     {
         private readonly ILogger logger;
-        private string[] subjects;
+        private List<string> subjects;
         // The amount of messages which max should be pulled from a stream at the same time
         private int batchSize = 1000;
         private int maxPayloadLength = 200;
@@ -22,7 +22,7 @@ namespace Backend.Logic
         private string streamName;
         private List<Msg> allMessages;
 
-        public JetStreamSubscriber(ILogger<Subscriber> logger, string? url, string streamName, string[] subjects)
+        public JetStreamSubscriber(ILogger<JetStreamSubscriber> logger, string? url, string streamName, List<string> subjects)
         {
             this.logger = logger;
             allMessages = new List<Msg>();
@@ -148,9 +148,9 @@ namespace Backend.Logic
             logger.LogInformation("{} > {} viewed all messages", 
             DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), UserAccount.Name);
 
-            List<Msg> allMessagesSorted = allMessages.OrderBy(a => a.MetaData.StreamSequence).ToList();
+            List<Msg> allMessagesSorted = allMessages.OrderByDescending(a => a.MetaData.StreamSequence).ToList();
 
-            string json = "[";
+            string json = "";
             for (int i = 0; i < allMessagesSorted.Count; i++)
             {
                 Msg msg = allMessagesSorted[i];
@@ -168,7 +168,7 @@ namespace Backend.Logic
                 json = i < allMessagesSorted.Count - 1 ? json + "," : json;
             }
             
-            return json + "]";
+            return json;
         }
     }
 }
