@@ -29,9 +29,7 @@ if (app.Environment.IsDevelopment())
     natsServerURL = config["LOCAL_NATS_SERVER_URL"];
 }
 else
-{
     natsServerURL = Environment.GetEnvironmentVariable("AZURE_NATS_SERVER_URL");
-}
 
 /////////////////////////
 // Configuring the app //
@@ -50,14 +48,10 @@ app.UseSpa(builder =>
 // Setting up and configuring Loggers //
 ////////////////////////////////////////
 
-ILoggerFactory loggerFactory = LoggerFactory.Create(builder => 
-{
-    builder.AddConsole();
-    builder.AddEventLog();
-});
+ILoggerFactory loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
 
-ILogger<Subscriber> subLogger = loggerFactory.CreateLogger<Subscriber>();
-ILogger<Publisher> pubLogger = loggerFactory.CreateLogger<Publisher>();
+ILogger<SubscriberManager> subscriberLogger = loggerFactory.CreateLogger<SubscriberManager>();
+ILogger<Publisher> publisherLogger = loggerFactory.CreateLogger<Publisher>();
 ILogger<StreamManager> streamLogger = loggerFactory.CreateLogger<StreamManager>();
 
 //////////////////////////////////
@@ -66,12 +60,9 @@ ILogger<StreamManager> streamLogger = loggerFactory.CreateLogger<StreamManager>(
 
 SubjectManager subjectManager = new SubjectManager(natsServerURL);
 StreamManager streamManager = new StreamManager(streamLogger, natsServerURL);
+SubscriberManager subscriberManager = new SubscriberManager(subscriberLogger, natsServerURL);
 
-Subscriber sub = new Subscriber(subLogger, natsServerURL, subjectManager);
-Thread thread = new Thread(sub.Run);
-thread.Start();
-
-Publisher pub = new Publisher(pubLogger, natsServerURL);
+Publisher pub = new Publisher(publisherLogger, natsServerURL);
 
 ///////////////////////////////////////////////////
 // Adding API-endpoints for data retrieval (GET) //
@@ -82,7 +73,9 @@ app.MapGet("/api/streamBasicInfo", () => streamManager.GetBasicStreamInfo());
 
 app.MapGet("/api/subjectHierarchy", () => subjectManager.GetSubjectHierarchy());
 app.MapGet("/api/subjectNames", () => subjectManager.GetSubjectNames());
-app.MapGet("/api/messages", () => sub.GetMessages());
+app.MapGet("/api/messages", () => subscriberManager.GetAllMessages());
+
+app.MapGet("/api/messageData", (string stream, ulong sequenceNumber) => subscriberManager.GetSpecificMessage(stream, sequenceNumber));
 
 ///////////////////////////////////////////////////
 // Adding API-endpoints for data delivery (POST) //
@@ -97,25 +90,6 @@ app.MapPost("/api/streamName", async (HttpRequest request) =>
         streamName = await stream.ReadToEndAsync();
     }
     return Results.Json(streamManager.GetExtendedStreamInfo(streamName));
-});
-
-app.MapPost("/api/newSubject", async (HttpRequest request) =>
-{
-    string content = "";
-    using (StreamReader stream = new StreamReader(request.Body))
-    {
-        content = await stream.ReadToEndAsync();
-    }
-
-    var jsonObject = JsonNode.Parse(content);
-
-    if (jsonObject != null && jsonObject["subject"] != null)
-    {
-        var subject = jsonObject["subject"];
-
-        if (subject != null && !string.IsNullOrWhiteSpace(subject.ToString()))
-            sub.MessageSubject = subject.ToString();
-    }
 });
 
 app.MapPost("/api/publishFullMessage", async (HttpRequest request) =>
