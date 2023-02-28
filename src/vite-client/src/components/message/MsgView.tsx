@@ -9,26 +9,31 @@ function MsgView(props: { messages: any[] }) {
           Header: "Sequence Number",
           accessor: "sequenceNumber",
           appendChildren: "false",
+          rowBound: "false",
         },
         {
           Header: "Timestamp",
           accessor: "timestamp",
           appendChildren: "false",
+          rowBound: "false",
         },
         {
           Header: "Stream",
           accessor: "stream",
           appendChildren: "false",
+          rowBound: "false",
         },
         {
           Header: "Subject",
           accessor: "subject",
           appendChildren: "false",
+          rowBound: "false",
         },
         {
           Header: "Data",
           accessor: "data",
           appendChildren: "true",
+          rowBound: "true",
         },
       ],
     },
@@ -36,7 +41,7 @@ function MsgView(props: { messages: any[] }) {
 
   return (
     <PaginatedTable columns={columns} data={props.messages}>
-      <MsgModal></MsgModal>
+      <MsgModal content={""} />
     </PaginatedTable>
   );
 }

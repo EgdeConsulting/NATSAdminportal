@@ -11,7 +11,6 @@ namespace Backend.Logic
 {
     public class JetStreamSubscriber
     {
-        private readonly ILogger logger;
         private List<string> subjects;
         // The amount of messages which max should be pulled from a stream at the same time
         private int batchSize = 1000;
@@ -19,15 +18,15 @@ namespace Backend.Logic
         private string? url = Defaults.Url;
         private bool sync = true;
         private string? creds = null;
-        private string streamName;
         private List<Msg> allMessages;
 
-        public JetStreamSubscriber(ILogger<JetStreamSubscriber> logger, string? url, string streamName, List<string> subjects)
+        public string StreamName { get; }
+
+        public JetStreamSubscriber(string? url, string streamName, List<string> subjects)
         {
-            this.logger = logger;
             allMessages = new List<Msg>();
             this.url = url;
-            this.streamName = streamName;
+            StreamName = streamName;
             this.subjects = subjects;
         }
 
@@ -49,7 +48,7 @@ namespace Backend.Logic
         private TimeSpan receiveJetStreamPullSubscribe(IConnection c)
         {
             IJetStream js = c.CreateJetStreamContext();
-            PullSubscribeOptions pullOptions = PullSubscribeOptions.Builder().WithStream(streamName).Build();
+            PullSubscribeOptions pullOptions = PullSubscribeOptions.Builder().WithStream(StreamName).Build();
 
             while (true) {
                 List<Msg> currentMessages = new List<Msg>();
@@ -96,8 +95,6 @@ namespace Backend.Logic
         //     return sw.Elapsed;
 
         public string GetMessageData(ulong sequenceNumber) {
-            logger.LogInformation("{} > {} viewed message (stream, sequence number): {}, {}", 
-            DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), UserAccount.Name, streamName, sequenceNumber);
 
             string json = "[";
             for (int i = 0; i < allMessages.Count; i++)
@@ -128,6 +125,8 @@ namespace Backend.Logic
                     
                     string? payload = msg.Data.ToString();
 
+                    Console.WriteLine(msg.Data);
+
                     json += JsonSerializer.Serialize(
                     new
                         {
@@ -145,9 +144,6 @@ namespace Backend.Logic
 
         public string GetMessages()
         {
-            logger.LogInformation("{} > {} viewed all messages", 
-            DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), UserAccount.Name);
-
             List<Msg> allMessagesSorted = allMessages.OrderByDescending(a => a.MetaData.StreamSequence).ToList();
 
             string json = "";
@@ -160,7 +156,7 @@ namespace Backend.Logic
                     {
                         sequenceNumber = msg.MetaData.StreamSequence,
                         timestamp = msg.MetaData.Timestamp,
-                        stream = streamName,
+                        stream = StreamName,
                         subject = msg.Subject,
                    }
                 );

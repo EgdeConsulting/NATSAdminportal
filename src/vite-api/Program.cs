@@ -55,8 +55,8 @@ ILoggerFactory loggerFactory = LoggerFactory.Create(builder =>
     builder.AddConsole();
 });
 
-ILogger<JetStreamSubscriber> subLogger = loggerFactory.CreateLogger<JetStreamSubscriber>();
-ILogger<Publisher> pubLogger = loggerFactory.CreateLogger<Publisher>();
+ILogger<SubscriberManager> subscriberLogger = loggerFactory.CreateLogger<SubscriberManager>();
+ILogger<Publisher> publisherLogger = loggerFactory.CreateLogger<Publisher>();
 ILogger<StreamManager> streamLogger = loggerFactory.CreateLogger<StreamManager>();
 
 //////////////////////////////////
@@ -65,9 +65,9 @@ ILogger<StreamManager> streamLogger = loggerFactory.CreateLogger<StreamManager>(
 
 SubjectManager subjectManager = new SubjectManager(natsServerURL);
 StreamManager streamManager = new StreamManager(streamLogger, natsServerURL);
-SubscriberManager subscriberManager = new SubscriberManager(subLogger, natsServerURL);
+SubscriberManager subscriberManager = new SubscriberManager(subscriberLogger, natsServerURL);
 
-Publisher pub = new Publisher(pubLogger, natsServerURL);
+Publisher pub = new Publisher(publisherLogger, natsServerURL);
 
 ///////////////////////////////////////////////////
 // Adding API-endpoints for data retrieval (GET) //
@@ -79,6 +79,8 @@ app.MapGet("/api/streamBasicInfo", () => streamManager.GetBasicStreamInfo());
 app.MapGet("/api/subjectHierarchy", () => subjectManager.GetSubjectHierarchy());
 app.MapGet("/api/subjectNames", () => subjectManager.GetSubjectNames());
 app.MapGet("/api/messages", () => subscriberManager.GetAllMessages());
+
+app.MapGet("/api/messageData", (string stream, ulong sequenceNumber) => subscriberManager.GetSpecificMessage(stream, sequenceNumber));
 
 ///////////////////////////////////////////////////
 // Adding API-endpoints for data delivery (POST) //
@@ -132,6 +134,26 @@ app.MapPost("/api/publishFullMessage", async (HttpRequest request) =>
 
         if (payload != null && !string.IsNullOrWhiteSpace(payload.ToString()))
             pub.SendNewMessage(payload.ToString(), headers!.ToString(), subject!.ToString());
+    }
+});
+
+app.MapPost("/api/deleteMessage", async (HttpRequest request) =>
+{
+    string content = "";
+    using (StreamReader stream = new StreamReader(request.Body))
+    {
+        content = await stream.ReadToEndAsync();
+    }
+
+    var jsonObject = JsonNode.Parse(content);
+
+    if (jsonObject != null && jsonObject["name"] != null && jsonObject["sequenceNumber"] != null)
+    {
+        string streamName = jsonObject["name"]!.ToString();
+        ulong sequenceNumber = ulong.Parse(jsonObject["number"]!.ToString());
+        bool erase = jsonObject["erase"]!.ToString() == "true";
+
+        streamManager.DeleteMessage(streamName, sequenceNumber, erase);
     }
 });
 

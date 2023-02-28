@@ -9,10 +9,10 @@ namespace Backend.Logic
 {
     public class SubscriberManager
     {
-        private readonly ILogger<JetStreamSubscriber> logger;
+        private readonly ILogger logger;
         private List<JetStreamSubscriber> allSubscribers;
 
-        public SubscriberManager(ILogger<JetStreamSubscriber> logger, string? url)
+        public SubscriberManager(ILogger<SubscriberManager> logger, string? url)
         {
             this.logger = logger;
             allSubscribers = new List<JetStreamSubscriber>();
@@ -29,38 +29,17 @@ namespace Backend.Logic
                 List<StreamInfo> streamInfo = c.CreateJetStreamManagementContext().GetStreams().ToList<StreamInfo>();
 
                 // Gets all subjects in form ["Subject.A.1", "Subject.A.2", ....]
-                streamInfo.ForEach(a => allSubscribers.Add(new JetStreamSubscriber(logger, url, a.Config.Name, a.Config.Subjects)));
+                streamInfo.ForEach(a => allSubscribers.Add(new JetStreamSubscriber(url, a.Config.Name, a.Config.Subjects)));
             }
 
-            allSubscribers.ForEach(a => new Thread(a.Run).Start());
-
-            // rawSubjects.Sort();
-            // rawSubjects.ForEach(a => refinedSubjects.Add(a.Split(".")));
-
-            // for (int i = 0; i < refinedSubjects.Count; i++)
-            // {
-            //     // Adding all unique subjects to list.
-            //     for (int k = 0; k < refinedSubjects[i].Length; k++)
-            //     {
-            //         string subjectName = refinedSubjects[i][k];
-            //         if (allSubjects.FirstOrDefault(x => x.SubjectName.Equals(subjectName)) is null)
-            //             allSubjects.Add(new Subject(subjectName));
-            //     }
-
-            //     // Initializing the hierarchy links between all the subjects. 
-            //     for (int k = 0; k < refinedSubjects[i].Length; k++)
-            //     {
-            //         string? parentName = k - 1 < 0 ? null : refinedSubjects[i][k - 1];
-            //         string? childName = k + 1 > refinedSubjects[i].Length - 1 ? null : refinedSubjects[i][k + 1];
-            //         AddSubjectLinks(refinedSubjects[i][k], parentName, childName, i);
-            //     }
-            // }
-
-            
+            allSubscribers.ForEach(a => new Thread(a.Run).Start());            
         }
 
         public string GetAllMessages()
         {
+            logger.LogInformation("{} > {} viewed all messages", 
+            DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), UserAccount.Name);
+
             string json = "[";
             for (int i = 0; i < allSubscribers.Count; i++)
             {
@@ -70,6 +49,20 @@ namespace Backend.Logic
             }
             
             return json + "]";
+        }
+
+        public string GetSpecificMessage(string streamName, ulong sequenceNumber)
+        {
+            logger.LogInformation("{} > {} viewed message (stream, sequence number): {}, {}", 
+            DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), UserAccount.Name, streamName, sequenceNumber);
+
+            foreach (JetStreamSubscriber sub in allSubscribers)
+            {
+                if (sub.StreamName == streamName)
+                    return sub.GetMessageData(sequenceNumber);
+            }
+
+            return "";
         }
     }
 

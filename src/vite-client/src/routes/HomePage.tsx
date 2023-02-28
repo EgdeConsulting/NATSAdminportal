@@ -19,6 +19,7 @@ function HomePage() {
 
   function manageAllMessagesInterval() {
     if (intervalState == -1) {
+      getAllMessages();
       setIntervalState(setInterval(getAllMessages, 10000));
       setButtonText("Stop");
     } else {
