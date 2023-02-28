@@ -19,25 +19,28 @@ namespace Backend.Logic
             InitializeSubscribers(url);
         }
 
+        /// <summary>
+        /// Creates and stores a JetStreamSubscriber-object for each stream on the specified NATS-server.
+        /// </summary>
+        /// <param name="url">Url of the NATS-server</param>
         private void InitializeSubscribers(string? url)
         {
-            List<string> rawSubjects = new List<string>();
-            List<string[]> refinedSubjects = new List<string[]>();
-
             using (IConnection c = new ConnectionFactory().CreateConnection(url))
             {
                 List<StreamInfo> streamInfo = c.CreateJetStreamManagementContext().GetStreams().ToList<StreamInfo>();
-
-                // Gets all subjects in form ["Subject.A.1", "Subject.A.2", ....]
                 streamInfo.ForEach(a => allSubscribers.Add(new JetStreamSubscriber(url, a.Config.Name, a.Config.Subjects)));
             }
 
-            allSubscribers.ForEach(a => new Thread(a.Run).Start());            
+            allSubscribers.ForEach(a => new Thread(a.Run).Start());
         }
 
+        /// <summary>
+        /// Gets a JSON representation of all the messages contained within all streams (JetStreamSubscribers).
+        /// </summary>
+        /// <returns>String containing all of the JSON-objects</returns>
         public string GetAllMessages()
         {
-            logger.LogInformation("{} > {} viewed all messages", 
+            logger.LogInformation("{} > {} viewed all messages",
             DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), UserAccount.Name);
 
             string json = "[";
@@ -47,13 +50,19 @@ namespace Backend.Logic
                 json += sub.GetMessages();
                 json = i < allSubscribers.Count - 1 ? json + "," : json;
             }
-            
+
             return json + "]";
         }
 
+        /// <summary>
+        /// Gets a JSON representation of the contents of a specific message on a specific stream.
+        /// </summary>
+        /// <param name="streamName">The name or identifier of the stream</param>
+        /// <param name="sequenceNumber">The identification number of the message</param>
+        /// <returns>String of a JSON-object containing the message payload and headers</returns>
         public string GetSpecificMessage(string streamName, ulong sequenceNumber)
         {
-            logger.LogInformation("{} > {} viewed message (stream, sequence number): {}, {}", 
+            logger.LogInformation("{} > {} viewed message (stream, sequence number): {}, {}",
             DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), UserAccount.Name, streamName, sequenceNumber);
 
             foreach (JetStreamSubscriber sub in allSubscribers)
@@ -65,5 +74,4 @@ namespace Backend.Logic
             return "";
         }
     }
-
 }

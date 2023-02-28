@@ -16,7 +16,6 @@ namespace Backend.Logic
         private int batchSize = 1000;
         private int maxPayloadLength = 200;
         private string? url = Defaults.Url;
-        private bool sync = true;
         private string? creds = null;
         private List<Msg> allMessages;
 
@@ -30,6 +29,9 @@ namespace Backend.Logic
             this.subjects = subjects;
         }
 
+        /// <summary>
+        /// Starts the subscribers so that is fetches all previous, current and future messages on a stream. 
+        /// </summary>
         public void Run()
         {
             Options opts = ConnectionFactory.GetDefaultOptions();
@@ -40,61 +42,41 @@ namespace Backend.Logic
             using (IConnection c = new ConnectionFactory().CreateConnection(opts))
             {
                 TimeSpan elapsed = receiveJetStreamPullSubscribe(c);
-                //TimeSpan elapsed = sync ? receiveJetStreamPullSubscribe(c) : receiveAsyncSubscriber(c);
             }
         }
 
-        //https://stackoverflow.com/questions/75181157/pull-last-batch-of-messages-from-a-nats-jetstream
+        // The following method was created based on: https://stackoverflow.com/questions/75181157/pull-last-batch-of-messages-from-a-nats-jetstream
+        /// <summary>
+        /// Bulk pulls all messages on all subjects from a stream. 
+        /// </summary>
+        /// <param name="c">Nats connection</param>
+        /// <returns></returns>
         private TimeSpan receiveJetStreamPullSubscribe(IConnection c)
         {
             IJetStream js = c.CreateJetStreamContext();
             PullSubscribeOptions pullOptions = PullSubscribeOptions.Builder().WithStream(StreamName).Build();
 
-            while (true) {
+            while (true)
+            {
                 List<Msg> currentMessages = new List<Msg>();
 
-                foreach (string subject in subjects) {
+                foreach (string subject in subjects)
+                {
                     IJetStreamPullSubscription sub = js.PullSubscribe(subject, pullOptions);
                     currentMessages = new List<Msg>(currentMessages.Concat(sub.Fetch(batchSize, 1000)));
                 }
-                
+
                 allMessages = currentMessages;
             }
         }
 
-        // private TimeSpan receiveAsyncSubscriber(IConnection c)
-        // {
-        //     Stopwatch sw = new Stopwatch();
-        //     Object testLock = new Object();
-
-        //     EventHandler<MsgHandlerEventArgs> msgHandler = (sender, args) =>
-        //     {
-        //         if (received == 0)
-        //             sw.Start();
-
-        //         received++;
-
-        //         if (verbose)
-        //             Console.WriteLine("Received: " + args.Message);
-
-        //         if (received >= count)
-        //         {
-        //             sw.Stop();
-        //             lock (testLock)
-        //                 Monitor.Pulse(testLock);
-        //         }
-        //     };
-
-        //     using (IAsyncSubscription s = c.SubscribeAsync(subject, msgHandler))
-        //     {
-        //         // just wait until we are done.
-        //         lock (testLock)
-        //             Monitor.Wait(testLock);
-        //     }
-
-        //     return sw.Elapsed;
-
-        public string GetMessageData(ulong sequenceNumber) {
+        /// <summary>
+        /// Gets a JSON representation of the contents of a specific message which the subscriber holds.
+        /// </summary>
+        /// <param name="sequenceNumber">The identification number of the message</param>
+        /// <returns>String of a JSON-object containing the message payload and headers</returns>
+        public string GetMessageData(ulong sequenceNumber)
+        {
 
             string json = "[";
             for (int i = 0; i < allMessages.Count; i++)
@@ -122,26 +104,28 @@ namespace Backend.Logic
                     }
 
                     headerData += "]";
-                    
-                    string? payload = msg.Data.ToString();
 
-                    Console.WriteLine(msg.Data);
+                    string? payload = msg.Data.ToString();
 
                     json += JsonSerializer.Serialize(
                     new
-                        {
-                            headers = headerData,
-                            payload = payload?.Length > maxPayloadLength ? payload.Substring(0, maxPayloadLength) : payload,
-                        }
+                    {
+                        headers = headerData,
+                        payload = payload?.Length > maxPayloadLength ? payload.Substring(0, maxPayloadLength) : payload,
+                    }
                     );
 
                     break;
                 }
             }
-            
+
             return json + "]";
         }
 
+        /// <summary>
+        /// Gets a JSON representation of all the messages that the subscribers holds.
+        /// </summary>
+        /// <returns>String containing all of the JSON-objects</returns>
         public string GetMessages()
         {
             List<Msg> allMessagesSorted = allMessages.OrderByDescending(a => a.MetaData.StreamSequence).ToList();
@@ -158,12 +142,12 @@ namespace Backend.Logic
                         timestamp = msg.MetaData.Timestamp,
                         stream = StreamName,
                         subject = msg.Subject,
-                   }
+                    }
                 );
 
                 json = i < allMessagesSorted.Count - 1 ? json + "," : json;
             }
-            
+
             return json;
         }
     }

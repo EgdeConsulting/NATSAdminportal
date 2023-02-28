@@ -29,9 +29,7 @@ if (app.Environment.IsDevelopment())
     natsServerURL = config["LOCAL_NATS_SERVER_URL"];
 }
 else
-{
     natsServerURL = Environment.GetEnvironmentVariable("AZURE_NATS_SERVER_URL");
-}
 
 /////////////////////////
 // Configuring the app //
@@ -50,10 +48,7 @@ app.UseSpa(builder =>
 // Setting up and configuring Loggers //
 ////////////////////////////////////////
 
-ILoggerFactory loggerFactory = LoggerFactory.Create(builder => 
-{
-    builder.AddConsole();
-});
+ILoggerFactory loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
 
 ILogger<SubscriberManager> subscriberLogger = loggerFactory.CreateLogger<SubscriberManager>();
 ILogger<Publisher> publisherLogger = loggerFactory.CreateLogger<Publisher>();
@@ -97,25 +92,6 @@ app.MapPost("/api/streamName", async (HttpRequest request) =>
     return Results.Json(streamManager.GetExtendedStreamInfo(streamName));
 });
 
-// app.MapPost("/api/newSubject", async (HttpRequest request) =>
-// {
-//     string content = "";
-//     using (StreamReader stream = new StreamReader(request.Body))
-//     {
-//         content = await stream.ReadToEndAsync();
-//     }
-
-//     var jsonObject = JsonNode.Parse(content);
-
-//     if (jsonObject != null && jsonObject["subject"] != null)
-//     {
-//         var subject = jsonObject["subject"];
-
-//         if (subject != null && !string.IsNullOrWhiteSpace(subject.ToString()))
-//             sub.MessageSubject = subject.ToString();
-//     }
-// });
-
 app.MapPost("/api/publishFullMessage", async (HttpRequest request) =>
 {
     string content = "";
@@ -134,26 +110,6 @@ app.MapPost("/api/publishFullMessage", async (HttpRequest request) =>
 
         if (payload != null && !string.IsNullOrWhiteSpace(payload.ToString()))
             pub.SendNewMessage(payload.ToString(), headers!.ToString(), subject!.ToString());
-    }
-});
-
-app.MapPost("/api/deleteMessage", async (HttpRequest request) =>
-{
-    string content = "";
-    using (StreamReader stream = new StreamReader(request.Body))
-    {
-        content = await stream.ReadToEndAsync();
-    }
-
-    var jsonObject = JsonNode.Parse(content);
-
-    if (jsonObject != null && jsonObject["name"] != null && jsonObject["sequenceNumber"] != null)
-    {
-        string streamName = jsonObject["name"]!.ToString();
-        ulong sequenceNumber = ulong.Parse(jsonObject["number"]!.ToString());
-        bool erase = jsonObject["erase"]!.ToString() == "true";
-
-        streamManager.DeleteMessage(streamName, sequenceNumber, erase);
     }
 });
 
