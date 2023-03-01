@@ -15,21 +15,24 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using Microsoft.Extensions.Options;
 using NATS.Client;
+using vite_api.Config;
+using Options = NATS.Client.Options;
 
 namespace Backend.Logic
 {
     public class Publisher
     {
         private readonly ILogger logger;
+        private readonly IOptions<AppConfig> appConfig;
         private int count = 1;
-        private string? url = Defaults.Url;
         private string? creds = null;
 
-        public Publisher(ILogger<Publisher> logger, string? url)
+        public Publisher(ILogger<Publisher> logger, IOptions<AppConfig> appConfig)
         {
             this.logger = logger;
-            this.url = url;
+            this.appConfig = appConfig;
         }
 
         public void SendNewMessage(string payload, string header, string subject)
@@ -38,7 +41,7 @@ namespace Backend.Logic
             DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), UserAccount.Name ,subject, 1);
 
             Options opts = ConnectionFactory.GetDefaultOptions();
-            opts.Url = url;
+            opts.Url = appConfig.Value.NatsServerUrl ?? Defaults.Url;
             if (creds != null)
             {
                 opts.SetUserCredentials(creds);
