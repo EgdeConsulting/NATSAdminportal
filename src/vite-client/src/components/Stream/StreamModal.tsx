@@ -10,6 +10,7 @@ import {
   useDisclosure,
   Heading,
   Box,
+  Text,
   Stack,
   StackDivider,
 } from "@chakra-ui/react";
@@ -68,7 +69,7 @@ function StreamModal(props: { content: string }) {
                   {streamData[0]["Description"].length != 0 ? (
                     streamData[0]["Description"]
                   ) : (
-                    <div>No description...</div>
+                    <Text>No description...</Text>
                   )}
                 </Box>
                 <Box>
@@ -78,7 +79,7 @@ function StreamModal(props: { content: string }) {
 
                   {streamData[0]["Subjects"].map(
                     (subject: string, key: number) => {
-                      return <div key={key}>{subject}</div>;
+                      return <Text key={key}>{subject}</Text>;
                     }
                   )}
                 </Box>
@@ -90,11 +91,11 @@ function StreamModal(props: { content: string }) {
                   {streamData[0]["Consumers"].length != 0 ? (
                     streamData[0]["Consumers"].map(
                       (consumer: string, key: number) => {
-                        return <div key={key}>{consumer}</div>;
+                        return <Text key={key}>{consumer}</Text>;
                       }
                     )
                   ) : (
-                    <div>No consumers...</div>
+                    <Text>No consumers...</Text>
                   )}
                 </Box>
                 <Box>
@@ -104,12 +105,12 @@ function StreamModal(props: { content: string }) {
 
                   {streamData[0]["Policies"].map((policy: any, key: number) => {
                     return (
-                      <div key={key}>
+                      <Text key={key}>
                         {/* Probably a better way to display policy string, but this will do for now */}
                         {JSON.stringify(policy)
                           .replace(/{|}|"/g, "")
                           .replace(":", ":\t")}
-                      </div>
+                      </Text>
                     );
                   })}
                 </Box>
@@ -118,7 +119,7 @@ function StreamModal(props: { content: string }) {
                     Deleted
                   </Heading>
 
-                  {<div>Deleted messages: {streamData[0]["Deleted"]}</div>}
+                  {<Text>Deleted messages: {streamData[0]["Deleted"]}</Text>}
                 </Box>
               </Stack>
             </ModalBody>
