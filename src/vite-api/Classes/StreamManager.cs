@@ -28,6 +28,9 @@ namespace Backend.Logic
             _provider = provider;
         }
 
+        /// <summary>
+        /// Gets the subject names of all subjects that reside within all streams.
+        /// </summary>
         public List<string[]> GetStreamSubjects()
         {
             List<StreamInfo> streamInfo;
@@ -54,9 +57,12 @@ namespace Backend.Logic
             return listOfSubjectArray;
         }
 
+        /// <summary>
+        /// Deletes a message from a stream based on the message sequence number.
+        /// </summary>
         public bool DeleteMessage(string streamName, ulong sequenceNumber, bool erase)
         {
-            logger.LogInformation("{} > {} deleted message (stream name, sequence number): {}, {}", 
+            logger.LogInformation("{} > {} deleted message (stream name, sequence number): {}, {}",
             DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), UserAccount.Name, streamName, sequenceNumber);
 
             using (IConnection c = new ConnectionFactory().CreateConnection(Url))
@@ -66,10 +72,9 @@ namespace Backend.Logic
             }
         }
 
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+        /// <summary>
+        /// Gets the name of all streams on the server. Returns JSON.
+        /// </summary>
         public string GetStreamNames()
         {
             List<string> streamNames;
@@ -94,6 +99,9 @@ namespace Backend.Logic
             return json + "]";
         }
 
+        /// <summary>
+        /// Gets basic information about all streams on the server. Returns JSON.
+        /// </summary>
         public string GetBasicStreamInfo()
         {
             string json = "[";
@@ -122,6 +130,9 @@ namespace Backend.Logic
             return json + "]";
         }
 
+        /// <summary>
+        /// Gets extended information about a specific stream on the server. Returns JSON.
+        /// </summary>
         public BasicStreamInfoDto[] GetBasicStreamInfo2()
         {
             using var connection = _provider.GetRequiredService<IConnection>();
@@ -136,7 +147,6 @@ namespace Backend.Logic
                     MessageCount = x.State.Messages
                 }).ToArray();
         }
-
 
         public string GetExtendedStreamInfo(string streamName)
         {
@@ -160,9 +170,11 @@ namespace Backend.Logic
                 {
                     Name = streamName,
                     Subjects = streamInfo.Config.Subjects,
+
                     Consumers = Consumers.GetConsumerNamesForAStream(Url, streamName), // NEED TO GET THIS FROM CONSUMER.CS
+
                     Description = streamInfo.Config.Description,
-                    Messages = streamInfo.State.Messages, //Also need to get this from somewhere..... CLI: nats stream view -s ip:port, check https://github.com/nats-io/nats.net/blob/master/src/Samples/JetStreamManageStreams/JetStreamManageStreams.cs
+                    Messages = streamInfo.State.Messages,
                     Deleted = streamInfo.State.DeletedCount,
                     Policies = policies,
                 }
@@ -170,6 +182,11 @@ namespace Backend.Logic
             return json + "]";
         }
 
+
+        /// <summary>
+        /// Creates a stream from a HttpRequest.         
+        /// </summary>
+        /// <param name="request">This request contains the name of the stream and its subjects.</param>
         public ExtendedStreamInfoDto GetExtendedStreamInfo2(string streamName)
         {
             using var connection = _provider.GetRequiredService<IConnection>();

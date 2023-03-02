@@ -91,10 +91,17 @@ function PaginatedTable(props: {
                       cell.render("Cell").props.column.appendChildren ==
                       "false" ? (
                         <Td {...cell.getCellProps()}>{cell.render("Cell")}</Td>
-                      ) : (
+                      ) : cell.render("Cell").props.column.rowBound ==
+                        "false" ? (
                         <Td {...cell.getCellProps()}>
                           {React.cloneElement(props.children, {
                             content: cell.value,
+                          })}
+                        </Td>
+                      ) : (
+                        <Td {...cell.getCellProps()}>
+                          {React.cloneElement(props.children, {
+                            content: row.values,
                           })}
                         </Td>
                       );
