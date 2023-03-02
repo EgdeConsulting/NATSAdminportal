@@ -5,20 +5,27 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading;
+using Microsoft.Extensions.Options;
 using NATS.Client;
 using NATS.Client.JetStream;
+using vite_api.Config;
+using vite_api.Dto;
 
 namespace Backend.Logic
 {
     public class StreamManager
     {
         private readonly ILogger logger;
-        private string? url = Defaults.Url;
+        private readonly IOptions<AppConfig> appConfig;
+        private readonly IServiceProvider _provider;
 
-        public StreamManager(ILogger<StreamManager> logger, string? url)
+        private string Url => appConfig.Value.NatsServerUrl ?? Defaults.Url;
+
+        public StreamManager(ILogger<StreamManager> logger, IOptions<AppConfig> appConfig, IServiceProvider provider)
         {
             this.logger = logger;
-            this.url = url;
+            this.appConfig = appConfig;
+            _provider = provider;
         }
 
         /// <summary>
@@ -30,6 +37,7 @@ namespace Backend.Logic
             List<string> subjects = new List<string>();
             List<string[]> listOfSubjectArray = new List<string[]>();
 
+            var url = appConfig.Value.NatsServerUrl ?? Defaults.Url;
             using (IConnection c = new ConnectionFactory().CreateConnection(url))
             {
                 IJetStreamManagement jsm = c.CreateJetStreamManagementContext();
@@ -57,7 +65,7 @@ namespace Backend.Logic
             logger.LogInformation("{} > {} deleted message (stream name, sequence number): {}, {}",
             DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), UserAccount.Name, streamName, sequenceNumber);
 
-            using (IConnection c = new ConnectionFactory().CreateConnection(url))
+            using (IConnection c = new ConnectionFactory().CreateConnection(Url))
             {
                 IJetStreamManagement jsm = c.CreateJetStreamManagementContext();
                 return jsm.DeleteMessage(streamName, sequenceNumber, erase);
@@ -72,7 +80,7 @@ namespace Backend.Logic
             List<string> streamNames;
             string json = "[";
 
-            using (IConnection c = new ConnectionFactory().CreateConnection(url))
+            using (IConnection c = new ConnectionFactory().CreateConnection(Url))
             {
                 IJetStreamManagement jsm = c.CreateJetStreamManagementContext();
                 streamNames = GetStreamNamesArray(jsm).ToList<string>();
@@ -99,7 +107,7 @@ namespace Backend.Logic
             string json = "[";
             List<StreamInfo> streamInfo;
 
-            using (IConnection c = new ConnectionFactory().CreateConnection(url))
+            using (IConnection c = new ConnectionFactory().CreateConnection(Url))
             {
                 IJetStreamManagement jsm = c.CreateJetStreamManagementContext();
                 streamInfo = GetStreamInfoArray(jsm).ToList<StreamInfo>();
@@ -125,6 +133,21 @@ namespace Backend.Logic
         /// <summary>
         /// Gets extended information about a specific stream on the server. Returns JSON.
         /// </summary>
+        public BasicStreamInfoDto[] GetBasicStreamInfo2()
+        {
+            using var connection = _provider.GetRequiredService<IConnection>();
+            var jsm = connection.CreateJetStreamManagementContext();
+
+            return jsm.GetStreams()
+               .Select(x => new BasicStreamInfoDto
+                {
+                    Name = x.Config.Name,
+                    SubjectCount = x.State.SubjectCount,
+                    ConsumerCount = x.State.ConsumerCount,
+                    MessageCount = x.State.Messages
+                }).ToArray();
+        }
+
         public string GetExtendedStreamInfo(string streamName)
         {
             string json = "[";
@@ -133,7 +156,7 @@ namespace Backend.Logic
             Dictionary<string, string> retPol = new Dictionary<string, string>();
             StreamInfo streamInfo;
 
-            using (IConnection c = new ConnectionFactory().CreateConnection(url))
+            using (IConnection c = new ConnectionFactory().CreateConnection(Url))
             {
                 IJetStreamManagement jsm = c.CreateJetStreamManagementContext();
                 streamInfo = jsm.GetStreamInfo(streamName);
@@ -147,7 +170,9 @@ namespace Backend.Logic
                 {
                     Name = streamName,
                     Subjects = streamInfo.Config.Subjects,
-                    Consumers = Consumers.GetConsumerNamesForAStream(url, streamName),
+
+                    Consumers = Consumers.GetConsumerNamesForAStream(Url, streamName), // NEED TO GET THIS FROM CONSUMER.CS
+
                     Description = streamInfo.Config.Description,
                     Messages = streamInfo.State.Messages,
                     Deleted = streamInfo.State.DeletedCount,
@@ -157,10 +182,33 @@ namespace Backend.Logic
             return json + "]";
         }
 
+
         /// <summary>
         /// Creates a stream from a HttpRequest.         
         /// </summary>
         /// <param name="request">This request contains the name of the stream and its subjects.</param>
+        public ExtendedStreamInfoDto GetExtendedStreamInfo2(string streamName)
+        {
+            using var connection = _provider.GetRequiredService<IConnection>();
+            var jsm = connection.CreateJetStreamManagementContext();
+            var streamInfo = jsm.GetStreamInfo(streamName);
+
+            return new ExtendedStreamInfoDto
+            {
+                Name = streamInfo.Config.Name,
+                Subjects = streamInfo.Config.Subjects,
+                Consumers = jsm.GetConsumerNames(streamName).ToList(),
+                Description = streamInfo.Config.Description,
+                Messages = streamInfo.State.Messages,
+                Deleted = streamInfo.State.DeletedCount,
+                Policies = new PoliciesDto
+                {
+                    DiscardPolicy = streamInfo.Config.DiscardPolicy.GetString(),
+                    RetentionPolicy = streamInfo.Config.RetentionPolicy.GetString()
+                }
+            };
+        }
+
         public async void CreateStreamFromRequest(HttpRequest request)
         {
             string content = "";
@@ -179,7 +227,7 @@ namespace Backend.Logic
 
                 if (streamName != null && !string.IsNullOrWhiteSpace(streamName.ToString()))
                 {
-                    using (IConnection c = new ConnectionFactory().CreateConnection(url))
+                    using (IConnection c = new ConnectionFactory().CreateConnection(Url))
                     {
                         IJetStreamManagement jsm = c.CreateJetStreamManagementContext();
                         CreateStreamWhenDoesNotExist(jsm, StorageType.File, streamName.ToString(), "Daniel");
