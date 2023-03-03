@@ -17,7 +17,7 @@ function AccountMenu() {
   function changeAccount(index: number) {
     let newActiveAccount = accounts[index];
 
-    fetch("/api/newUserAccount", {
+    fetch("/api/updateUserAccount", {
       method: "POST",
       headers: {
         Accept: "application/json",

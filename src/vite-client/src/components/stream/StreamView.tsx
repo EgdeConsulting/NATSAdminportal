@@ -13,13 +13,13 @@ function StreamView(props: { streamInfo: any[] }) {
         },
         {
           Header: "No. Subjects",
-          accessor: "subjectsCount",
+          accessor: "subjectCount",
           appendChildren: "false",
           rowBound: "false",
         },
         {
           Header: "No. Consumers",
-          accessor: "consumersCount",
+          accessor: "consumerCount",
           appendChildren: "false",
           rowBound: "false",
         },

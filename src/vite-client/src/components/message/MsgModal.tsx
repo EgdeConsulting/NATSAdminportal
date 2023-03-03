@@ -22,14 +22,14 @@ function MsgModal(props: { content: any }) {
 
   function getMessageData() {
     const queryString =
-      "stream=" +
+      "streamName=" +
       props.content["stream"] +
       "&sequenceNumber=" +
       props.content["sequenceNumber"];
     fetch("/api/messageData?" + queryString)
       .then((res) => res.json())
       .then((data) => {
-        setMessageData(data[0]);
+        setMessageData(data);
       });
   }
 
@@ -55,17 +55,24 @@ function MsgModal(props: { content: any }) {
                 <Heading size={"sm"} marginBottom={2}>
                   Headers
                 </Heading>
-                {messageData["headers"] != undefined ? (
-                  <Text>{messageData["headers"]}</Text>
+                {messageData.headers != undefined &&
+                Object.entries(messageData.headers).length != 0 ? (
+                  Object.entries(messageData.headers).map(
+                    ([key, value], index: number) => (
+                      <Text key={index} fontSize={"md"}>
+                        {key + " : " + value}
+                      </Text>
+                    )
+                  )
                 ) : (
-                  <Text>No headers...</Text>
+                  <Text fontSize={"md"}>No Headers...</Text>
                 )}
               </Box>
               <Box>
                 <Heading size={"sm"} marginBottom={2}>
                   Payload
                 </Heading>
-                <Text>{messageData["payload"]}</Text>
+                <Text fontSize={"md"}>{messageData.payload}</Text>
               </Box>
             </Stack>
           </ModalBody>

@@ -1,154 +1,106 @@
-using System;
-using System.Diagnostics;
-using System.Threading;
-using System.Collections.Generic;
-using System.Text.Json;
+using System.Collections;
+using System.Runtime.ExceptionServices;
 using System.Text;
 using NATS.Client;
 using NATS.Client.JetStream;
+using vite_api.Dto;
 
-namespace Backend.Logic
+namespace vite_api.Classes
 {
     public class JetStreamSubscriber
     {
-        private List<string> subjects;
+        private readonly List<string> _subjects;
         // The amount of messages which max should be pulled from a stream at the same time
-        private int batchSize = 1000;
-        private int maxPayloadLength = 200;
-        private string? url = Defaults.Url;
-        private string? creds = null;
-        private List<Msg> allMessages;
-
+        private const int BatchSize = 1000;
+        private const int MaxPayloadLength = 200;
+        private readonly string? _url = Defaults.Url;
+        private readonly string? _creds = null;
         public string StreamName { get; }
 
-        public JetStreamSubscriber(string? url, string streamName, List<string> subjects)
+        public JetStreamSubscriber(string url, string streamName, List<string> subjects)
         {
-            allMessages = new List<Msg>();
-            this.url = url;
+            _url = url;
             StreamName = streamName;
-            this.subjects = subjects;
+            _subjects = subjects;
         }
 
         /// <summary>
         /// Starts the subscribers so that is fetches all previous, current and future messages on a stream. 
         /// </summary>
-        public void Run()
-        {
-            Options opts = ConnectionFactory.GetDefaultOptions();
-            opts.Url = url;
-            if (creds != null)
-                opts.SetUserCredentials(creds);
-
-            using (IConnection c = new ConnectionFactory().CreateConnection(opts))
-            {
-                TimeSpan elapsed = receiveJetStreamPullSubscribe(c);
-            }
-        }
+        // public void Run()
+        // {
+        //     Options opts = ConnectionFactory.GetDefaultOptions();
+        //     opts.Url = _url;
+        //     if (_creds != null)
+        //         opts.SetUserCredentials(_creds);
+        //
+        //     using (IConnection c = new ConnectionFactory().CreateConnection(opts))
+        //     {
+        //         //TimeSpan elapsed = receiveJetStreamPullSubscribe(c);
+        //     }
+        // }
 
         // The following method was created based on: https://stackoverflow.com/questions/75181157/pull-last-batch-of-messages-from-a-nats-jetstream
         /// <summary>
         /// Bulk pulls all messages on all subjects from a stream. 
         /// </summary>
         /// <param name="c">Nats connection</param>
-        /// <returns></returns>
-        private TimeSpan receiveJetStreamPullSubscribe(IConnection c)
+        /// <returns>List of all message objects</returns>
+        private IEnumerable<Msg> ReceiveJetStreamPullSubscribe()
         {
-            IJetStream js = c.CreateJetStreamContext();
-            PullSubscribeOptions pullOptions = PullSubscribeOptions.Builder().WithStream(StreamName).Build();
+            var currentMessages = new List<Msg>();
+            var opts = ConnectionFactory.GetDefaultOptions();
+            opts.Url = _url;
+            if (_creds != null)
+                opts.SetUserCredentials(_creds);
 
-            while (true)
+            using (var c = new ConnectionFactory().CreateConnection(opts))
             {
-                List<Msg> currentMessages = new List<Msg>();
-
-                foreach (string subject in subjects)
+                var js = c.CreateJetStreamContext();
+                var pullOptions = PullSubscribeOptions.Builder().WithStream(StreamName).Build();
+                
+                foreach (var subject in _subjects)
                 {
-                    IJetStreamPullSubscription sub = js.PullSubscribe(subject, pullOptions);
-                    currentMessages = new List<Msg>(currentMessages.Concat(sub.Fetch(batchSize, 1000)));
+                    var sub = js.PullSubscribe(subject, pullOptions);
+                    currentMessages = new List<Msg>(currentMessages.Concat(sub.Fetch(BatchSize, 1000)));
                 }
-
-                allMessages = currentMessages;
             }
+            return currentMessages.OrderByDescending(x => x.MetaData.StreamSequence).ToList();
         }
 
         /// <summary>
-        /// Gets a JSON representation of the contents of a specific message which the subscriber holds.
+        /// Gets an object representation of the contents of a specific message which the subscriber holds.
         /// </summary>
         /// <param name="sequenceNumber">The identification number of the message</param>
-        /// <returns>String of a JSON-object containing the message payload and headers</returns>
-        public string GetMessageData(ulong sequenceNumber)
+        /// <returns>Dto of a message object containing the payload and headers</returns>
+        public MessageDataDto GetMessageData(ulong sequenceNumber)
         {
-
-            string json = "[";
-            for (int i = 0; i < allMessages.Count; i++)
+            var msg = ReceiveJetStreamPullSubscribe().First(x => x.MetaData.StreamSequence == sequenceNumber);
+            return new MessageDataDto()
             {
-                Msg msg = allMessages[i];
-
-                if (sequenceNumber == msg.MetaData.StreamSequence)
-                {
-                    string headerData = "[";
-
-                    var enu = msg.Header.GetEnumerator();
-                    int index = 0;
-
-                    while (enu.MoveNext())
-                    {
-                        headerData += JsonSerializer.Serialize(
-                            new
-                            {
-                                name = enu.Current,
-                                value = msg.Header[enu.Current.ToString()],
-                            }
-                        );
-                        headerData = index < msg.Header.Count - 1 ? headerData + "," : headerData;
-                        index++;
-                    }
-
-                    headerData += "]";
-
-                    string? payload = msg.Data.ToString();
-
-                    json += JsonSerializer.Serialize(
-                    new
-                    {
-                        headers = headerData,
-                        payload = payload?.Length > maxPayloadLength ? payload.Substring(0, maxPayloadLength) : payload,
-                    }
-                    );
-
-                    break;
-                }
+                Headers = msg.Header.Cast<string>().ToDictionary(k => k, v => msg.Header[v]),
+                Payload = GetData(msg.Data)
+            };
+            
+            static string GetData(byte[] data)
+            {
+                return data.All(x => char.IsAscii((char) x)) ? Encoding.ASCII.GetString(data) : Convert.ToBase64String(data);
             }
-
-            return json + "]";
         }
 
         /// <summary>
-        /// Gets a JSON representation of all the messages that the subscribers holds.
+        /// Gets an object representation of all the messages that the subscribers holds.
         /// </summary>
-        /// <returns>String containing all of the JSON-objects</returns>
-        public string GetMessages()
+        /// <returns>List containing all of the message-objects</returns>
+        public IEnumerable<MessageDto> GetMessages()
         {
-            List<Msg> allMessagesSorted = allMessages.OrderByDescending(a => a.MetaData.StreamSequence).ToList();
-
-            string json = "";
-            for (int i = 0; i < allMessagesSorted.Count; i++)
+            return ReceiveJetStreamPullSubscribe().Select(x => new MessageDto
             {
-                Msg msg = allMessagesSorted[i];
-
-                json += JsonSerializer.Serialize(
-                    new
-                    {
-                        sequenceNumber = msg.MetaData.StreamSequence,
-                        timestamp = msg.MetaData.Timestamp,
-                        stream = StreamName,
-                        subject = msg.Subject,
-                    }
-                );
-
-                json = i < allMessagesSorted.Count - 1 ? json + "," : json;
-            }
-
-            return json;
+                SequenceNumber = x.MetaData.StreamSequence,
+                Timestamp = x.MetaData.Timestamp,
+                Stream = StreamName,
+                Subject = x.Subject,
+            }).ToList();
         }
     }
 }

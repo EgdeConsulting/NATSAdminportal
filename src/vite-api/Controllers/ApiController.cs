@@ -1,6 +1,7 @@
 using System.Text.Json.Nodes;
-using Backend.Logic;
 using Microsoft.AspNetCore.Mvc;
+using vite_api.Classes;
+using vite_api.Dto;
 
 namespace vite_api.Controllers;
 
@@ -9,63 +10,31 @@ namespace vite_api.Controllers;
 public class ApiController : ControllerBase
 {
     private readonly StreamManager _streamManager;
-    private readonly Subscriber _sub;
-    private readonly Publisher _pub;
+    private readonly Publisher _publisher;
     private readonly SubjectManager _subjectManager;
+    private readonly SubscriberManager _subscriberManager;
 
-    public ApiController(StreamManager streamManager, Subscriber sub, Publisher pub, SubjectManager subjectManager)
+    public ApiController(StreamManager streamManager, Publisher publisher, SubjectManager subjectManager, SubscriberManager subscriberManager)
     {
         _streamManager = streamManager;
-        _sub = sub;
-        _pub = pub;
+        _publisher = publisher;
         _subjectManager = subjectManager;
+        _subscriberManager = subscriberManager;
     }
 
-    #warning Why post and not get?
-    [HttpPost("streamName")]
-    public async Task<IActionResult> GetExtendedStreamInfo()
+    [HttpGet("streamName")]
+    public IActionResult GetStreamName([FromQuery] string streamName)
     {
-
-        string streamName = "";
-
-        using (StreamReader stream = new StreamReader(Request.Body))
-        {
-            streamName = await stream.ReadToEndAsync();
-        }
-        var result = Results.Json(_streamManager.GetExtendedStreamInfo(streamName));
-        return Ok(result);
+        var res = _streamManager.GetExtendedStreamInfo(streamName);
+        return Ok(res);
     }
-
-    [HttpGet("streamName/{streamName}")]
-    public IActionResult GetExtendedStreamInfo2([FromRoute] string streamName)
+    
+    [HttpGet("messageData")]
+    public IActionResult GetMessageData([FromQuery] string streamName, [FromQuery] ulong sequenceNumber)
     {
-        var result = _streamManager.GetExtendedStreamInfo2(streamName);
-        return Ok(result);
+        var res = _subscriberManager.GetSpecificMessage(streamName, sequenceNumber);
+        return Ok(res);
     }
-
-    [HttpPut("subject")]
-    public async Task<IActionResult> CreateSubject()
-    {
-        string content = "";
-        using (StreamReader stream = new StreamReader(Request.Body))
-        {
-            content = await stream.ReadToEndAsync();
-        }
-
-        var jsonObject = JsonNode.Parse(content);
-
-        if (jsonObject != null && jsonObject["subject"] != null)
-        {
-            var subject = jsonObject["subject"];
-
-            if (subject != null && !string.IsNullOrWhiteSpace(subject.ToString()))
-                _sub.MessageSubject = subject.ToString();
-        }
-
-        #warning Post but no return info about created resource?
-        return Ok();
-    }
-
 
     [HttpPost("publishFullMessage")]
     public async Task PublishFullMessage()
@@ -85,39 +54,58 @@ public class ApiController : ControllerBase
             var headers = jsonObject["headers"];
 
             if (payload != null && !string.IsNullOrWhiteSpace(payload.ToString()))
-                _pub.SendNewMessage(payload.ToString(), headers!.ToString(), subject!.ToString());
+                _publisher.SendNewMessage(payload.ToString(), headers!.ToString(), subject!.ToString());
         }
-
-
-#warning Post but no return info about created resource?
+    #warning Post but no return info about created resource?
     }
-
-    #warning Why post and not delete?
-    [HttpPost("deleteMessage")]
-    public async Task<IActionResult> DeleteMessage()
+    
+    [HttpDelete("deleteMessage")]
+    public async Task<IActionResult> DeleteMessage([FromQuery] string streamName, [FromQuery] ulong sequenceNumber, [FromQuery] bool erase)
     {
-        string content = "";
-        using (StreamReader stream = new StreamReader(Request.Body))
-        {
-            content = await stream.ReadToEndAsync();
-        }
-
-        var jsonObject = JsonNode.Parse(content);
-
-        if (jsonObject != null && jsonObject["name"] != null && jsonObject["sequenceNumber"] != null)
-        {
-            string streamName = jsonObject["name"]!.ToString();
-            ulong sequenceNumber = ulong.Parse(jsonObject["number"]!.ToString());
-            bool erase = jsonObject["erase"]!.ToString() == "true";
-
-            _streamManager.DeleteMessage(streamName, sequenceNumber, erase);
-        }
-
-        return Ok();
+        var res = _streamManager.DeleteMessage(streamName, sequenceNumber, erase);
+        return Ok(res);
     }
+    
+    // #warning Why post and not delete?
+    // [HttpPost("deleteMessage")]
+    // public async Task<IActionResult> DeleteMessage()
+    // {
+    //     string content = "";
+    //     using (StreamReader stream = new StreamReader(Request.Body))
+    //     {
+    //         content = await stream.ReadToEndAsync();
+    //     }
+    //
+    //     var jsonObject = JsonNode.Parse(content);
+    //
+    //     if (jsonObject != null && jsonObject["name"] != null && jsonObject["sequenceNumber"] != null)
+    //     {
+    //         string streamName = jsonObject["name"]!.ToString();
+    //         ulong sequenceNumber = ulong.Parse(jsonObject["number"]!.ToString());
+    //         bool erase = jsonObject["erase"]!.ToString() == "true";
+    //
+    //         _streamManager.DeleteMessage(streamName, sequenceNumber, erase);
+    //     }
+    //
+    //     return Ok();
+    // }
 
-    [HttpPost("newUserAccount")]
-    public async Task<IActionResult> CreateUserAccount()
+    // [HttpPost("updateUserAccount")]
+    // public Task<IActionResult> UpdateUserAccount([FromQuery] string userName)
+    // {
+    //     try
+    //     {
+    //         UserAccount.Name = userName;
+    //         return Task.FromResult<IActionResult>(Ok());
+    //     }
+    //     catch
+    //     {
+    //         return Task.FromResult<IActionResult>(BadRequest());
+    //     }
+    // }
+    
+    [HttpPost("updateUserAccount")]
+    public async Task<IActionResult> UpdateUserAccount()
     {
         string content = "";
         using (StreamReader stream = new StreamReader(Request.Body))
@@ -125,7 +113,7 @@ public class ApiController : ControllerBase
             content = await stream.ReadToEndAsync();
         }
         UserAccount.Name = JsonNode.Parse(content)!["name"]!.ToString();
-
+    
         #warning No info about created resource returned
         return Ok();
     }
@@ -135,7 +123,7 @@ public class ApiController : ControllerBase
     [HttpGet("streamBasicInfo")]
     public IActionResult GetBasicStreamInfo()
     {
-        var res = _streamManager.GetBasicStreamInfo2();
+        var res = _streamManager.GetBasicStreamInfo();
         return Ok(res);
     }
 
@@ -167,7 +155,7 @@ public class ApiController : ControllerBase
     public IActionResult GetMessages()
     {
         #warning Get what messages? No parameters so no stream defined
-        var res = _sub.GetMessages2();
+        var res = _subscriberManager.GetAllMessages();
         return Ok(res);
     }
 }

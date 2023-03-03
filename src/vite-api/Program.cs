@@ -1,11 +1,9 @@
 using System.Text.Json;
-using Backend.Logic;
 using vite_api.Config;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using NATS.Client;
-using vite_api.HostedServices;
-using vite_api.Repositories;
+using vite_api.Classes;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddUserSecrets<Program>();
@@ -18,14 +16,13 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services
-   .AddSingleton<Subscriber>()
-   .AddSingleton<Publisher>()
+    .AddSingleton<Publisher>()
    .AddSingleton<StreamManager>()
    .AddSingleton<SubjectManager>()
-   .AddSingleton<MessageRepository>();
+   .AddSingleton<SubscriberManager>();
 
 builder.Services.AddTransient(NatsConnectionFactory);
-builder.Services.AddHostedService<SyncSubscriberService>();
+//builder.Services.AddHostedService<SyncSubscriberService>();
 
 var app = builder.Build();
 

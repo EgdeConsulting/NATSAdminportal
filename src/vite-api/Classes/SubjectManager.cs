@@ -1,14 +1,11 @@
-using System.Collections.Generic;
-using System.Linq;
-using System;
 using System.Text.Json;
 using Microsoft.Extensions.Options;
-using NATS.Client.JetStream;
 using NATS.Client;
+using NATS.Client.JetStream;
 using vite_api.Config;
 using vite_api.Internal;
 
-namespace Backend.Logic
+namespace vite_api.Classes
 {
     public class SubjectManager
     {
