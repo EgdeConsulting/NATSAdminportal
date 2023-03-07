@@ -6,11 +6,19 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>vite_api</RootNamespace>
     <UserSecretsId>08baf803-4c6d-43f3-a5dd-8dbbbfa8a525</UserSecretsId>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="7.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
     <PackageReference Include="NATS.Client" Version="1.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.2" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Services" />
   </ItemGroup>
 
 </Project>

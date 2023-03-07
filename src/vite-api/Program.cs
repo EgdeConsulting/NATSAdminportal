@@ -1,152 +1,66 @@
-using System.Text.Json.Nodes;
+using System.Text.Json;
 using Backend.Logic;
-
-//////////////////////
-// Building the app //
-//////////////////////
+using vite_api.Config;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using NATS.Client;
+using vite_api.HostedServices;
+using vite_api.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddUserSecrets<Program>();
 
-builder.Services.AddSpaStaticFiles(config =>
-{
-    config.RootPath = "dist";
-});
+builder.Services.AddOptions<AppConfig>().BindConfiguration("");
+builder.Services.AddControllers().AddJsonOptions(ConfigureJsonOptions);
+builder.Services.AddRouting(options => options.LowercaseUrls = true);
+
+builder.Services.AddSwaggerGen();
+builder.Services.AddEndpointsApiExplorer();
+
+builder.Services
+   .AddSingleton<Subscriber>()
+   .AddSingleton<Publisher>()
+   .AddSingleton<StreamManager>()
+   .AddSingleton<SubjectManager>()
+   .AddSingleton<MessageRepository>();
+
+builder.Services.AddTransient(NatsConnectionFactory);
+builder.Services.AddHostedService<SyncSubscriberService>();
 
 var app = builder.Build();
 
-///////////////////////////////
-// Loading data from secrets //
-///////////////////////////////
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
-string? natsServerURL;
+app.UseRouting();
+
+#pragma warning disable ASP0014
+app.UseEndpoints(_ => { /* Needed for routing to work with SPA proxy */ });
+#pragma warning restore ASP0014
+
+app.MapControllers();
 
 if (app.Environment.IsDevelopment())
 {
-    var config = new ConfigurationBuilder()
-    .AddUserSecrets<Program>()
-    .Build();
-
-    natsServerURL = config["LOCAL_NATS_SERVER_URL"];
+    app.UseSpa(configure =>
+    {
+        configure.UseProxyToSpaDevelopmentServer("http://localhost:5173/");
+    });
 }
-else
-{
-    natsServerURL = Environment.GetEnvironmentVariable("AZURE_NATS_SERVER_URL");
-}
-
-/////////////////////////
-// Configuring the app //
-/////////////////////////
-
-app.UseRouting();
-app.UseEndpoints(_ => { });
-app.UseSpaStaticFiles();
-app.UseSpa(builder =>
-{
-    if (app.Environment.IsDevelopment())
-        builder.UseProxyToSpaDevelopmentServer("http://localhost:5173/");
-});
-
-//////////////////////////////////
-// Initializing crucial objects //
-//////////////////////////////////
-
-SubjectManager subjectManager = new SubjectManager(natsServerURL);
-StreamManager streamManager = new StreamManager(natsServerURL);
-
-Subscriber sub = new Subscriber(natsServerURL, subjectManager);
-Thread thread = new Thread(sub.Run);
-thread.Start();
-
-Publisher pub = new Publisher("EgdeTest", natsServerURL);
-
-///////////////////////////////////////////////////
-// Adding API-endpoints for data retrieval (GET) //
-///////////////////////////////////////////////////
-
-app.MapGet("/api/streamBasicInfo", () => streamManager.GetBasicStreamInfo());
-//app.MapGet("/ConsumerInfo", () => Consumers.GetConsumerNamesForAStream(natsServerURL, "stream1"));
-
-app.MapGet("/api/subjectHierarchy", () => subjectManager.GetSubjectHierarchy());
-app.MapGet("/api/subjectNames", () => subjectManager.GetSubjectNames());
-app.MapGet("/api/messages", () => sub.GetMessages());
-
-///////////////////////////////////////////////////
-// Adding API-endpoints for data delivery (POST) //
-///////////////////////////////////////////////////
-
-app.MapPost("/api/streamName", async (HttpRequest request) =>
-{
-    string streamName = "";
-
-    using (StreamReader stream = new StreamReader(request.Body))
-    {
-        streamName = await stream.ReadToEndAsync();
-    }
-    return Results.Json(streamManager.GetExtendedStreamInfo(streamName));
-});
-
-app.MapPost("/api/newSubject", async (HttpRequest request) =>
-{
-    string content = "";
-    using (StreamReader stream = new StreamReader(request.Body))
-    {
-        content = await stream.ReadToEndAsync();
-    }
-
-    var jsonObject = JsonNode.Parse(content);
-
-    if (jsonObject != null && jsonObject["subject"] != null)
-    {
-        var subject = jsonObject["subject"];
-
-        if (subject != null && !string.IsNullOrWhiteSpace(subject.ToString()))
-            sub.MessageSubject = subject.ToString();
-    }
-});
-
-app.MapPost("/api/publishFullMessage", async (HttpRequest request) =>
-{
-    string content = "";
-    using (StreamReader stream = new StreamReader(request.Body))
-    {
-        content = await stream.ReadToEndAsync();
-    }
-
-    var jsonObject = JsonNode.Parse(content);
-
-    if (jsonObject != null && jsonObject["payload"] != null)
-    {
-        var payload = jsonObject["payload"];
-        var subject = jsonObject["subject"];
-        var headers = jsonObject["headers"];
-
-        if (payload != null && !string.IsNullOrWhiteSpace(payload.ToString()))
-            pub.SendNewMessage(payload.ToString(), headers!.ToString(), subject!.ToString());
-    }
-});
-
-app.MapPost("/api/deleteMessage", async (HttpRequest request) =>
-{
-    string content = "";
-    using (StreamReader stream = new StreamReader(request.Body))
-    {
-        content = await stream.ReadToEndAsync();
-    }
-
-    var jsonObject = JsonNode.Parse(content);
-
-    if (jsonObject != null && jsonObject["name"] != null && jsonObject["sequenceNumber"] != null)
-    {
-        string streamName = jsonObject["name"]!.ToString();
-        ulong sequenceNumber = ulong.Parse(jsonObject["number"]!.ToString());
-        bool erase = jsonObject["erase"]!.ToString() == "true";
-
-        streamManager.DeleteMessage(streamName, sequenceNumber, erase);
-    }
-});
-
-//////////////////////
-// Starting the app //
-//////////////////////
 
 app.Run();
+
+static void ConfigureJsonOptions(JsonOptions options)
+{
+    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+    options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+}
+
+static IConnection NatsConnectionFactory(IServiceProvider provider)
+{
+    var config = provider.GetRequiredService<IOptions<AppConfig>>();
+    return new ConnectionFactory().CreateConnection(config.Value.NatsServerUrl);
+}
