@@ -25,7 +25,7 @@ function SubjectSidebar() {
     padding: number;
   }): JSX.Element => {
     return (
-      <div>
+      <>
         <Checkbox margin={1} paddingLeft={padding} defaultChecked>
           {parent["name"]}
         </Checkbox>
@@ -39,7 +39,7 @@ function SubjectSidebar() {
               />
             );
           })}
-      </div>
+      </>
     );
   };
 
