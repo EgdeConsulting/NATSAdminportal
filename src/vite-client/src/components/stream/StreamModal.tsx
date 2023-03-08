@@ -10,6 +10,7 @@ import {
   useDisclosure,
   Heading,
   Box,
+  Text,
   Stack,
   StackDivider,
   Text,
@@ -63,7 +64,7 @@ function StreamModal(props: { content: string }) {
                   streamData.description.length != 0 ? (
                     streamData.desciption
                   ) : (
-                    <div>No description...</div>
+                    <Text>No description...</Text>
                   )}
                 </Box>
                 <Box>
@@ -72,7 +73,7 @@ function StreamModal(props: { content: string }) {
                   </Heading>
                   {streamData.subjects != undefined &&
                     streamData.subjects.map((subject: string, key: number) => {
-                      return <div key={key}>{subject}</div>;
+                      return <Text key={key}>{subject}</Text>;
                     })}
                 </Box>
                 <Box>
@@ -84,11 +85,11 @@ function StreamModal(props: { content: string }) {
                   streamData.consumers.length != 0 ? (
                     streamData.consumers.map(
                       (consumer: string, key: number) => {
-                        return <div key={key}>{consumer}</div>;
+                        return <Text key={key}>{consumer}</Text>;
                       }
                     )
                   ) : (
-                    <div>No consumers...</div>
+                    <Text>No consumers...</Text>
                   )}
                 </Box>
                 <Box>
@@ -109,12 +110,12 @@ function StreamModal(props: { content: string }) {
                   )}
                   {/* {streamData.policies.map((policy: any, key: number) => {
                     return (
-                      <div key={key}>
-                        
+                      <Text key={key}>
+                        {/* Probably a better way to display policy string, but this will do for now */}
                         {JSON.stringify(policy)
                           .replace(/{|}|"/g, "")
                           .replace(":", ":\t")}
-                      </div>
+                      </Text>
                     );
                   })} */}
                 </Box>
@@ -122,12 +123,11 @@ function StreamModal(props: { content: string }) {
                   <Heading size={"sm"} marginBottom={2}>
                     Deleted
                   </Heading>
-
                   {
-                    <div>
+                    <Text>
                       Deleted messages:{" "}
                       {streamData.deleted != undefined && streamData.deleted}
-                    </div>
+                    </Text>
                   }
                 </Box>
               </Stack>
