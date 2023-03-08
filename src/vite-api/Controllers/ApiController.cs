@@ -89,35 +89,21 @@ public class ApiController : ControllerBase
     //
     //     return Ok();
     // }
-
-    // [HttpPost("updateUserAccount")]
-    // public Task<IActionResult> UpdateUserAccount([FromQuery] string userName)
-    // {
-    //     try
-    //     {
-    //         UserAccount.Name = userName;
-    //         return Task.FromResult<IActionResult>(Ok());
-    //     }
-    //     catch
-    //     {
-    //         return Task.FromResult<IActionResult>(BadRequest());
-    //     }
-    // }
     
+    #warning This endpoint exists solely to allow for swapping between change dummy user accounts
     [HttpPost("updateUserAccount")]
-    public async Task<IActionResult> UpdateUserAccount()
+    public IActionResult UpdateUserAccount([FromQuery] string username)
     {
-        string content = "";
-        using (StreamReader stream = new StreamReader(Request.Body))
+        try
         {
-            content = await stream.ReadToEndAsync();
+            UserAccount.Name = username;
+            return Ok();
         }
-        UserAccount.Name = JsonNode.Parse(content)!["name"]!.ToString();
-    
-        #warning No info about created resource returned
-        return Ok();
+        catch
+        {
+            return BadRequest();
+        }
     }
-
 
     #warning Which stream do we get it for? There's absolutely no parameters here?
     [HttpGet("streamBasicInfo")]
