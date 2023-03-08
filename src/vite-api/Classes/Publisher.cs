@@ -11,16 +11,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Text;
 using Microsoft.Extensions.Options;
 using NATS.Client;
 using vite_api.Config;
 using Options = NATS.Client.Options;
 
-namespace Backend.Logic
+namespace vite_api.Classes
 {
     public class Publisher
     {

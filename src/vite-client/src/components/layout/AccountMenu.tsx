@@ -17,15 +17,9 @@ function AccountMenu() {
   function changeAccount(index: number) {
     let newActiveAccount = accounts[index];
 
-    fetch("/api/newUserAccount", {
+    const queryString = "username=" + newActiveAccount;
+    fetch("/api/updateUserAccount?" + queryString, {
       method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name: newActiveAccount,
-      }),
     });
 
     setAccounts(

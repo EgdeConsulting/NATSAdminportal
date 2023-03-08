@@ -1,30 +1,25 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using System.Threading;
 using Microsoft.Extensions.Options;
 using NATS.Client;
 using NATS.Client.JetStream;
 using vite_api.Config;
 using vite_api.Dto;
 
-namespace Backend.Logic
+namespace vite_api.Classes
 {
     public class StreamManager
     {
-        private readonly ILogger logger;
-        private readonly IOptions<AppConfig> appConfig;
+        private readonly ILogger _logger;
+        private readonly IOptions<AppConfig> _appConfig;
         private readonly IServiceProvider _provider;
 
-        private string Url => appConfig.Value.NatsServerUrl ?? Defaults.Url;
+        private string Url => _appConfig.Value.NatsServerUrl ?? Defaults.Url;
 
         public StreamManager(ILogger<StreamManager> logger, IOptions<AppConfig> appConfig, IServiceProvider provider)
         {
-            this.logger = logger;
-            this.appConfig = appConfig;
+            _logger = logger;
+            _appConfig = appConfig;
             _provider = provider;
         }
 
@@ -37,7 +32,7 @@ namespace Backend.Logic
             List<string> subjects = new List<string>();
             List<string[]> listOfSubjectArray = new List<string[]>();
 
-            var url = appConfig.Value.NatsServerUrl ?? Defaults.Url;
+            var url = _appConfig.Value.NatsServerUrl ?? Defaults.Url;
             using (IConnection c = new ConnectionFactory().CreateConnection(url))
             {
                 IJetStreamManagement jsm = c.CreateJetStreamManagementContext();
@@ -62,7 +57,7 @@ namespace Backend.Logic
         /// </summary>
         public bool DeleteMessage(string streamName, ulong sequenceNumber, bool erase)
         {
-            logger.LogInformation("{} > {} deleted message (stream name, sequence number): {}, {}",
+            _logger.LogInformation("{} > {} deleted message (stream name, sequence number): {}, {}",
             DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), UserAccount.Name, streamName, sequenceNumber);
 
             using (IConnection c = new ConnectionFactory().CreateConnection(Url))
@@ -71,69 +66,11 @@ namespace Backend.Logic
                 return jsm.DeleteMessage(streamName, sequenceNumber, erase);
             }
         }
-
+        
         /// <summary>
-        /// Gets the name of all streams on the server. Returns JSON.
+        /// Gets extended information about a all stream on a NATS-server. Returns JSON.
         /// </summary>
-        public string GetStreamNames()
-        {
-            List<string> streamNames;
-            string json = "[";
-
-            using (IConnection c = new ConnectionFactory().CreateConnection(Url))
-            {
-                IJetStreamManagement jsm = c.CreateJetStreamManagementContext();
-                streamNames = GetStreamNamesArray(jsm).ToList<string>();
-
-                for (int i = 0; i < streamNames.Count; i++)
-                {
-                    json += JsonSerializer.Serialize(
-                        new
-                        {
-                            name = streamNames[i]
-                        }
-                    );
-                    json = i < streamNames.Count - 1 ? json + "," : json;
-                }
-            }
-            return json + "]";
-        }
-
-        /// <summary>
-        /// Gets basic information about all streams on the server. Returns JSON.
-        /// </summary>
-        public string GetBasicStreamInfo()
-        {
-            string json = "[";
-            List<StreamInfo> streamInfo;
-
-            using (IConnection c = new ConnectionFactory().CreateConnection(Url))
-            {
-                IJetStreamManagement jsm = c.CreateJetStreamManagementContext();
-                streamInfo = GetStreamInfoArray(jsm).ToList<StreamInfo>();
-
-                for (int i = 0; i < streamInfo.Count; i++)
-                {
-                    json += JsonSerializer.Serialize(
-                        new
-                        {
-                            name = streamInfo[i].Config.Name,
-                            subjectsCount = streamInfo[i].State.SubjectCount,
-                            consumersCount = streamInfo[i].State.ConsumerCount,
-                            messageCount = streamInfo[i].State.Messages,
-
-                        }
-                    );
-                    json = i < streamInfo.Count - 1 ? json + "," : json;
-                }
-            }
-            return json + "]";
-        }
-
-        /// <summary>
-        /// Gets extended information about a specific stream on the server. Returns JSON.
-        /// </summary>
-        public BasicStreamInfoDto[] GetBasicStreamInfo2()
+        public BasicStreamInfoDto[] GetBasicStreamInfo()
         {
             using var connection = _provider.GetRequiredService<IConnection>();
             var jsm = connection.CreateJetStreamManagementContext();
@@ -147,47 +84,12 @@ namespace Backend.Logic
                     MessageCount = x.State.Messages
                 }).ToArray();
         }
-
-        public string GetExtendedStreamInfo(string streamName)
-        {
-            string json = "[";
-            List<Dictionary<string, string>> policies = new List<Dictionary<string, string>>();
-            Dictionary<string, string> discPol = new Dictionary<string, string>();
-            Dictionary<string, string> retPol = new Dictionary<string, string>();
-            StreamInfo streamInfo;
-
-            using (IConnection c = new ConnectionFactory().CreateConnection(Url))
-            {
-                IJetStreamManagement jsm = c.CreateJetStreamManagementContext();
-                streamInfo = jsm.GetStreamInfo(streamName);
-                discPol.Add("DiscardPolicy", streamInfo.Config.DiscardPolicy.GetString());
-                retPol.Add("RetentionPolicy", streamInfo.Config.RetentionPolicy.GetString());
-                policies.Add(new Dictionary<string, string>(discPol));
-                policies.Add(new Dictionary<string, string>(retPol));
-            }
-            json += JsonSerializer.Serialize(
-                new
-                {
-                    Name = streamName,
-                    Subjects = streamInfo.Config.Subjects,
-
-                    Consumers = Consumers.GetConsumerNamesForAStream(Url, streamName), // NEED TO GET THIS FROM CONSUMER.CS
-
-                    Description = streamInfo.Config.Description,
-                    Messages = streamInfo.State.Messages,
-                    Deleted = streamInfo.State.DeletedCount,
-                    Policies = policies,
-                }
-            );
-            return json + "]";
-        }
-
-
+        
         /// <summary>
         /// Creates a stream from a HttpRequest.         
         /// </summary>
         /// <param name="request">This request contains the name of the stream and its subjects.</param>
-        public ExtendedStreamInfoDto GetExtendedStreamInfo2(string streamName)
+        public ExtendedStreamInfoDto GetExtendedStreamInfo(string streamName)
         {
             using var connection = _provider.GetRequiredService<IConnection>();
             var jsm = connection.CreateJetStreamManagementContext();

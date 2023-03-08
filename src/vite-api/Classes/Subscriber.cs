@@ -11,12 +11,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using System.Diagnostics;
-using System.Threading;
-using System.Collections.Generic;
-using System.Text.Json;
 using System.Text;
+using System.Text.Json;
 using Microsoft.Extensions.Options;
 using NATS.Client;
 using vite_api.Config;
@@ -24,7 +21,7 @@ using vite_api.Dto;
 using vite_api.Repositories;
 using Options = NATS.Client.Options;
 
-namespace Backend.Logic
+namespace vite_api.Classes
 {
     public class Subscriber
     {
@@ -117,11 +114,10 @@ namespace Backend.Logic
         {
             var res = _msgRepo.GetAll().Select(x => new MessageDto
             {
-                Subject = x.Message.Subject,
-                Timestamp = x.Timestamp,
-                Acknowledgement = x.Message.LastAck?.ToString(),
-                Headers = x.Message.Header.Cast<string>().ToDictionary(k => k, v => x.Message.Header[v]),
-                Payload = GetData(x.Message.Data)
+                SequenceNumber = 2323,
+                Timestamp = DateTime.Now,
+                Stream = "Test",
+                Subject = "Subject",
             }).ToList();
 
             return res;
