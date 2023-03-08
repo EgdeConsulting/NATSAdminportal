@@ -13,7 +13,6 @@ import {
   Text,
   Stack,
   StackDivider,
-  Text,
 } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 
@@ -111,7 +110,7 @@ function StreamModal(props: { content: string }) {
                   {/* {streamData.policies.map((policy: any, key: number) => {
                     return (
                       <Text key={key}>
-                        {/* Probably a better way to display policy string, but this will do for now */}
+
                         {JSON.stringify(policy)
                           .replace(/{|}|"/g, "")
                           .replace(":", ":\t")}
