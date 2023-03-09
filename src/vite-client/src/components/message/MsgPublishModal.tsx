@@ -5,15 +5,15 @@ import {
   ModalOverlay,
   ModalContent,
   ModalHeader,
-  ModalFooter,
   ModalBody,
   ModalCloseButton,
   useDisclosure,
+  ModalFooter,
 } from "@chakra-ui/react";
 import { ChatIcon } from "@chakra-ui/icons";
-import { MessageForm } from "components";
+import { MsgPublishForm } from "components";
 
-function MessageModal() {
+function MsgPublishModal() {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
@@ -32,15 +32,17 @@ function MessageModal() {
           <ModalHeader>Publish message</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <MessageForm />
-            <Button variant="ghost" mr={3} onClick={onClose}>
+            <MsgPublishForm />
+          </ModalBody>
+          <ModalFooter>
+            <Button variant="ghost" mb={2} mr={3} onClick={onClose}>
               Close
             </Button>
-          </ModalBody>
+          </ModalFooter>
         </ModalContent>
       </Modal>
     </>
   );
 }
 
-export { MessageModal };
+export { MsgPublishModal };

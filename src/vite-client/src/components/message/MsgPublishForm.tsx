@@ -1,5 +1,4 @@
 import {
-  Select,
   Input,
   Button,
   FormControl,
@@ -7,28 +6,15 @@ import {
   FormHelperText,
   useDisclosure,
 } from "@chakra-ui/react";
-import { useRef, useEffect, useState } from "react";
-import { ActionConfirmation } from "./";
+import { useRef, useState } from "react";
+import { ActionConfirmation, SubjectDropDown } from "components";
 
-function MessageForm() {
+function MsgPublishForm() {
   const subjectInputRef = useRef<any>(null);
   const headerInputRef = useRef<any>(null);
   const payloadInputRef = useRef<any>(null);
-  const [subjects, setSubjects] = useState<[]>([]);
   const [buttonDisable, toggleButtonDisable] = useState<boolean>(true);
   const { isOpen, onOpen, onClose } = useDisclosure();
-
-  useEffect(() => {
-    getSubjects();
-  }, [subjects.length != 0]);
-
-  function getSubjects() {
-    fetch("/api/subjectNames")
-      .then((res) => res.json())
-      .then((data) => {
-        setSubjects(data); //Should consider removing stars from subjects?
-      });
-  }
 
   function postNewMessage() {
     fetch("/api/publishFullMessage", {
@@ -55,10 +41,20 @@ function MessageForm() {
     });
   }
 
+  function isAscii(str: string) {
+    if (/\S/.test(str) && /^[\x00-\x7F]+$/.test(str)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   function checkInputs() {
     if (
       payloadInputRef.current.value != "" &&
+      isAscii(payloadInputRef.current.value) &&
       headerInputRef.current.value != "" &&
+      isAscii(headerInputRef.current.value) &&
       subjectInputRef.current.value != ""
     ) {
       toggleButtonDisable(false);
@@ -66,43 +62,48 @@ function MessageForm() {
       toggleButtonDisable(true);
     }
   }
+
   return (
     <>
       <FormControl isRequired>
         <FormLabel>Subject</FormLabel>
-        <Select
-          ref={subjectInputRef}
-          placeholder="Select a subject"
-          onChange={checkInputs}
-        >
-          {subjects.map((subject: any, index: number) => {
-            return <option key={index}>{subject["name"]}</option>;
-          })}
-        </Select>
+        <SubjectDropDown
+          subjectInputRef={subjectInputRef}
+          checkInputs={checkInputs}
+        />
         <FormHelperText>
           Choose the subject you want to post your message to
         </FormHelperText>
 
-        <FormLabel marginTop={3}>Headers</FormLabel>
+        <FormLabel mt={3}>Headers</FormLabel>
         <Input
           type={"text"}
           ref={headerInputRef}
           width={"100%"}
-          onChange={checkInputs}
+          onChange={() => {
+            checkInputs();
+          }}
           placeholder={"Headers..."}
         />
 
-        <FormLabel marginTop={3}>Payload</FormLabel>
+        <FormLabel mt={3}>Payload</FormLabel>
         <Input
-          marginBottom={5}
+          mb={5}
           type={"text"}
           width={"100%"}
-          onChange={checkInputs}
+          onChange={() => {
+            checkInputs();
+          }}
           ref={payloadInputRef}
           placeholder={"Enter your message..."}
         />
       </FormControl>
-      <Button isDisabled={buttonDisable} colorScheme="blue" onClick={onOpen}>
+      <Button
+        mb={2}
+        isDisabled={buttonDisable}
+        colorScheme="blue"
+        onClick={onOpen}
+      >
         Publish
       </Button>
       <ActionConfirmation
@@ -118,4 +119,4 @@ function MessageForm() {
   );
 }
 
-export { MessageForm };
+export { MsgPublishForm };
