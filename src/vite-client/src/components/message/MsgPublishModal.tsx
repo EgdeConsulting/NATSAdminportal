@@ -9,6 +9,7 @@ import {
   ModalCloseButton,
   useDisclosure,
   ModalFooter,
+  HStack,
 } from "@chakra-ui/react";
 import { ChatIcon } from "@chakra-ui/icons";
 import { MsgPublishForm } from "components";
@@ -26,19 +27,17 @@ function MsgPublishModal() {
         icon={<ChatIcon />}
       />
 
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal size={"md"} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Publish message</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <MsgPublishForm />
-          </ModalBody>
-          <ModalFooter>
-            <Button variant="ghost" mb={2} mr={3} onClick={onClose}>
+            <Button mb={2} mt={4} ml={2} variant="ghost" onClick={onClose}>
               Close
             </Button>
-          </ModalFooter>
+          </ModalBody>
         </ModalContent>
       </Modal>
     </>

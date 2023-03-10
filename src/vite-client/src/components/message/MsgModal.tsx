@@ -53,6 +53,12 @@ function MsgModal(props: { content: any }) {
             <Stack divider={<StackDivider />} spacing={4}>
               <Box>
                 <Heading size={"sm"} marginBottom={2}>
+                  Subject
+                </Heading>
+                <Text fontSize={"md"}>{messageData.subject}</Text>
+              </Box>
+              <Box>
+                <Heading size={"sm"} marginBottom={2}>
                   Headers
                 </Heading>
                 {messageData.headers != undefined &&
