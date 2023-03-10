@@ -1,6 +1,6 @@
 import { Card, CardBody, Text, HStack, Input, Button } from "@chakra-ui/react";
 import { useState, useRef } from "react";
-import { MsgView, SubjectSidebar, MsgPublishModal } from "components";
+import { MsgView, SubjectSidebar, MsgPublishModal, DeleteMsgModal } from "components";
 
 function HomePage() {
   const [allMessages, setAllMessages] = useState<any[]>([]);
@@ -44,6 +44,11 @@ function HomePage() {
             <Card border={"none"}>
               <CardBody marginTop={5}>
                 <MsgPublishModal />
+              </CardBody>
+            </Card>
+            <Card border={"none"}>
+              <CardBody marginTop={5}>
+                <DeleteMsgModal />
               </CardBody>
             </Card>
           </HStack>
