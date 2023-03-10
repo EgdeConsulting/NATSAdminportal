@@ -11,54 +11,60 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using System.Diagnostics;
-using System.Threading;
-using System.Collections.Generic;
-using System.Text.Json;
 using System.Text;
+using System.Text.Json;
+using Microsoft.Extensions.Options;
 using NATS.Client;
+using vite_api.Config;
+using vite_api.Dto;
+using vite_api.Repositories;
+using Options = NATS.Client.Options;
 
-namespace Backend.Logic
+namespace vite_api.Classes
 {
     public class Subscriber
     {
+        private readonly ILogger _logger;
+
+        private readonly IOptions<AppConfig> _appConfig;
+
         // Use > to subscribe to all subjects
-        public string subject = ">";
-        private int count = 1000000;
-        private string? url = Defaults.Url;
+        public string _subject = ">";
+        private int _count = 1000000;
         private SubjectManager subjectManager;
-        private bool sync = true;
-        private int received = 0;
-        private bool verbose = true;
-        private string? creds = null;
-        private List<Msg> allMessages;
-        private List<DateTime> timestamps;
+        private readonly MessageRepository _msgRepo;
+        private bool _sync = true;
+        private int _received = 0;
+        private bool _verbose = true;
+        private string? _creds = null;
+        private List<Msg> _allMessages => _msgRepo.GetMessages();
+        private List<DateTime> _timestamps => _msgRepo.GetTimestamps();
 
         public string MessageSubject
         {
             get; set;
         }
 
-        public Subscriber(string? url, SubjectManager subjectManager)
+        public Subscriber(ILogger<Subscriber> logger, IOptions<AppConfig> appConfig, SubjectManager subjectManager, MessageRepository msgRepo)
         {
-            allMessages = new List<Msg>();
-            timestamps = new List<DateTime>();
+            this._logger = logger;
+            this._appConfig = appConfig;
             MessageSubject = ">";
-            this.url = url;
             this.subjectManager = subjectManager;
+            _msgRepo = msgRepo;
         }
 
         public void Run()
         {
             Options opts = ConnectionFactory.GetDefaultOptions();
-            opts.Url = url;
-            if (creds != null)
-                opts.SetUserCredentials(creds);
+            opts.Url = _appConfig.Value.NatsServerUrl ?? Defaults.Url;
+            if (_creds != null)
+                opts.SetUserCredentials(_creds);
 
             using (IConnection c = new ConnectionFactory().CreateConnection(opts))
             {
-                TimeSpan elapsed = sync ? receiveSyncSubscriber(c) : receiveAsyncSubscriber(c);
+                TimeSpan elapsed = _sync ? receiveSyncSubscriber(c) : receiveAsyncSubscriber(c);
             }
         }
 
@@ -69,15 +75,15 @@ namespace Backend.Logic
 
             EventHandler<MsgHandlerEventArgs> msgHandler = (sender, args) =>
             {
-                if (received == 0)
+                if (_received == 0)
                     sw.Start();
 
-                received++;
+                _received++;
 
-                if (verbose)
+                if (_verbose)
                     Console.WriteLine("Received: " + args.Message);
 
-                if (received >= count)
+                if (_received >= _count)
                 {
                     sw.Stop();
                     lock (testLock)
@@ -85,7 +91,7 @@ namespace Backend.Logic
                 }
             };
 
-            using (IAsyncSubscription s = c.SubscribeAsync(subject, msgHandler))
+            using (IAsyncSubscription s = c.SubscribeAsync(_subject, msgHandler))
             {
                 // just wait until we are done.
                 lock (testLock)
@@ -99,18 +105,43 @@ namespace Backend.Logic
         {
             if (subjectManager.SubjectExists(lastMessage.Subject))
             {
-                allMessages.Insert(0, lastMessage);
-                timestamps.Insert(0, DateTime.Now);
+                // _allMessages.Insert(0, lastMessage);
+                // _timestamps.Insert(0, DateTime.Now);
             }
         }
 
+        public List<MessageDto> GetMessages2()
+        {
+            var res = _msgRepo.GetAll().Select(x => new MessageDto
+            {
+                SequenceNumber = 2323,
+                Timestamp = DateTime.Now,
+                Stream = "Test",
+                Subject = "Subject",
+            }).ToList();
+
+            return res;
+
+            static string GetData(byte[] data)
+            {
+                if (data.All(x => char.IsAscii((char) x)))
+                    return Encoding.ASCII.GetString(data);
+
+                return Convert.ToBase64String(data);
+            }
+        }
+
+
         public string GetMessages()
         {
+            _logger.LogInformation("{} > {} viewed all messages",
+            DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), UserAccount.Name);
+
             string json = "[";
-            for (int i = 0; i < allMessages.Count; i++)
+            for (int i = 0; i < _allMessages.Count; i++)
             {
-                Msg msg = allMessages[i];
-                string timestamp = timestamps[i].ToString("MM/dd/yyyy HH:mm:ss");
+                Msg msg = _allMessages[i];
+                string timestamp = _timestamps[i].ToString("MM/dd/yyyy HH:mm:ss");
 
                 string headerData = "[";
 
@@ -139,31 +170,31 @@ namespace Backend.Logic
                         subject = msg.Subject,
                         timestamp = timestamp,
                         acknowledgement = msg.LastAck,
-                        headers = headerData,
+                        headers = headerData, //msg.MetaData has potential but throws objectreference error
                         // Checks if any characters are not ASCII.
                         payload = msg.Data.All(b => b >= 32 && b <= 127) ? Encoding.ASCII.GetString(msg.Data) : msg.Data.ToString()
                     }
                 );
 
-                json = i < allMessages.Count - 1 ? json + "," : json;
+                json = i < _allMessages.Count - 1 ? json + "," : json;
             }
-
+            
             return json + "]";
         }
 
         private TimeSpan receiveSyncSubscriber(IConnection c)
         {
-            using (ISyncSubscription s = c.SubscribeSync(subject))
+            using (ISyncSubscription s = c.SubscribeSync(_subject))
             {
                 Stopwatch sw = new Stopwatch();
 
-                while (received < count)
+                while (_received < _count)
                 {
-                    if (received == 0)
+                    if (_received == 0)
                         sw.Start();
 
                     Msg m = s.NextMessage();
-                    received++;
+                    _received++;
 
                     if (string.Equals(MessageSubject, ">") || string.Equals(MessageSubject, m.Subject))
                         AddMessage(m);

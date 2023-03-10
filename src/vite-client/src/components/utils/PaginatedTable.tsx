@@ -1,3 +1,4 @@
+import React from "react";
 import { useTable, usePagination } from "react-table";
 import {
   Table,
@@ -17,9 +18,6 @@ import {
   NumberInputStepper,
   NumberIncrementStepper,
   NumberDecrementStepper,
-  Button,
-  useDisclosure,
-  useStatStyles,
 } from "@chakra-ui/react";
 import {
   ArrowRightIcon,
@@ -27,8 +25,6 @@ import {
   ChevronRightIcon,
   ChevronLeftIcon,
 } from "@chakra-ui/icons";
-import { StreamModal } from "./";
-import { useState } from "react";
 
 {
   /*
@@ -37,11 +33,14 @@ import { useState } from "react";
   */
 }
 
-function StreamTable(props: { columns: any[]; data: any[] }) {
+function PaginatedTable(props: {
+  columns: any[];
+  data: any[];
+  children: JSX.Element;
+}) {
   const data = props.data;
   const columns = props.columns;
-  const { isOpen, onToggle, onClose } = useDisclosure();
-  const [streamName, setStreamName] = useState("");
+
   const {
     getTableProps,
     getTableBodyProps,
@@ -69,7 +68,6 @@ function StreamTable(props: { columns: any[]; data: any[] }) {
 
   return (
     <div>
-      <StreamModal name={streamName} isOpen={isOpen} onClose={onClose} />
       <TableContainer>
         <Table variant={"striped"} colorScheme={"gray"} {...getTableProps()}>
           <Thead>
@@ -90,21 +88,22 @@ function StreamTable(props: { columns: any[]; data: any[] }) {
                 <Tr {...row.getRowProps()}>
                   {row.cells.map((cell: any) => {
                     const cellContent =
-                      cell.render("Cell").props.column.clickable == "true" ? (
+                      cell.render("Cell").props.column.appendChildren ==
+                      "false" ? (
+                        <Td {...cell.getCellProps()}>{cell.render("Cell")}</Td>
+                      ) : cell.render("Cell").props.column.rowBound ==
+                        "false" ? (
                         <Td {...cell.getCellProps()}>
-                          <Button
-                            onClick={() => {
-                              setStreamName(cell.value);
-                              onToggle();
-                            }}
-                            variant={"outline"}
-                            width={"100%"}
-                          >
-                            {cell.render("Cell")}
-                          </Button>
+                          {React.cloneElement(props.children, {
+                            content: cell.value,
+                          })}
                         </Td>
                       ) : (
-                        <Td {...cell.getCellProps()}>{cell.render("Cell")}</Td>
+                        <Td {...cell.getCellProps()}>
+                          {React.cloneElement(props.children, {
+                            content: row.values,
+                          })}
+                        </Td>
                       );
                     return cellContent;
                   })}
@@ -205,4 +204,4 @@ function StreamTable(props: { columns: any[]; data: any[] }) {
   );
 }
 
-export { StreamTable };
+export { PaginatedTable };

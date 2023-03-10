@@ -1,21 +1,27 @@
-using System.Collections.Generic;
-using System.Linq;
-using System;
 using System.Text.Json;
-using NATS.Client.JetStream;
+using Microsoft.Extensions.Options;
 using NATS.Client;
+using NATS.Client.JetStream;
+using vite_api.Config;
+using vite_api.Internal;
 
-namespace Backend.Logic
+namespace vite_api.Classes
 {
     public class SubjectManager
     {
+        private readonly IOptions<AppConfig> appConfig;
         private List<Subject> allSubjects;
 
-        public SubjectManager(string? url)
+        private string Url => appConfig.Value.NatsServerUrl ?? Defaults.Url;
+
+        public SubjectManager(IOptions<AppConfig> appConfig)
         {
+            this.appConfig = appConfig;
             allSubjects = new List<Subject>();
-            InitializeSubjects(url);
+            InitializeSubjects(Url);
         }
+
+
 
         private void InitializeSubjects(string? url)
         {
@@ -32,6 +38,7 @@ namespace Backend.Logic
 
             rawSubjects.Sort();
             rawSubjects.ForEach(a => refinedSubjects.Add(a.Split(".")));
+
 
             for (int i = 0; i < refinedSubjects.Count; i++)
             {
@@ -119,6 +126,28 @@ namespace Backend.Logic
                     hierarchyJSON += b.ToJSON(-1, b.ChildrenLinks.Count) + ", ";
                 });
             return hierarchyJSON.Substring(0, hierarchyJSON.Length - 2) + "]";
+        }
+        
+        public NodeMember<object?> GetSubjectHierarch2()
+        {
+            var url = appConfig.Value.NatsServerUrl ?? Defaults.Url;
+            using var connection = new ConnectionFactory().CreateConnection(url);
+            var subjects = connection
+               .CreateJetStreamManagementContext()
+               .GetStreams()
+               .SelectMany(x => x.Config.Subjects)
+               .Distinct()
+               .ToList();
+
+            var root = new NodeMember<object?>();
+            foreach (var subject in subjects)
+            {
+                var node = root;
+                foreach (var segment in subject.Split('.'))
+                    node = node.AddChild(segment, null);
+            }
+
+            return root;
         }
     }
 }

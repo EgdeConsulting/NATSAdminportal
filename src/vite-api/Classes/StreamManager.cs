@@ -1,30 +1,38 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using System.Threading;
+using Microsoft.Extensions.Options;
 using NATS.Client;
 using NATS.Client.JetStream;
+using vite_api.Config;
+using vite_api.Dto;
 
-namespace Backend.Logic
+namespace vite_api.Classes
 {
     public class StreamManager
     {
-        private string? url = Defaults.Url;
+        private readonly ILogger _logger;
+        private readonly IOptions<AppConfig> _appConfig;
+        private readonly IServiceProvider _provider;
 
-        public StreamManager(string? url)
+        private string Url => _appConfig.Value.NatsServerUrl ?? Defaults.Url;
+
+        public StreamManager(ILogger<StreamManager> logger, IOptions<AppConfig> appConfig, IServiceProvider provider)
         {
-            this.url = url;
+            _logger = logger;
+            _appConfig = appConfig;
+            _provider = provider;
         }
 
+        /// <summary>
+        /// Gets the subject names of all subjects that reside within all streams.
+        /// </summary>
         public List<string[]> GetStreamSubjects()
         {
             List<StreamInfo> streamInfo;
             List<string> subjects = new List<string>();
             List<string[]> listOfSubjectArray = new List<string[]>();
 
+            var url = _appConfig.Value.NatsServerUrl ?? Defaults.Url;
             using (IConnection c = new ConnectionFactory().CreateConnection(url))
             {
                 IJetStreamManagement jsm = c.CreateJetStreamManagementContext();
@@ -33,106 +41,76 @@ namespace Backend.Logic
                 for (int i = 0; i < streamInfo.Count; i++)
                     // Gets all subjects in form ["Subject.A.1", "Subject.A.2", ....]
                     subjects.AddRange(streamInfo[i].Config.Subjects);
-                
+
                 subjects.Sort();
             }
 
             for (int i = 0; i < subjects.Count; i++)
                 // Gets all subjects in form [[Subject, A, 1], [Subject, A, 2], ....]
-                listOfSubjectArray.Add(subjects[i].Split(".")); 
+                listOfSubjectArray.Add(subjects[i].Split("."));
 
             return listOfSubjectArray;
         }
 
+        /// <summary>
+        /// Deletes a message from a stream based on the message sequence number.
+        /// </summary>
         public bool DeleteMessage(string streamName, ulong sequenceNumber, bool erase)
         {
-            using (IConnection c = new ConnectionFactory().CreateConnection(url))
+            _logger.LogInformation("{} > {} deleted message (stream name, sequence number): {}, {}",
+            DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), UserAccount.Name, streamName, sequenceNumber);
+
+            using (IConnection c = new ConnectionFactory().CreateConnection(Url))
             {
                 IJetStreamManagement jsm = c.CreateJetStreamManagementContext();
                 return jsm.DeleteMessage(streamName, sequenceNumber, erase);
             }
         }
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        public string GetStreamNames()
+        
+        /// <summary>
+        /// Gets extended information about a all stream on a NATS-server. Returns JSON.
+        /// </summary>
+        public BasicStreamInfoDto[] GetBasicStreamInfo()
         {
-            List<string> streamNames;
-            string json = "[";
+            using var connection = _provider.GetRequiredService<IConnection>();
+            var jsm = connection.CreateJetStreamManagementContext();
 
-            using (IConnection c = new ConnectionFactory().CreateConnection(url))
-            {
-                IJetStreamManagement jsm = c.CreateJetStreamManagementContext();
-                streamNames = GetStreamNamesArray(jsm).ToList<string>();
-
-                for (int i = 0; i < streamNames.Count; i++)
+            return jsm.GetStreams()
+               .Select(x => new BasicStreamInfoDto
                 {
-                    json += JsonSerializer.Serialize(
-                        new
-                        {
-                            name = streamNames[i]
-                        }
-                    );
-                    json = i < streamNames.Count - 1 ? json + "," : json;
+                    Name = x.Config.Name,
+                    SubjectCount = x.State.SubjectCount,
+                    ConsumerCount = x.State.ConsumerCount,
+                    MessageCount = x.State.Messages
+                }).ToArray();
+        }
+        
+        /// <summary>
+        /// Creates a stream from a HttpRequest.         
+        /// </summary>
+        /// <param name="request">This request contains the name of the stream and its subjects.</param>
+        public ExtendedStreamInfoDto GetExtendedStreamInfo(string streamName)
+        {
+            using var connection = _provider.GetRequiredService<IConnection>();
+            var jsm = connection.CreateJetStreamManagementContext();
+            var streamInfo = jsm.GetStreamInfo(streamName);
+
+            return new ExtendedStreamInfoDto
+            {
+                Name = streamInfo.Config.Name,
+                Subjects = streamInfo.Config.Subjects,
+                Consumers = jsm.GetConsumerNames(streamName).ToList(),
+                Description = streamInfo.Config.Description,
+                Messages = streamInfo.State.Messages,
+                Deleted = streamInfo.State.DeletedCount,
+                Policies = new PoliciesDto
+                {
+                    DiscardPolicy = streamInfo.Config.DiscardPolicy.GetString(),
+                    RetentionPolicy = streamInfo.Config.RetentionPolicy.GetString()
                 }
-            }
-            return json + "]";
+            };
         }
 
-        public string GetBasicStreamInfo()
-        {
-            string json = "[";
-            List<StreamInfo> streamInfo;
-
-            using (IConnection c = new ConnectionFactory().CreateConnection(url))
-            {
-                IJetStreamManagement jsm = c.CreateJetStreamManagementContext();
-                streamInfo = GetStreamInfoArray(jsm).ToList<StreamInfo>();
-
-                for (int i = 0; i < streamInfo.Count; i++)
-                {
-                    json += JsonSerializer.Serialize(
-                        new
-                        {
-                            name = streamInfo[i].Config.Name,
-                            subjectsCount = streamInfo[i].State.SubjectCount,
-                            consumersCount = streamInfo[i].State.ConsumerCount,
-                            messageCount = streamInfo[i].State.Messages,
-                            //discardPolicy = streamInfo[i].Config.DiscardPolicy.ToString()
-                        }
-                    );
-                    json = i < streamInfo.Count - 1 ? json + "," : json;
-                }
-            }
-            return json + "]";
-        }
-        public string GetExtendedStreamInfo(string streamName)
-        {
-            string json = "[";
-            StreamInfo streamInfo;
-
-            using (IConnection c = new ConnectionFactory().CreateConnection(url))
-            {
-                IJetStreamManagement jsm = c.CreateJetStreamManagementContext();
-                streamInfo = jsm.GetStreamInfo(streamName);
-            }
-            json += JsonSerializer.Serialize(
-                new
-                {
-                    Name = streamName,
-                    Subjects = streamInfo.Config.Subjects,
-                    Consumers = Consumers.GetConsumerNamesForAStream(url, streamName), // NEED TO GET THIS FROM CONSUMER.CS
-                    Description = streamInfo.Config.Description,
-                    Messages = streamInfo.State.Messages, //Also need to get this from somewhere..... CLI: nats stream view -s ip:port, check https://github.com/nats-io/nats.net/blob/master/src/Samples/JetStreamManageStreams/JetStreamManageStreams.cs
-                    Deleted = streamInfo.State.DeletedCount,
-                    DiscardPolicy = streamInfo.Config.DiscardPolicy,
-                    RetentionPolicy = streamInfo.Config.RetentionPolicy,
-                }
-            );
-            return json + "]";
-        }
         public async void CreateStreamFromRequest(HttpRequest request)
         {
             string content = "";
@@ -151,7 +129,7 @@ namespace Backend.Logic
 
                 if (streamName != null && !string.IsNullOrWhiteSpace(streamName.ToString()))
                 {
-                    using (IConnection c = new ConnectionFactory().CreateConnection(url))
+                    using (IConnection c = new ConnectionFactory().CreateConnection(Url))
                     {
                         IJetStreamManagement jsm = c.CreateJetStreamManagementContext();
                         CreateStreamWhenDoesNotExist(jsm, StorageType.File, streamName.ToString(), "Daniel");

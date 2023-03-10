@@ -16,6 +16,12 @@ function AccountMenu() {
 
   function changeAccount(index: number) {
     let newActiveAccount = accounts[index];
+
+    const queryString = "username=" + newActiveAccount;
+    fetch("/api/updateUserAccount?" + queryString, {
+      method: "POST",
+    });
+
     setAccounts(
       accounts
         .filter((item) => item !== accounts[index])
