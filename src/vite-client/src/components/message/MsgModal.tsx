@@ -15,6 +15,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { useState } from "react";
+import { MsgDeleteModal } from "./MsgDeleteModal";
 
 function MsgModal(props: { content: any }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -44,7 +45,7 @@ function MsgModal(props: { content: any }) {
         View Data
       </Button>
 
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal isOpen={isOpen} onClose={onClose} isCentered={true}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Message Data</ModalHeader>
@@ -74,6 +75,7 @@ function MsgModal(props: { content: any }) {
                 </Heading>
                 <Text fontSize={"md"}>{messageData.payload}</Text>
               </Box>
+              <MsgDeleteModal content={props.content} />
             </Stack>
           </ModalBody>
           <ModalFooter>

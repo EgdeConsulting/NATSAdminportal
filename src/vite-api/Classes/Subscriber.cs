@@ -163,6 +163,7 @@ namespace vite_api.Classes
 
                 headerData += "]";
 
+                Console.WriteLine(msg.MetaData);
                 json += JsonSerializer.Serialize(
                     new
                     {
