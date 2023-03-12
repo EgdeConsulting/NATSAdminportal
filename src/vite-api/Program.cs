@@ -38,6 +38,8 @@ app.UseRouting();
 app.UseEndpoints(_ => { /* Needed for routing to work with SPA proxy */ });
 #pragma warning restore ASP0014
 
+app.UseDefaultFiles();
+app.UseStaticFiles();
 app.MapControllers();
 
 if (app.Environment.IsDevelopment())
