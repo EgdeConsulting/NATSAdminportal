@@ -1,9 +1,18 @@
-import { Card, CardBody, Text, HStack, Input, Button } from "@chakra-ui/react";
-import { useState, useRef } from "react";
-import { MsgView, SubjectSidebar, MsgPublishModal } from "components";
+import { Card, CardBody, Text, HStack, Button, VStack } from "@chakra-ui/react";
+import { useContext, useState } from "react";
+import {
+  MsgView,
+  MsgTable,
+  SubjectSidebar,
+  MsgPublishModal,
+  MsgContextProvider,
+  MsgContext,
+  MsgViewContextProvider,
+} from "components";
 
 function HomePage() {
   const [allMessages, setAllMessages] = useState<any[]>([]);
+  const currentMsgContex = useContext(MsgContext);
 
   function getAllMessages() {
     fetch("/api/messages") // "http://localhost:3000/message1"
@@ -29,29 +38,38 @@ function HomePage() {
     }
   }
 
+  const [showMsg, setShowMsg] = useState(false);
+
   return (
-    <HStack align={"stretch"} paddingTop={2}>
-      <Card variant={"outline"} width={"1115px"}>
-        <CardBody>
-          <HStack>
-            <Card border={"none"}>
-              <CardBody marginTop={5}>
-                <Button onClick={manageAllMessagesInterval}>
-                  {buttonText}
-                </Button>
-              </CardBody>
-            </Card>
-            <Card border={"none"}>
-              <CardBody marginTop={5}>
-                <MsgPublishModal />
-              </CardBody>
-            </Card>
-          </HStack>
-          <MsgView messages={allMessages} />
-        </CardBody>
-      </Card>
-      <SubjectSidebar />
-    </HStack>
+    <MsgContextProvider>
+      <MsgViewContextProvider>
+        <HStack align={"stretch"} paddingTop={2}>
+          <Card variant={"outline"} width={"1115px"}>
+            <CardBody>
+              <HStack>
+                <Card border={"none"}>
+                  <CardBody marginTop={5}>
+                    <Button onClick={manageAllMessagesInterval}>
+                      {buttonText}
+                    </Button>
+                  </CardBody>
+                </Card>
+                <Card border={"none"}>
+                  <CardBody marginTop={5}>
+                    <MsgPublishModal />
+                  </CardBody>
+                </Card>
+              </HStack>
+              <MsgTable messages={allMessages} />
+            </CardBody>
+          </Card>
+          <VStack>
+            <MsgView />
+            <SubjectSidebar />
+          </VStack>
+        </HStack>
+      </MsgViewContextProvider>
+    </MsgContextProvider>
   );
 }
 

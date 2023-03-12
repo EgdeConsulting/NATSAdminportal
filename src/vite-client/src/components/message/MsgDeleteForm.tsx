@@ -5,24 +5,28 @@ import {
   FormHelperText,
   Text,
 } from "@chakra-ui/react";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useContext } from "react";
+import { MsgContext } from "components";
 
 function MsgDeleteForm(props: {
-  content: any;
   erase: boolean;
   setErase?: Dispatch<SetStateAction<boolean>>;
 }) {
+  const currentMsgContext = useContext(MsgContext);
+
   return (
     <>
       <FormControl>
         <FormLabel>
           Delete message with sequence number:{" "}
           <Text as={"cite"} fontSize={"md"}>
-            {props.content["sequenceNumber"]}
+            {currentMsgContext?.currentMsg &&
+              currentMsgContext.currentMsg.sequenceNumber}
           </Text>
           , on stream:{" "}
           <Text as={"cite"} fontSize={"md"}>
-            {props.content["stream"]}
+            {currentMsgContext?.currentMsg &&
+              currentMsgContext.currentMsg.stream}
           </Text>
         </FormLabel>
 
