@@ -37,44 +37,19 @@ public class ApiController : ControllerBase
         return Ok(res);
     }
     [HttpPost("publishFullMessage")]
-    public IActionResult PublishFullMessage([FromBody] string subject)
+    public IActionResult PublishFullMessage([FromBody] PublishMessageDto msg)
     {
-        Console.WriteLine(subject);
-        return Ok();
-        // try
-        // {
-        //     //_publisher.SendNewMessage(payload, header, subject); 
-        //     return Ok();
-        // }
-        // catch
-        // {
-        //     return BadRequest();
-        // }
+        try
+        {
+            _publisher.SendNewMessage(msg); 
+            return Ok();
+        }
+        catch
+        {
+            return BadRequest();
+        }
     }
-    
-    // [HttpPost("publishFullMessage")]
-    // public async Task PublishFullMessage()
-    // {
-    //     string content = "";
-    //     using (StreamReader stream = new StreamReader(Request.Body))
-    //     {
-    //         content = await stream.ReadToEndAsync();
-    //     }
-    //
-    //     var jsonObject = JsonNode.Parse(content);
-    //
-    //     if (jsonObject != null && jsonObject["payload"] != null)
-    //     {
-    //         var payload = jsonObject["payload"];
-    //         var subject = jsonObject["subject"];
-    //         var headers = jsonObject["headers"];
-    //
-    //         if (payload != null && !string.IsNullOrWhiteSpace(payload.ToString()))
-    //             _publisher.SendNewMessage(payload.ToString(), headers!.ToString(), subject!.ToString());
-    //     }
-    // #warning Post but no return info about created resource?
-    // }
-    
+
     [HttpDelete("deleteMessage")]
     public async Task<IActionResult> DeleteMessage([FromQuery] string streamName, [FromQuery] ulong sequenceNumber, [FromQuery] bool erase)
     {

@@ -15,6 +15,7 @@ using System.Text;
 using Microsoft.Extensions.Options;
 using NATS.Client;
 using vite_api.Config;
+using vite_api.Dto;
 using Options = NATS.Client.Options;
 
 namespace vite_api.Classes
@@ -32,10 +33,10 @@ namespace vite_api.Classes
             this.appConfig = appConfig;
         }
 
-        public void SendNewMessage(string payload, Object[] headers, string subject)
+        public void SendNewMessage(PublishMessageDto message)
         {
             logger.LogInformation("{} > {} created a new message (subject, sequence number): {}, {}", 
-            DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), UserAccount.Name ,subject, 1);
+            DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), UserAccount.Name ,message.Subject, 1);
 
             Options opts = ConnectionFactory.GetDefaultOptions();
             opts.Url = appConfig.Value.NatsServerUrl ?? Defaults.Url;
@@ -44,55 +45,21 @@ namespace vite_api.Classes
                 opts.SetUserCredentials(creds);
             }
 
-            using (IConnection c = new ConnectionFactory().CreateConnection(opts))
+            MsgHeader msgHeader = new();
+            foreach (var headerPair in message.Headers)
             {
-                MsgHeader msgHead = new MsgHeader();
-                foreach (var headerPair in headers)
-                {
-                    //msgHead.Add(headerPair["Name"], headerPair.Value);
-                }
-                Msg msg = new Msg(subject, msgHead, Encoding.UTF8.GetBytes(payload));
-                for (int i = 0; i < count; i++)
-                {
-                    c.Publish(msg);
-                }
-                c.Flush();
+                msgHeader.Add(headerPair.Name, headerPair.Value);
             }
+            using IConnection c = new ConnectionFactory().CreateConnection(opts);
+           
+            Msg msg = new Msg(message.Subject, msgHeader, Encoding.UTF8.GetBytes(message.Payload));
+            for (int i = 0; i < count; i++)
+            {
+                c.Publish(msg);
+            }
+            c.Flush();
         }
         
-        // public void SendNewMessage(string payload)
-        // {
-        //     Stopwatch? sw = null;
-
-        //     // parseArgs(args);
-        //     // banner();
-
-        //     Options opts = ConnectionFactory.GetDefaultOptions();
-        //     opts.Url = url;
-        //     if (creds != null)
-        //     {
-        //         opts.SetUserCredentials(creds);
-        //     }
-
-        //     using (IConnection c = new ConnectionFactory().CreateConnection(opts))
-        //     {
-        //         sw = Stopwatch.StartNew();
-
-        //         for (int i = 0; i < count; i++)
-        //         {
-        //             c.Publish(MessageSubject, Encoding.UTF8.GetBytes(payload));
-        //         }
-        //         c.Flush();
-
-        //         sw.Stop();
-
-        //         // Console.Write("Published {0} msgs in {1} seconds ", count, sw.Elapsed.TotalSeconds);
-        //         // Console.WriteLine("({0} msgs/second).",
-        //         //     (int)(count / sw.Elapsed.TotalSeconds));
-        //         // printStats(c);
-
-        //     }
-        // }
 
         // private void printStats(IConnection c)
         // {
