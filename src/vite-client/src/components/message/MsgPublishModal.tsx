@@ -38,9 +38,9 @@ function MsgPublishModal() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        subject: subjectInputRef.current.value,
-        // headers: "test", //JSON.stringify(headerList),
-        // payload: payloadInputRef.current.value,
+        Subject: subjectInputRef.current.value,
+        //Headers: headerList,
+        Payload: payloadInputRef.current.value,
       }),
     }).then((res) => {
       if (res.ok) {
@@ -58,7 +58,10 @@ function MsgPublishModal() {
       <IconButton
         margin={2}
         size={"md"}
-        onClick={onOpen}
+        onClick={() => {
+          setHeaderList([{ name: "", value: "" }]);
+          onOpen();
+        }}
         aria-label="Publish a message"
         icon={<ChatIcon />}
       />
