@@ -34,7 +34,7 @@ function MsgPublishForm() {
       },
       body: JSON.stringify({
         subject: subjectInputRef.current.value,
-        headers: headerList,
+        headers: "test", //JSON.stringify(headerList),
         payload: payloadInputRef.current.value,
       }),
     }).then((res) => {
