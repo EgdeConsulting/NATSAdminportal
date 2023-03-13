@@ -6,7 +6,7 @@ namespace vite_api.Dto;
 public class PublishMessageDto
 {
     public string Subject { get; set; }
-    public List<MsgHeaderDTO> Headers { get; set; } = new();
+    public List<MessageHeaderDTO> Headers { get; set; } = new();
 
     public string Payload { get; set; }
 }

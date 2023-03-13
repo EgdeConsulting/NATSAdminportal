@@ -1,6 +1,6 @@
 namespace vite_api.Dto;
 
-public class MsgHeaderDTO
+public class MessageHeaderDTO
 {
     public string Name { get; set; }
     public string Value { get; set; }
