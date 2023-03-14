@@ -15,7 +15,6 @@ import { MsgDeleteForm, ActionConfirmation } from "components";
 import { useState } from "react";
 
 function MsgDeleteModal(props: { content: any }) {
-  const [buttonDisable, toggleButtonDisable] = useState<boolean>(true);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
     isOpen: isOpenAC,
@@ -40,7 +39,7 @@ function MsgDeleteModal(props: { content: any }) {
   return (
     <>
       <IconButton
-        margin={2}
+        m={2}
         size={"md"}
         onClick={onOpen}
         aria-label="Delete a message"
@@ -60,13 +59,11 @@ function MsgDeleteModal(props: { content: any }) {
             />
           </ModalBody>
           <ModalFooter>
-            <Button onClick={onOpenAC} marginRight={2} colorScheme="red">
+            <Button onClick={onOpenAC} mr={2} colorScheme="red">
               Delete
             </Button>
             <ActionConfirmation
               action={deleteMessage}
-              buttonDisable={buttonDisable}
-              toggleButtonDisable={toggleButtonDisable}
               isOpen={isOpenAC}
               onClose={() => {
                 onClose();

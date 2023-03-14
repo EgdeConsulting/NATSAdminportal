@@ -15,7 +15,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { MsgDeleteModal } from "./MsgDeleteModal";
+import { MsgDeleteModal, MsgCopyModal } from "components";
 
 function MsgModal(props: { content: any }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -53,13 +53,13 @@ function MsgModal(props: { content: any }) {
           <ModalBody>
             <Stack divider={<StackDivider />} spacing={4}>
               <Box>
-                <Heading size={"sm"} marginBottom={2}>
+                <Heading size={"sm"} mb={2}>
                   Subject
                 </Heading>
                 <Text fontSize={"md"}>{messageData.subject}</Text>
               </Box>
               <Box>
-                <Heading size={"sm"} marginBottom={2}>
+                <Heading size={"sm"} mb={2}>
                   Headers
                 </Heading>
                 {messageData.headers != undefined &&
@@ -76,12 +76,15 @@ function MsgModal(props: { content: any }) {
                 )}
               </Box>
               <Box>
-                <Heading size={"sm"} marginBottom={2}>
+                <Heading size={"sm"} mb={2}>
                   Payload
                 </Heading>
                 <Text fontSize={"md"}>{messageData.payload}</Text>
               </Box>
-              <MsgDeleteModal content={props.content} />
+              <>
+                <MsgCopyModal content={props.content} />
+                <MsgDeleteModal content={props.content} />
+              </>
             </Stack>
           </ModalBody>
           <ModalFooter>

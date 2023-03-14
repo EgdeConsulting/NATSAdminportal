@@ -26,7 +26,7 @@ function MsgDeleteForm(props: {
           </Text>
         </FormLabel>
 
-        <FormHelperText marginTop={5}>
+        <FormHelperText mt={5}>
           Optionally erasing the content of the message.
         </FormHelperText>
         <Checkbox
@@ -34,7 +34,7 @@ function MsgDeleteForm(props: {
           onChange={() =>
             props.setErase ? (props.erase ? false : true) : null
           }
-          marginTop={2}
+          mt={2}
         >
           Erase Message
         </Checkbox>
