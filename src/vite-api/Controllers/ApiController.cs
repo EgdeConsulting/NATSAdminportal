@@ -42,14 +42,14 @@ public class ApiController : ControllerBase
     {
         try
         {
-            _publisher.SendNewMessage(msg); 
+            _publisher.SendNewMessage(msg);
             return Ok();
         }
         catch
         {
             return BadRequest();
         }
-
+    }
     [HttpDelete("deleteMessage")]
     public async Task<IActionResult> DeleteMessage([FromQuery] string streamName, [FromQuery] ulong sequenceNumber, [FromQuery] bool erase)
     {
