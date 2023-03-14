@@ -1,5 +1,6 @@
 using System.Text.Json.Nodes;
 using Microsoft.AspNetCore.Mvc;
+using NATS.Client;
 using vite_api.Classes;
 using vite_api.Dto;
 
@@ -35,30 +36,20 @@ public class ApiController : ControllerBase
         var res = _subscriberManager.GetSpecificMessage(streamName, sequenceNumber);
         return Ok(res);
     }
-
     [HttpPost("publishFullMessage")]
-    public async Task PublishFullMessage()
+    public IActionResult PublishFullMessage([FromBody] PublishMessageDto msg)
     {
-        string content = "";
-        using (StreamReader stream = new StreamReader(Request.Body))
+        try
         {
-            content = await stream.ReadToEndAsync();
+            _publisher.SendNewMessage(msg); 
+            return Ok();
         }
-
-        var jsonObject = JsonNode.Parse(content);
-
-        if (jsonObject != null && jsonObject["payload"] != null)
+        catch
         {
-            var payload = jsonObject["payload"];
-            var subject = jsonObject["subject"];
-            var headers = jsonObject["headers"];
-
-            if (payload != null && !string.IsNullOrWhiteSpace(payload.ToString()))
-                _publisher.SendNewMessage(payload.ToString(), headers!.ToString(), subject!.ToString());
+            return BadRequest();
         }
-    #warning Post but no return info about created resource?
     }
-    
+
     [HttpDelete("deleteMessage")]
     public async Task<IActionResult> DeleteMessage([FromQuery] string streamName, [FromQuery] ulong sequenceNumber, [FromQuery] bool erase)
     {
