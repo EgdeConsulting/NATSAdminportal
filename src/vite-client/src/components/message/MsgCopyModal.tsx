@@ -24,8 +24,19 @@ function MsgCopyModal(props: { content: any }) {
 
   const subjectInputRef = useRef<any>(null);
   const [buttonDisable, toggleButtonDisable] = useState<boolean>(true);
+
   function copyMessage() {
-    console.log("Messaged copied");
+    //Should the user be allowed to copy a message onto the same subject it orignated from?
+    const queryString =
+      "streamName=" +
+      props.content["stream"] +
+      "&sequenceNumber=" +
+      props.content["sequenceNumber"] +
+      "&newSubject=" +
+      subjectInputRef.current.value;
+    fetch("/api/copyMessage?" + queryString, {
+      method: "POST",
+    });
   }
 
   return (
