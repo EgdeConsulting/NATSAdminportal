@@ -3,7 +3,7 @@ import { LegacyRef, useEffect, useState } from "react";
 
 function SubjectDropDown(props: {
   subjectInputRef: LegacyRef<HTMLSelectElement>;
-  checkInputs: () => void;
+  validateAllInputs: () => void;
 }) {
   const [subjects, setSubjects] = useState<[]>([]);
 
@@ -11,7 +11,7 @@ function SubjectDropDown(props: {
     fetch("/api/subjectNames")
       .then((res) => res.json())
       .then((data) => {
-        setSubjects(data); //Should consider removing stars from subjects?
+        setSubjects(data);
       });
   }
 
@@ -24,7 +24,7 @@ function SubjectDropDown(props: {
       ref={props.subjectInputRef}
       placeholder="Select a subject"
       onChange={() => {
-        props.checkInputs();
+        props.validateAllInputs();
       }}
     >
       {subjects.map((subject: any, index: number) => {
