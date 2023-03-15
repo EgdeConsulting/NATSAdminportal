@@ -1,4 +1,13 @@
-import { Card, CardBody, Text, HStack, Button, VStack } from "@chakra-ui/react";
+import {
+  Card,
+  CardBody,
+  Text,
+  HStack,
+  Button,
+  VStack,
+  Flex,
+  Spacer,
+} from "@chakra-ui/react";
 import { useContext, useState } from "react";
 import {
   MsgView,
@@ -43,30 +52,33 @@ function HomePage() {
   return (
     <MsgContextProvider>
       <MsgViewContextProvider>
-        <HStack align={"stretch"} paddingTop={2}>
-          <Card variant={"outline"} width={"1115px"}>
-            <CardBody>
-              <HStack>
-                <Card border={"none"}>
-                  <CardBody marginTop={5}>
-                    <Button onClick={manageAllMessagesInterval}>
-                      {buttonText}
-                    </Button>
-                  </CardBody>
-                </Card>
-                <Card border={"none"}>
-                  <CardBody marginTop={5}>
-                    <MsgPublishModal />
-                  </CardBody>
-                </Card>
-              </HStack>
-              <MsgTable messages={allMessages} />
-            </CardBody>
-          </Card>
-          <VStack>
-            <MsgView />
-            <SubjectSidebar />
-          </VStack>
+        <HStack w={"100%"} align={"stretch"} pt={2}>
+          <Flex w={"100%"}>
+            <Card variant={"outline"} w={"75%"} mr={2}>
+              <CardBody>
+                <HStack>
+                  <Card border={"none"}>
+                    <CardBody mt={5}>
+                      <Button onClick={manageAllMessagesInterval}>
+                        {buttonText}
+                      </Button>
+                    </CardBody>
+                  </Card>
+                  <Card border={"none"}>
+                    <CardBody mt={5}>
+                      <MsgPublishModal />
+                    </CardBody>
+                  </Card>
+                </HStack>
+                <MsgTable messages={allMessages} />
+              </CardBody>
+            </Card>
+            <Spacer />
+            <VStack w={"25%"} h={"100%"} mr={2}>
+              <MsgView />
+              <SubjectSidebar />
+            </VStack>
+          </Flex>
         </HStack>
       </MsgViewContextProvider>
     </MsgContextProvider>

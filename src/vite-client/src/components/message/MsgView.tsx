@@ -5,11 +5,16 @@ import {
   Heading,
   Box,
   Stack,
+  Flex,
   StackDivider,
   Text,
+  Spacer,
+  HStack,
+  VStack,
 } from "@chakra-ui/react";
 import { useContext, useEffect, useState } from "react";
 import { MsgDeleteModal, MsgContext, MsgViewContext } from "components";
+import { CloseIcon } from "@chakra-ui/icons";
 
 function MsgView() {
   const [messageData, setMessageData] = useState<any>([]);
@@ -32,50 +37,58 @@ function MsgView() {
 
   useEffect(() => {
     getMessageData();
-  });
+  }, [currentMsgContext]);
 
   return (
-    <Stack divider={<StackDivider />} spacing={4}>
+    <Stack w={"100%"} spacing={4}>
       {viewContext.isVisiable && (
         <Card variant={"outline"} h={"100%"} w={"100%"}>
           <CardHeader>
-            <Heading size={"md"}>Message Details</Heading>
+            <Flex>
+              <Heading size={"md"}>Message Details</Heading>
+              <Spacer />
+              <HStack mt={-15} mr={-2}>
+                <MsgDeleteModal />
+                <Button
+                  variant="ghost"
+                  w={"25px"}
+                  mb={2}
+                  mr={3}
+                  onClick={() => {
+                    changeVisibility(false);
+                  }}
+                >
+                  <CloseIcon />
+                </Button>
+              </HStack>
+            </Flex>
           </CardHeader>
-          <Box>
-            <Heading size={"sm"} marginBottom={2}>
-              Headers
-            </Heading>
-            {messageData &&
-            messageData.headers != undefined &&
-            Object.entries(messageData.headers).length != 0 ? (
-              Object.entries(messageData.headers).map(
-                ([key, value], index: number) => (
-                  <Text key={index} fontSize={"md"}>
-                    {key + " : " + value}
-                  </Text>
+          <VStack ml={5} mb={5} align={"flex-start"} spacing={6}>
+            <Box>
+              <Heading size={"sm"} marginBottom={2}>
+                Headers
+              </Heading>
+              {messageData &&
+              messageData.headers != undefined &&
+              Object.entries(messageData.headers).length != 0 ? (
+                Object.entries(messageData.headers).map(
+                  ([key, value], index: number) => (
+                    <Text key={index} fontSize={"md"}>
+                      {key + " : " + value}
+                    </Text>
+                  )
                 )
-              )
-            ) : (
-              <Text fontSize={"md"}>No Headers...</Text>
-            )}
-          </Box>
-          <Box>
-            <Heading size={"sm"} marginBottom={2}>
-              Payload
-            </Heading>
-            <Text fontSize={"md"}>{messageData.payload}</Text>
-          </Box>
-          <MsgDeleteModal />
-          <Button
-            variant="ghost"
-            mb={2}
-            mr={3}
-            onClick={() => {
-              changeVisibility(false);
-            }}
-          >
-            Close
-          </Button>
+              ) : (
+                <Text fontSize={"md"}>No Headers...</Text>
+              )}
+            </Box>
+            <Box>
+              <Heading size={"sm"} marginBottom={2}>
+                Payload
+              </Heading>
+              <Text fontSize={"md"}>{messageData.payload}</Text>
+            </Box>
+          </VStack>
         </Card>
       )}
     </Stack>
