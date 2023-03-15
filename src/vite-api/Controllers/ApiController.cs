@@ -1,5 +1,6 @@
 using System.Text.Json.Nodes;
 using Microsoft.AspNetCore.Mvc;
+using NATS.Client;
 using vite_api.Classes;
 using vite_api.Dto;
 
@@ -28,7 +29,7 @@ public class ApiController : ControllerBase
         var res = _streamManager.GetExtendedStreamInfo(streamName);
         return Ok(res);
     }
-    
+
     [HttpGet("messageData")]
     public IActionResult GetMessageData([FromQuery] string streamName, [FromQuery] ulong sequenceNumber)
     {
@@ -37,26 +38,32 @@ public class ApiController : ControllerBase
     }
 
     [HttpPost("publishFullMessage")]
-    public async Task PublishFullMessage()
+    public IActionResult PublishFullMessage([FromBody] PublishMessageDto msg)
     {
-        string content = "";
-        using (StreamReader stream = new StreamReader(Request.Body))
+        try
         {
-            content = await stream.ReadToEndAsync();
+            _publisher.SendNewMessage(msg);
+            return Ok();
         }
-
-        var jsonObject = JsonNode.Parse(content);
-
-        if (jsonObject != null && jsonObject["payload"] != null)
+        catch
         {
-            var payload = jsonObject["payload"];
-            var subject = jsonObject["subject"];
-            var headers = jsonObject["headers"];
-
-            if (payload != null && !string.IsNullOrWhiteSpace(payload.ToString()))
-                _publisher.SendNewMessage(payload.ToString(), headers!.ToString(), subject!.ToString());
+            return BadRequest();
         }
-    #warning Post but no return info about created resource?
+    }
+
+    [HttpPost("copyMessage")]
+    public IActionResult CopyMessage([FromQuery] string streamName, [FromQuery] ulong sequenceNumber, [FromQuery] string newSubject)
+    {
+        try
+        {
+            var msg = _subscriberManager.GetSpecificMessage(streamName, sequenceNumber);
+            _publisher.CopyMessage(msg!, newSubject);
+            return Ok();
+        }
+        catch
+        {
+            return BadRequest();
+        }
     }
     
     [HttpDelete("deleteMessage")]
@@ -65,7 +72,7 @@ public class ApiController : ControllerBase
         var res = _streamManager.DeleteMessage(streamName, sequenceNumber, erase);
         return Ok(res);
     }
-    
+
     // #warning Why post and not delete?
     // [HttpPost("deleteMessage")]
     // public async Task<IActionResult> DeleteMessage()
@@ -89,8 +96,8 @@ public class ApiController : ControllerBase
     //
     //     return Ok();
     // }
-    
-    #warning This endpoint exists solely to allow for swapping between change dummy user accounts
+
+#warning This endpoint exists solely to allow for swapping between change dummy user accounts
     [HttpPost("updateUserAccount")]
     public IActionResult UpdateUserAccount([FromQuery] string username)
     {
@@ -105,7 +112,7 @@ public class ApiController : ControllerBase
         }
     }
 
-    #warning Which stream do we get it for? There's absolutely no parameters here?
+#warning Which stream do we get it for? There's absolutely no parameters here?
     [HttpGet("streamBasicInfo")]
     public IActionResult GetBasicStreamInfo()
     {
@@ -113,7 +120,7 @@ public class ApiController : ControllerBase
         return Ok(res);
     }
 
-    #warning Get which subject hierarchy? On what stream? No parameters.
+#warning Get which subject hierarchy? On what stream? No parameters.
     [HttpGet("subjectHierarchy")]
     public IActionResult GetSubjectHierarch()
     {
@@ -132,7 +139,7 @@ public class ApiController : ControllerBase
     [HttpGet("subjectNames")]
     public IActionResult GetSubjectNames()
     {
-        #warning Get subject names for what stream?
+#warning Get subject names for what stream?
         var res = _subjectManager.GetSubjectNames();
         return Ok(res);
     }
@@ -140,7 +147,7 @@ public class ApiController : ControllerBase
     [HttpGet("messages")]
     public IActionResult GetMessages()
     {
-        #warning Get what messages? No parameters so no stream defined
+#warning Get what messages? No parameters so no stream defined
         var res = _subscriberManager.GetAllMessages();
         return Ok(res);
     }

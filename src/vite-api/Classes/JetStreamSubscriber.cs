@@ -24,9 +24,10 @@ namespace vite_api.Classes
             _subjects = subjects;
         }
 
-        /// <summary>
-        /// Starts the subscribers so that is fetches all previous, current and future messages on a stream. 
-        /// </summary>
+        // /// <summary>
+        // /// Starts the subscribers so that is fetches all previous, current and future messages on a stream. 
+        // /// </summary>
+        // /// 
         // public void Run()
         // {
         //     Options opts = ConnectionFactory.GetDefaultOptions();
@@ -63,7 +64,7 @@ namespace vite_api.Classes
             {
                 var js = c.CreateJetStreamContext();
                 var pullOptions = PullSubscribeOptions.Builder().WithStream(StreamName).Build();
-                
+
                 foreach (var subject in _subjects)
                 {
                     var sub = js.PullSubscribe(subject, pullOptions);
@@ -81,15 +82,17 @@ namespace vite_api.Classes
         public MessageDataDto GetMessageData(ulong sequenceNumber)
         {
             var msg = ReceiveJetStreamPullSubscribe().First(x => x.MetaData.StreamSequence == sequenceNumber);
+
             return new MessageDataDto()
             {
                 Headers = msg.Header.Cast<string>().ToDictionary(k => k, v => msg.Header[v]),
-                Payload = GetData(msg.Data)
+                Payload = GetData(msg.Data),
+                Subject = msg.Subject
             };
-            
+
             static string GetData(byte[] data)
             {
-                return data.All(x => char.IsAscii((char) x)) ? Encoding.ASCII.GetString(data) : Convert.ToBase64String(data);
+                return data.All(x => char.IsAscii((char)x)) ? Encoding.ASCII.GetString(data) : Convert.ToBase64String(data);
             }
         }
 
