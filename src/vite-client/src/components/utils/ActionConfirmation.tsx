@@ -11,8 +11,6 @@ import { Dispatch, SetStateAction, useRef } from "react";
 
 function ActionConfirmation(props: {
   action: any;
-  buttonText: string;
-  alertHeader: string;
   isOpen: boolean;
   onClose: () => void;
 }) {
@@ -28,7 +26,7 @@ function ActionConfirmation(props: {
       <AlertDialogOverlay>
         <AlertDialogContent>
           <AlertDialogHeader fontSize="lg" fontWeight="bold">
-            {props.alertHeader}
+            Action Confirmation
           </AlertDialogHeader>
 
           <AlertDialogBody>
@@ -44,7 +42,7 @@ function ActionConfirmation(props: {
                 props.action();
               }}
             >
-              {props.buttonText}
+              Confirm
             </Button>
             <Button
               ref={cancelRef}

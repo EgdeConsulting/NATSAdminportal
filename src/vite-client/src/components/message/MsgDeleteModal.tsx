@@ -69,8 +69,6 @@ function MsgDeleteModal(props: { content: any }) {
                 onClose();
                 onCloseAC();
               }}
-              buttonText={"Delete"}
-              alertHeader={"Delete Message"}
             />
           </ModalFooter>
         </ModalContent>

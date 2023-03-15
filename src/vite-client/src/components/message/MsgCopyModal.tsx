@@ -82,8 +82,6 @@ function MsgCopyModal(props: { content: any }) {
                 onClose();
                 onCloseAC();
               }}
-              buttonText={"Copy"}
-              alertHeader={"Copy message"}
             />
           </ModalFooter>
         </ModalContent>
