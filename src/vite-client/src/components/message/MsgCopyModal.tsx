@@ -11,39 +11,40 @@ import {
   ModalOverlay,
   useDisclosure,
 } from "@chakra-ui/react";
-import { ActionConfirmation, MsgCopyForm } from "components";
-import { useRef, useState } from "react";
+import { ActionConfirmation, MsgCopyForm, MsgContext } from "components";
+import { useContext, useRef, useState } from "react";
 
-function MsgCopyModal(props: { content: any }) {
+function MsgCopyModal() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
     isOpen: isOpenAC,
     onOpen: onOpenAC,
     onClose: onCloseAC,
   } = useDisclosure();
-
   const subjectInputRef = useRef<any>(null);
   const [buttonDisable, toggleButtonDisable] = useState<boolean>(true);
+  const currentMsgContext = useContext(MsgContext);
 
   function copyMessage() {
-    const queryString =
-      "streamName=" +
-      props.content["stream"] +
-      "&sequenceNumber=" +
-      props.content["sequenceNumber"] +
-      "&newSubject=" +
-      subjectInputRef.current.value;
-    fetch("/api/copyMessage?" + queryString, {
-      method: "POST",
-    });
+    const msg = currentMsgContext?.currentMsg;
+    if (msg) {
+      const queryString =
+        "streamName=" +
+        msg.stream +
+        "&sequenceNumber=" +
+        msg.sequenceNumber +
+        "&newSubject=" +
+        subjectInputRef.current.value;
+      fetch("/api/copyMessage?" + queryString, {
+        method: "POST",
+      });
+    }
   }
 
   return (
     <>
       <IconButton
-        mt={2}
-        mr={2}
-        ml={2}
+        mt={0.4}
         size={"md"}
         aria-label="Copy a message"
         onClick={() => {
@@ -54,7 +55,7 @@ function MsgCopyModal(props: { content: any }) {
       />
       <Modal isOpen={isOpen} onClose={onClose} isCentered={true}>
         <ModalOverlay />
-        <ModalContent>
+        <ModalContent maxW={"600px"}>
           <ModalHeader>Copy message</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
