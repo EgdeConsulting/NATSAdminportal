@@ -24,7 +24,9 @@ function StreamModal(props: { content: string }) {
     const queryString = "streamName=" + name;
     fetch("/api/streamData?" + queryString)
       .then((res) => res.json())
-      .then((data) => {
+      .then((rawData) => {
+        // JSON-server returns an JSON-array, whilest .NET-api returns a single JSON-object.
+        let data = rawData instanceof Array ? rawData[0] : rawData;
         setStreamData(data);
       });
   }
