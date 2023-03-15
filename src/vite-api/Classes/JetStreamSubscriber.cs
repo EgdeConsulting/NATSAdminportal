@@ -52,6 +52,11 @@ namespace vite_api.Classes
             var currentMessages = new List<Msg>();
             var opts = ConnectionFactory.GetDefaultOptions();
             opts.Url = _url;
+            
+            // The default handlers write a newline for each event, pretty annoying.
+            opts.ClosedEventHandler += (sender, args) => { };
+            opts.DisconnectedEventHandler += (sender, args) => { };
+            
             if (_creds != null)
                 opts.SetUserCredentials(_creds);
 

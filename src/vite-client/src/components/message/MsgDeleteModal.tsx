@@ -11,10 +11,11 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { DeleteIcon } from "@chakra-ui/icons";
-import { MsgDeleteForm, ActionConfirmation } from "components";
-import { useState } from "react";
+import { MsgDeleteForm, MsgContext, ActionConfirmation } from "components";
+import { useContext, useState } from "react";
 
-function MsgDeleteModal(props: { content: any }) {
+function MsgDeleteModal() {
+  const [buttonDisable, toggleButtonDisable] = useState<boolean>(true);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
     isOpen: isOpenAC,
@@ -22,18 +23,22 @@ function MsgDeleteModal(props: { content: any }) {
     onClose: onCloseAC,
   } = useDisclosure();
   const [erase, setErase] = useState(true);
+  const currentMsgContext = useContext(MsgContext);
 
   function deleteMessage() {
-    const queryString =
-      "streamName=" +
-      props.content["stream"] +
-      "&sequenceNumber=" +
-      props.content["sequenceNumber"] +
-      "&erase=" +
-      erase;
-    fetch("/api/deleteMessage?" + queryString, {
-      method: "DELETE",
-    });
+    const msg = currentMsgContext?.currentMsg;
+    if (msg) {
+      const queryString =
+        "streamName=" +
+        msg.stream +
+        "&sequenceNumber=" +
+        msg.sequenceNumber +
+        "&erase=" +
+        erase;
+      fetch("/api/deleteMessage?" + queryString, {
+        method: "DELETE",
+      });
+    }
   }
 
   return (
@@ -52,11 +57,7 @@ function MsgDeleteModal(props: { content: any }) {
           <ModalHeader>Delete message</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <MsgDeleteForm
-              content={props.content}
-              erase={erase}
-              setErase={setErase}
-            />
+            <MsgDeleteForm erase={erase} setErase={setErase} />
           </ModalBody>
           <ModalFooter>
             <Button onClick={onOpenAC} mr={2} colorScheme="red">
