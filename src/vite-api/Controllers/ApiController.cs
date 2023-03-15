@@ -50,6 +50,7 @@ public class ApiController : ControllerBase
             return BadRequest();
         }
     }
+
     [HttpPost("copyMessage")]
     public IActionResult CopyMessage([FromQuery] string streamName, [FromQuery] ulong sequenceNumber, [FromQuery] string newSubject)
     {
@@ -64,7 +65,7 @@ public class ApiController : ControllerBase
             return BadRequest();
         }
     }
-
+    
     [HttpDelete("deleteMessage")]
     public async Task<IActionResult> DeleteMessage([FromQuery] string streamName, [FromQuery] ulong sequenceNumber, [FromQuery] bool erase)
     {
