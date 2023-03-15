@@ -20,9 +20,9 @@ function StreamModal(props: { content: string }) {
   const { isOpen, onToggle, onClose } = useDisclosure();
   const [streamData, setStreamData] = useState<any>([]);
 
-  function sendStreamName(name: string) {
+  function getStreamData(name: string) {
     const queryString = "streamName=" + name;
-    fetch("/api/streamName?" + queryString)
+    fetch("/api/streamData?" + queryString)
       .then((res) => res.json())
       .then((data) => {
         setStreamData(data);
@@ -30,7 +30,7 @@ function StreamModal(props: { content: string }) {
   }
 
   useEffect(() => {
-    sendStreamName(props.content);
+    getStreamData(props.content);
   }, [isOpen]);
 
   return (

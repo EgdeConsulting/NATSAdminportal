@@ -1,0 +1,14 @@
+{
+  "/api/newSubject": "/apinewSubject",
+  "/api/newSubject/:id": "/apinewSubject/:id",
+  "/api/subjectNames": "/apisubjectNames",
+  "/api/subjectNames/:id": "/apisubjectNames/:id",
+  "/api/subjectHierarchy": "/apisubjectHierarchy",
+  "/api/subjectHierarchy/:id": "/apisubjectHierarchy/:id",
+  "/api/streams": "/apistreams",
+  "/api/streams/:id": "/apistreams/:id",
+  "/api/messages": "/apimessages",
+  "/api/messages/:id": "/apimessages/:id",
+  "/api/streamData": "/apistreamData",
+  "/api/streamData?streamName=stream1": "/apistreamData?streamName=stream1"
+}

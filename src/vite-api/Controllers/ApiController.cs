@@ -22,13 +22,13 @@ public class ApiController : ControllerBase
         _subscriberManager = subscriberManager;
     }
 
-    [HttpGet("streamName")]
-    public IActionResult GetStreamName([FromQuery] string streamName)
+    [HttpGet("streamData")]
+    public IActionResult GetStreamData([FromQuery] string streamName)
     {
         var res = _streamManager.GetExtendedStreamInfo(streamName);
         return Ok(res);
     }
-    
+
     [HttpGet("messageData")]
     public IActionResult GetMessageData([FromQuery] string streamName, [FromQuery] ulong sequenceNumber)
     {
@@ -56,16 +56,16 @@ public class ApiController : ControllerBase
             if (payload != null && !string.IsNullOrWhiteSpace(payload.ToString()))
                 _publisher.SendNewMessage(payload.ToString(), headers!.ToString(), subject!.ToString());
         }
-    #warning Post but no return info about created resource?
+#warning Post but no return info about created resource?
     }
-    
+
     [HttpDelete("deleteMessage")]
     public async Task<IActionResult> DeleteMessage([FromQuery] string streamName, [FromQuery] ulong sequenceNumber, [FromQuery] bool erase)
     {
         var res = _streamManager.DeleteMessage(streamName, sequenceNumber, erase);
         return Ok(res);
     }
-    
+
     // #warning Why post and not delete?
     // [HttpPost("deleteMessage")]
     // public async Task<IActionResult> DeleteMessage()
@@ -89,8 +89,8 @@ public class ApiController : ControllerBase
     //
     //     return Ok();
     // }
-    
-    #warning This endpoint exists solely to allow for swapping between change dummy user accounts
+
+#warning This endpoint exists solely to allow for swapping between change dummy user accounts
     [HttpPost("updateUserAccount")]
     public IActionResult UpdateUserAccount([FromQuery] string username)
     {
@@ -105,15 +105,15 @@ public class ApiController : ControllerBase
         }
     }
 
-    #warning Which stream do we get it for? There's absolutely no parameters here?
-    [HttpGet("streamBasicInfo")]
-    public IActionResult GetBasicStreamInfo()
+#warning Which stream do we get it for? There's absolutely no parameters here?
+    [HttpGet("streams")]
+    public IActionResult GetStreams()
     {
         var res = _streamManager.GetBasicStreamInfo();
         return Ok(res);
     }
 
-    #warning Get which subject hierarchy? On what stream? No parameters.
+#warning Get which subject hierarchy? On what stream? No parameters.
     [HttpGet("subjectHierarchy")]
     public IActionResult GetSubjectHierarch()
     {
@@ -132,7 +132,7 @@ public class ApiController : ControllerBase
     [HttpGet("subjectNames")]
     public IActionResult GetSubjectNames()
     {
-        #warning Get subject names for what stream?
+#warning Get subject names for what stream?
         var res = _subjectManager.GetSubjectNames();
         return Ok(res);
     }
@@ -140,7 +140,7 @@ public class ApiController : ControllerBase
     [HttpGet("messages")]
     public IActionResult GetMessages()
     {
-        #warning Get what messages? No parameters so no stream defined
+#warning Get what messages? No parameters so no stream defined
         var res = _subscriberManager.GetAllMessages();
         return Ok(res);
     }

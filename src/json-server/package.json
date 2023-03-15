@@ -4,7 +4,8 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "api": "json-server ./data/data.json --routes ./data/routes.json --no-cors=false"
   },
   "keywords": [],
   "author": "",
