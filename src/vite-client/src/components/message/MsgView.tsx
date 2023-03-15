@@ -71,13 +71,12 @@ function MsgView() {
               {messageData &&
               messageData.headers != undefined &&
               Object.entries(messageData.headers).length != 0 ? (
-                Object.entries(messageData.headers).map(
-                  ([key, value], index: number) => (
-                    <Text key={index} fontSize={"md"}>
-                      {key + " : " + value}
-                    </Text>
-                  )
-                )
+                messageData.headers.map((headerPair: any, index: number) => (
+                  //Snakk me gunther imåro...
+                  <Text key={index} fontSize={"md"}>
+                    {headerPair.name + " : " + headerPair.value}
+                  </Text>
+                ))
               ) : (
                 <Text fontSize={"md"}>No Headers...</Text>
               )}
