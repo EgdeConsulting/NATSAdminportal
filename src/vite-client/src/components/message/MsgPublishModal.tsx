@@ -39,7 +39,7 @@ function MsgPublishModal() {
       },
       body: JSON.stringify({
         Subject: subjectInputRef.current.value,
-        Headers: headerList, //datatype?!??!?!?
+        Headers: headerList,
         Payload: payloadInputRef.current.value,
       }),
     }).then((res) => {

@@ -50,6 +50,22 @@ public class ApiController : ControllerBase
             return BadRequest();
         }
     }
+
+    [HttpPost("copyMessage")]
+    public IActionResult CopyMessage([FromQuery] string streamName, [FromQuery] ulong sequenceNumber, [FromQuery] string newSubject)
+    {
+        try
+        {
+            var msg = _subscriberManager.GetSpecificMessage(streamName, sequenceNumber);
+            _publisher.CopyMessage(msg!, newSubject);
+            return Ok();
+        }
+        catch
+        {
+            return BadRequest();
+        }
+    }
+    
     [HttpDelete("deleteMessage")]
     public async Task<IActionResult> DeleteMessage([FromQuery] string streamName, [FromQuery] ulong sequenceNumber, [FromQuery] bool erase)
     {

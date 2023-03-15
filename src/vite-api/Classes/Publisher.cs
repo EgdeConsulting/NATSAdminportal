@@ -60,6 +60,33 @@ namespace vite_api.Classes
             c.Flush();
         }
         
+        public void CopyMessage(MessageDataDto message, string newSubject)
+        {
+            logger.LogInformation("{} > {} copied message (old subject, new subject, sequence number): {}, {}, {}", 
+                DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), UserAccount.Name ,message.Subject, newSubject, 1);
+
+            Options opts = ConnectionFactory.GetDefaultOptions();
+            opts.Url = appConfig.Value.NatsServerUrl ?? Defaults.Url;
+            if (creds != null)
+            {
+                opts.SetUserCredentials(creds);
+            }
+
+            MsgHeader msgHeader = new();
+            foreach (var headerPair in message.Headers)
+            {
+                msgHeader.Add(headerPair.Key, headerPair.Value);
+            }
+            using IConnection c = new ConnectionFactory().CreateConnection(opts);
+           
+            Msg msg = new Msg(newSubject, msgHeader, Encoding.UTF8.GetBytes(message.Payload!));
+            for (int i = 0; i < count; i++)
+            {
+                c.Publish(msg);
+            }
+            c.Flush();
+        }
+
 
         // private void printStats(IConnection c)
         // {
