@@ -114,8 +114,6 @@ function MsgPublishModal() {
                 onCloseAC();
               }}
               isOpen={isOpenAC}
-              buttonText={"Publish"}
-              alertHeader={"Publish Message"}
             />
           </ModalFooter>
         </ModalContent>
