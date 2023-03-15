@@ -5,7 +5,7 @@ import { useState } from "react";
 import { NavItem } from "components";
 
 function Sidebar() {
-  const { colorMode, toggleColorMode } = useColorMode();
+  const { colorMode } = useColorMode();
   const [navSize, changeNavSize] = useState(200);
   const [size, setSize] = useState(50);
 
@@ -21,7 +21,7 @@ function Sidebar() {
       borderRight={"1px solid"}
       borderColor={colorMode === "dark" ? "whiteAlpha.300" : "gray.200"}
     >
-      <Card h={"100%"} border={"none"}>
+      <Card h={"93.7vh"} border={"none"}>
         <Box h="40px" p="2">
           <IconButton
             width={"100%"}

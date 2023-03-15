@@ -6,14 +6,18 @@ import {
   Box,
   Stack,
   Flex,
-  StackDivider,
   Text,
   Spacer,
   HStack,
   VStack,
 } from "@chakra-ui/react";
 import { useContext, useEffect, useState } from "react";
-import { MsgDeleteModal, MsgContext, MsgViewContext } from "components";
+import {
+  MsgDeleteModal,
+  MsgContext,
+  MsgViewContext,
+  MsgCopyModal,
+} from "components";
 import { CloseIcon } from "@chakra-ui/icons";
 
 function MsgView() {
@@ -42,18 +46,17 @@ function MsgView() {
   return (
     <Stack w={"100%"} spacing={4}>
       {viewContext.isVisiable && (
-        <Card variant={"outline"} h={"100%"} w={"100%"}>
+        <Card variant={"outline"} h={"100%"} w={"100%"} mb={2}>
           <CardHeader>
             <Flex>
               <Heading size={"md"}>Message Details</Heading>
               <Spacer />
-              <HStack mt={-15} mr={-2}>
+              <HStack mt={-2} mr={-2}>
+                <MsgCopyModal />
                 <MsgDeleteModal />
                 <Button
                   variant="ghost"
                   w={"25px"}
-                  mb={2}
-                  mr={3}
                   onClick={() => {
                     changeVisibility(false);
                   }}
