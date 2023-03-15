@@ -48,7 +48,7 @@ function MsgDeleteModal(props: { content: any }) {
 
       <Modal isOpen={isOpen} onClose={onClose} isCentered={true}>
         <ModalOverlay />
-        <ModalContent maxWidth={"600px"}>
+        <ModalContent maxW={"600px"}>
           <ModalHeader>Delete message</ModalHeader>
           <ModalCloseButton />
           <ModalBody>

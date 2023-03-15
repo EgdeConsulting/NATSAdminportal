@@ -26,7 +26,6 @@ function MsgCopyModal(props: { content: any }) {
   const [buttonDisable, toggleButtonDisable] = useState<boolean>(true);
 
   function copyMessage() {
-    //Should the user be allowed to copy a message onto the same subject it orignated from?
     const queryString =
       "streamName=" +
       props.content["stream"] +
