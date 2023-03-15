@@ -1,4 +1,4 @@
-import { createContext } from "react";
+import { createContext, useState } from "react";
 
 export interface IMsg {
   sequenceNumber: string;
@@ -18,4 +18,19 @@ const DefaultMsgState = {
 
 const MsgContext = createContext<MsgContextType>(DefaultMsgState);
 
-export { DefaultMsgState, MsgContext };
+function MsgContextProvider(props: { children: JSX.Element | JSX.Element[] }) {
+  const [currentMsg, setCurrentMsg] = useState<IMsg>(
+    DefaultMsgState.currentMsg
+  );
+  function changeCurrentMsg(newMsg: IMsg) {
+    setCurrentMsg(newMsg);
+  }
+
+  return (
+    <MsgContext.Provider value={{ currentMsg, changeCurrentMsg }}>
+      {props.children}
+    </MsgContext.Provider>
+  );
+}
+
+export { DefaultMsgState, MsgContext, MsgContextProvider };

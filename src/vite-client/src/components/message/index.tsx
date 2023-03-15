@@ -5,6 +5,5 @@ export * from "./MsgView";
 export * from "./MsgDeleteForm";
 export * from "./MsgDeleteModal";
 export * from "./MsgContext";
-export * from "./MsgContextProvider";
 export * from "./MsgViewButton";
 export * from "./MsgViewContext";
