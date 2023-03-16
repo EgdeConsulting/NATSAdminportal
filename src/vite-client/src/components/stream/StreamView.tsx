@@ -27,7 +27,8 @@ function StreamView() {
       const queryString = "streamName=" + stream.name;
       fetch("/api/streamName?" + queryString)
         .then((res) => res.json())
-        .then((data) => {
+        .then((rawData) => {
+          let data = rawData instanceof Array ? rawData[0] : rawData;
           setStreamData(data);
         });
     }

@@ -6,5 +6,5 @@
   "/streams": "/apistreams",
   "/messages": "/apimessages",
   "/messageData\\?streamName=:name&sequenceNumber=:sequenceNumber": "/apimessages?name=:name&sequenceNumber=:sequenceNumber",
-  "/streamData\\?streamName=:name": "/apistreams?name=:name"
+  "/streamName\\?streamName=:name": "/apistreams?name=:name"
 }
