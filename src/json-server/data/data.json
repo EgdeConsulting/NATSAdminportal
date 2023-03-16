@@ -132,7 +132,9 @@
       "timestamp": "2023-03-02T14:11:45.7036823Z",
       "stream": "stream1",
       "subject": "subject.A.*",
-      "headers": ["header1.1", "header1.2", "header1.3"],
+      "headers": [{"name": "headerName1", "value": "headerValue1"},
+                  {"name": "headerName2", "value": "headerValue2"},
+                  {"name": "headerName3", "value": "headerValue3"}],
       "payload": "payload1.2"
     },
     {
@@ -140,7 +142,9 @@
       "timestamp": "2023-03-01T10:32:11.5906588Z",
       "stream": "stream1",
       "subject": "subject.A.*",
-      "headers": ["header1.1", "header1.2", "header1.3"],
+      "headers": [{"name": "headerName1", "value": "headerValue1"},
+                  {"name": "headerName2", "value": "headerValue2"},
+                  {"name": "headerName3", "value": "headerValue3"}],
       "payload": "payload1.3"
     },
     {
@@ -148,7 +152,9 @@
       "timestamp": "2023-02-24T13:05:30.9394227Z",
       "stream": "stream2",
       "subject": "subject.B.*",
-      "headers": ["header2.1", "header2.2", "header2.3"],
+      "headers": [{"name": "headerName1", "value": "headerValue1"},
+                  {"name": "headerName2", "value": "headerValue2"},
+                  {"name": "headerName3", "value": "headerValue3"}],
       "payload": "payload2.1"
     },
     {
@@ -156,7 +162,9 @@
       "timestamp": "2023-02-24T12:54:12.307516Z",
       "stream": "stream2",
       "subject": "subject.B.*",
-      "headers": ["header2.1", "header2.2", "header2.3"],
+      "headers": [{"name": "headerName1", "value": "headerValue1"},
+                  {"name": "headerName2", "value": "headerValue2"},
+                  {"name": "headerName3", "value": "headerValue3"}],
       "payload": "payload2.2"
     },
     {
@@ -164,7 +172,9 @@
       "timestamp": "2023-02-24T12:17:09.8729091Z",
       "stream": "stream2",
       "subject": "subject.B.*",
-      "headers": ["header2.1", "header2.2", "header2.3"],
+      "headers": [{"name": "headerName1", "value": "headerValue1"},
+                  {"name": "headerName2", "value": "headerValue2"},
+                  {"name": "headerName3", "value": "headerValue3"}],
       "payload": "payload2.3"
     },
     {
@@ -172,7 +182,9 @@
       "timestamp": "2023-02-24T12:12:07.0348007Z",
       "stream": "stream3",
       "subject": "subject.C.1",
-      "headers": ["header3.1", "header3.2", "header3.3"],
+      "headers": [{"name": "headerName1", "value": "headerValue1"},
+                  {"name": "headerName2", "value": "headerValue2"},
+                  {"name": "headerName3", "value": "headerValue3"}],
       "payload": "payload3.1"
     },
     {
@@ -180,7 +192,9 @@
       "timestamp": "2023-02-24T11:31:37.1990285Z",
       "stream": "stream3",
       "subject": "subject.C.1",
-      "headers": ["header3.1", "header3.2", "header3.3"],
+      "headers": [{"name": "headerName1", "value": "headerValue1"},
+                  {"name": "headerName2", "value": "headerValue2"},
+                  {"name": "headerName3", "value": "headerValue3"}],
       "payload": "payload3.2"
     },
     {
@@ -188,7 +202,9 @@
       "timestamp": "2023-02-24T10:45:49.516257Z",
       "stream": "stream3",
       "subject": "subject.C.2",
-      "headers": ["header3.1", "header3.2", "header3.3"],
+      "headers": [{"name": "headerName1", "value": "headerValue1"},
+                  {"name": "headerName2", "value": "headerValue2"},
+                  {"name": "headerName3", "value": "headerValue3"}],
       "payload": "payload3.3"
     },
     {
@@ -196,7 +212,9 @@
       "timestamp": "2023-02-24T12:12:07.0348007Z",
       "stream": "stream4",
       "subject": "subject2.A.1",
-      "headers": ["header4.1", "header4.2", "header4.3"],
+      "headers": [{"name": "headerName1", "value": "headerValue1"},
+                  {"name": "headerName2", "value": "headerValue2"},
+                  {"name": "headerName3", "value": "headerValue3"}],
       "payload": "payload4.1"
     },
     {
@@ -204,7 +222,9 @@
       "timestamp": "2023-02-24T11:31:37.1990285Z",
       "stream": "stream4",
       "subject": "subject2.A.1",
-      "headers": ["header4.1", "header4.2", "header4.3"],
+      "headers": [{"name": "headerName1", "value": "headerValue1"},
+                  {"name": "headerName2", "value": "headerValue2"},
+                  {"name": "headerName3", "value": "headerValue3"}],
       "payload": "payload4.2"
     },
     {
@@ -212,7 +232,9 @@
       "timestamp": "2023-02-24T10:45:49.516257Z",
       "stream": "stream4",
       "subject": "subject2.A.1",
-      "headers": ["header4.1", "header4.2", "header4.3"],
+      "headers": [{"name": "headerName1", "value": "headerValue1"},
+                  {"name": "headerName2", "value": "headerValue2"},
+                  {"name": "headerName3", "value": "headerValue3"}],
       "payload": "payload4.3"
     },
     {
@@ -220,7 +242,9 @@
       "timestamp": "2023-02-24T12:12:07.0348007Z",
       "stream": "stream5",
       "subject": "subject.C.3",
-      "headers": ["header5.1", "header5.2", "header5.3"],
+      "headers": [{"name": "headerName1", "value": "headerValue1"},
+                  {"name": "headerName2", "value": "headerValue2"},
+                  {"name": "headerName3", "value": "headerValue3"}],
       "payload": "payload5.1"
     },
     {
@@ -228,7 +252,9 @@
       "timestamp": "2023-02-24T11:31:37.1990285Z",
       "stream": "stream5",
       "subject": "subject.C.3",
-      "headers": ["header5.1", "header5.2", "header5.3"],
+      "headers": [{"name": "headerName1", "value": "headerValue1"},
+                  {"name": "headerName2", "value": "headerValue2"},
+                  {"name": "headerName3", "value": "headerValue3"}],
       "payload": "payload5.2"
     },
     {
@@ -236,7 +262,9 @@
       "timestamp": "2023-02-24T10:45:49.516257Z",
       "stream": "stream5",
       "subject": "subject.C.3",
-      "headers": ["header5.1", "header5.2", "header5.3"],
+      "headers": [{"name": "headerName1", "value": "headerValue1"},
+                  {"name": "headerName2", "value": "headerValue2"},
+                  {"name": "headerName3", "value": "headerValue3"}],
       "payload": "payload5.3"
     },
     {
@@ -244,7 +272,9 @@
       "timestamp": "2023-02-24T12:12:07.0348007Z",
       "stream": "streamtest",
       "subject": "subject.A",
-      "headers": ["headertest1", "headertest2", "headertest3"],
+      "headers": [{"name": "headerName1", "value": "headerValue1"},
+                  {"name": "headerName2", "value": "headerValue2"},
+                  {"name": "headerName3", "value": "headerValue3"}],
       "payload": "payloadtest1"
     },
     {
@@ -252,7 +282,9 @@
       "timestamp": "2023-02-24T11:31:37.1990285Z",
       "stream": "streamtest",
       "subject": "subject.A",
-      "headers": ["headertest1", "headertest2", "headertest3"],
+      "headers": [{"name": "headerName1", "value": "headerValue1"},
+                  {"name": "headerName2", "value": "headerValue2"},
+                  {"name": "headerName3", "value": "headerValue3"}],
       "payload": "payloadtest2"
     },
     {
@@ -260,7 +292,9 @@
       "timestamp": "2023-02-24T10:45:49.516257Z",
       "stream": "streamtest",
       "subject": "subject.A",
-      "headers": ["headertest1", "headertest2", "headertest3"],
+      "headers": [{"name": "headerName1", "value": "headerValue1"},
+                  {"name": "headerName2", "value": "headerValue2"},
+                  {"name": "headerName3", "value": "headerValue3"}],
       "payload": "payloadtest3"
     }
   ]

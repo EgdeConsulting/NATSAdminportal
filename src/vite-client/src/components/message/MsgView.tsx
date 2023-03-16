@@ -33,7 +33,8 @@ function MsgView() {
         "streamName=" + msg.stream + "&sequenceNumber=" + msg.sequenceNumber;
       fetch("/api/specificMessage?" + queryString)
         .then((res) => res.json())
-        .then((data) => {
+        .then((rawData) => {
+          let data = rawData instanceof Array ? rawData[0] : rawData;
           setMessageData(data);
         });
     }
