@@ -24,9 +24,10 @@ namespace vite_api.Classes
             _subjects = subjects;
         }
 
-        /// <summary>
-        /// Starts the subscribers so that is fetches all previous, current and future messages on a stream. 
-        /// </summary>
+        // /// <summary>
+        // /// Starts the subscribers so that is fetches all previous, current and future messages on a stream. 
+        // /// </summary>
+        // /// 
         // public void Run()
         // {
         //     Options opts = ConnectionFactory.GetDefaultOptions();
@@ -51,6 +52,11 @@ namespace vite_api.Classes
             var currentMessages = new List<Msg>();
             var opts = ConnectionFactory.GetDefaultOptions();
             opts.Url = _url;
+            
+            // The default handlers write a newline for each event, pretty annoying.
+            opts.ClosedEventHandler += (sender, args) => { };
+            opts.DisconnectedEventHandler += (sender, args) => { };
+            
             if (_creds != null)
                 opts.SetUserCredentials(_creds);
 
@@ -58,7 +64,7 @@ namespace vite_api.Classes
             {
                 var js = c.CreateJetStreamContext();
                 var pullOptions = PullSubscribeOptions.Builder().WithStream(StreamName).Build();
-                
+
                 foreach (var subject in _subjects)
                 {
                     var sub = js.PullSubscribe(subject, pullOptions);
@@ -76,15 +82,29 @@ namespace vite_api.Classes
         public MessageDataDto GetMessageData(ulong sequenceNumber)
         {
             var msg = ReceiveJetStreamPullSubscribe().First(x => x.MetaData.StreamSequence == sequenceNumber);
-            return new MessageDataDto()
-            {
-                Headers = msg.Header.Cast<string>().ToDictionary(k => k, v => msg.Header[v]),
-                Payload = GetData(msg.Data)
-            };
+            
+                List<MessageHeaderDTO> msgHeaders = new();
+            
+                foreach (string headerName in msg.Header)
+                {
+                    msgHeaders.AddRange(msg.Header.GetValues(headerName).Select(headerValue => 
+                        new MessageHeaderDTO()
+                        {
+                            Name = headerName, 
+                            Value = headerValue
+                        }));
+                }
+                return new MessageDataDto()
+                {
+                    Headers = msgHeaders,
+                    Payload = GetData(msg.Data),
+                    Subject = msg.Subject
+                };
+
             
             static string GetData(byte[] data)
             {
-                return data.All(x => char.IsAscii((char) x)) ? Encoding.ASCII.GetString(data) : Convert.ToBase64String(data);
+                return data.All(x => char.IsAscii((char)x)) ? Encoding.ASCII.GetString(data) : Convert.ToBase64String(data);
             }
         }
 

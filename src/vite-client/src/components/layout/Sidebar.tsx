@@ -1,11 +1,11 @@
-import { IconButton, Box, VStack, useColorMode } from "@chakra-ui/react";
+import { IconButton, Card, Box, VStack, useColorMode } from "@chakra-ui/react";
 import { FiHome, FiSettings, FiArchive, FiLayers } from "react-icons/fi";
 import { HamburgerIcon } from "@chakra-ui/icons";
 import { useState } from "react";
 import { NavItem } from "components";
 
 function Sidebar() {
-  const { colorMode, toggleColorMode } = useColorMode();
+  const { colorMode } = useColorMode();
   const [navSize, changeNavSize] = useState(200);
   const [size, setSize] = useState(50);
 
@@ -16,31 +16,31 @@ function Sidebar() {
 
   return (
     <VStack
-      h="100vh"
       w={size + "px"}
       style={{ minWidth: size + "px", maxWidth: size + "px" }}
       borderRight={"1px solid"}
       borderColor={colorMode === "dark" ? "whiteAlpha.300" : "gray.200"}
     >
-      <Box w="100%" h="40px" p="2">
-        <IconButton
-          _hover={{
-            textDecor: "none",
-            backgroundColor:
-              colorMode === "dark" ? "whiteAlpha.300" : "gray.200",
-          }}
-          bg="none"
-          borderRadius={8}
-          aria-label="Panel button"
-          onClick={() => {
-            togglePanel();
-          }}
-          size="sm"
-          icon={<HamburgerIcon boxSize={6} />}
-        ></IconButton>
-      </Box>
+      <Card h={"93.7vh"} border={"none"}>
+        <Box h="40px" p="2">
+          <IconButton
+            width={"100%"}
+            _hover={{
+              textDecor: "none",
+              backgroundColor:
+                colorMode === "dark" ? "whiteAlpha.300" : "gray.200",
+            }}
+            bg="none"
+            borderRadius={8}
+            aria-label="Panel button"
+            onClick={() => {
+              togglePanel();
+            }}
+            size="sm"
+            icon={<HamburgerIcon boxSize={6} />}
+          ></IconButton>
+        </Box>
 
-      <Box>
         <VStack>
           <NavItem
             navSize={navSize}
@@ -71,7 +71,7 @@ function Sidebar() {
             width={size - 25}
           />
         </VStack>
-      </Box>
+      </Card>
     </VStack>
   );
 }

@@ -1,5 +1,6 @@
 using System.Text.Json.Nodes;
 using Microsoft.AspNetCore.Mvc;
+using NATS.Client;
 using vite_api.Classes;
 using vite_api.Dto;
 
@@ -37,26 +38,32 @@ public class ApiController : ControllerBase
     }
 
     [HttpPost("publishFullMessage")]
-    public async Task PublishFullMessage()
+    public IActionResult PublishFullMessage([FromBody] MessageDataDto msg)
     {
-        string content = "";
-        using (StreamReader stream = new StreamReader(Request.Body))
+        try
         {
-            content = await stream.ReadToEndAsync();
+            _publisher.SendNewMessage(msg);
+            return Ok();
         }
-
-        var jsonObject = JsonNode.Parse(content);
-
-        if (jsonObject != null && jsonObject["payload"] != null)
+        catch
         {
-            var payload = jsonObject["payload"];
-            var subject = jsonObject["subject"];
-            var headers = jsonObject["headers"];
-
-            if (payload != null && !string.IsNullOrWhiteSpace(payload.ToString()))
-                _publisher.SendNewMessage(payload.ToString(), headers!.ToString(), subject!.ToString());
+            return BadRequest();
         }
-#warning Post but no return info about created resource?
+    }
+
+    [HttpPost("copyMessage")]
+    public IActionResult CopyMessage([FromQuery] string streamName, [FromQuery] ulong sequenceNumber, [FromQuery] string newSubject)
+    {
+        try
+        {
+            var msg = _subscriberManager.GetSpecificMessage(streamName, sequenceNumber);
+            _publisher.CopyMessage(msg!, newSubject);
+            return Ok();
+        }
+        catch
+        {
+            return BadRequest();
+        }
     }
 
     [HttpDelete("deleteMessage")]

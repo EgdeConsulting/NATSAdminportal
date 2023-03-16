@@ -32,8 +32,7 @@ namespace vite_api.Classes
             List<string> subjects = new List<string>();
             List<string[]> listOfSubjectArray = new List<string[]>();
 
-            var url = _appConfig.Value.NatsServerUrl ?? Defaults.Url;
-            using (IConnection c = new ConnectionFactory().CreateConnection(url))
+            using (IConnection c = new ConnectionFactory().CreateConnection(Url))
             {
                 IJetStreamManagement jsm = c.CreateJetStreamManagementContext();
                 streamInfo = GetStreamInfoArray(jsm).ToList<StreamInfo>();
@@ -85,10 +84,6 @@ namespace vite_api.Classes
                 }).ToArray();
         }
         
-        /// <summary>
-        /// Creates a stream from a HttpRequest.         
-        /// </summary>
-        /// <param name="request">This request contains the name of the stream and its subjects.</param>
         public ExtendedStreamInfoDto GetExtendedStreamInfo(string streamName)
         {
             using var connection = _provider.GetRequiredService<IConnection>();
@@ -110,7 +105,10 @@ namespace vite_api.Classes
                 }
             };
         }
-
+        /// <summary>
+        /// Creates a stream from a HttpRequest.         
+        /// </summary>
+        /// <param name="request">This request contains the name of the stream and its subjects.</param>
         public async void CreateStreamFromRequest(HttpRequest request)
         {
             string content = "";

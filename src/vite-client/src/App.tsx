@@ -3,6 +3,7 @@ import {
   ColorModeProvider,
   CSSReset,
   HStack,
+  Box,
 } from "@chakra-ui/react";
 
 import { Topbar, Sidebar } from "./components";
@@ -19,12 +20,14 @@ function App() {
           <Topbar />
           <HStack align="stretch">
             <Sidebar />
-            <Routes>
-              <Route path="/streams" element={<StreamPage />}></Route>
-              <Route path="/log" element={<LogPage />} />
-              <Route path="/settings" element={<SettingsPage />} />
-              <Route path="/" element={<HomePage />} />
-            </Routes>
+            <Box w={"100%"} h={"100%"} pb={2}>
+              <Routes>
+                <Route path="/streams" element={<StreamPage />} />
+                <Route path="/log" element={<LogPage />} />
+                <Route path="/settings" element={<SettingsPage />} />
+                <Route path="/" element={<HomePage />} />
+              </Routes>
+            </Box>
           </HStack>
         </ColorModeProvider>
       </ChakraProvider>
