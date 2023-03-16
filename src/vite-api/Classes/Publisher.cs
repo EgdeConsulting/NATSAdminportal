@@ -51,12 +51,16 @@ namespace vite_api.Classes
                 msgHeader.Add(headerPair.Name, headerPair.Value);
             }
             using IConnection c = new ConnectionFactory().CreateConnection(opts);
-           
-            Msg msg = new Msg(message.Subject, msgHeader, Encoding.UTF8.GetBytes(message.Payload));
-            for (int i = 0; i < count; i++)
+
+            if (message.Payload != null)
             {
-                c.Publish(msg);
+                Msg msg = new Msg(message.Subject, msgHeader, Encoding.UTF8.GetBytes(message.Payload));
+                for (int i = 0; i < count; i++)
+                {
+                    c.Publish(msg);
+                }
             }
+
             c.Flush();
         }
         

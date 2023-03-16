@@ -114,28 +114,33 @@ public class ApiController : ControllerBase
             return BadRequest();
         }
     }
-
-#warning Get which subject hierarchy? On what stream? No parameters.
+    
     [HttpGet("subjectHierarchy")]
-    public IActionResult GetSubjectHierarch()
+    public IActionResult GetSubjectHierarchy()
     {
-        var res = _subjectManager.GetSubjectHierarchy();
-        return Ok(res);
+        try
+        {
+            var res = _subjectManager.GetSubjectHierarchy();
+            return Ok(res);
+        }
+        catch
+        {
+            return BadRequest();
+        }
     }
 
-    [HttpGet("subjectHierarchy2")]
-    public IActionResult GetSubjectHierarch2()
+    [HttpGet("allSubjects")]
+    public IActionResult AllSubjects()
     {
-        var res = _subjectManager.GetSubjectHierarch2();
-        return Ok(res);
-    }
-
-    [HttpGet("subjectNames")]
-    public IActionResult GetSubjectNames()
-    {
-#warning Get subject names for what stream?
-        var res = _subjectManager.GetSubjectNames();
-        return Ok(res);
+        try
+        {
+            var res = _subjectManager.GetAllSubjects();
+            return Ok(res);
+        }
+        catch
+        {
+            return BadRequest();
+        }
     }
 
 #warning This endpoint exists solely to allow for swapping between change dummy user accounts

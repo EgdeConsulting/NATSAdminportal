@@ -28,6 +28,7 @@ function StreamView() {
       fetch("/api/specificStream?" + queryString)
         .then((res) => res.json())
         .then((rawData) => {
+          // JSON-server returns a JSON-array, whilest .NET-api returns a single JSON-object.
           let data = rawData instanceof Array ? rawData[0] : rawData;
           setStreamData(data);
         });

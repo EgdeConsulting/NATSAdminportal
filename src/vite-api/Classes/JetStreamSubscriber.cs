@@ -83,12 +83,12 @@ namespace vite_api.Classes
         {
             var msg = ReceiveJetStreamPullSubscribe().First(x => x.MetaData.StreamSequence == sequenceNumber);
             
-                List<MessageHeaderDTO> msgHeaders = new();
+                List<MessageHeaderDto> msgHeaders = new();
             
                 foreach (string headerName in msg.Header)
                 {
                     msgHeaders.AddRange(msg.Header.GetValues(headerName).Select(headerValue => 
-                        new MessageHeaderDTO()
+                        new MessageHeaderDto()
                         {
                             Name = headerName, 
                             Value = headerValue

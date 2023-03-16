@@ -38,9 +38,9 @@ function MsgPublishModal() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        Subject: subjectInputRef.current.value,
-        Headers: headerList,
-        Payload: payloadInputRef.current.value,
+        subject: subjectInputRef.current.value,
+        headers: headerList,
+        payload: payloadInputRef.current.value,
       }),
     }).then((res) => {
       if (res.ok) {

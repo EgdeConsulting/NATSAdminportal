@@ -1,10 +1,12 @@
 {
   "/api/*": "/$1",
-  "/newSubject": "/apinewSubject",
-  "/subjectNames": "/apisubjectNames",
-  "/subjectHierarchy": "/apisubjectHierarchy",
-  "/streams": "/apistreams",
-  "/messages": "/apimessages",
-  "/messageData\\?streamName=:name&sequenceNumber=:sequenceNumber": "/apimessages?name=:name&sequenceNumber=:sequenceNumber",
-  "/streamName\\?streamName=:name": "/apistreams?name=:name"
+  "/allMessages": "/messages",
+  "/specificMessage\\?streamName=:stream&sequenceNumber=:sequenceNumber": "/messages?stream=:stream&sequenceNumber=:sequenceNumber",
+  "/newMessage": "/messages",
+  "/copyMessage\\?streamName=:name&sequenceNumber=:sequenceNumber&newSubject=:subject": "/messages?name=:name&sequenceNumber=:sequenceNumber&subject=:subject",
+  "/deleteMessage\\?streamName=:stream&sequenceNumber=:sequenceNumber&erase=:erase": "/messages?stream=:stream&id=:sequenceNumber",
+  "/allStreams": "/streams",
+  "/specificStream\\?streamName=:name": "/streams?name=:name",
+  "/allSubjects": "/allSubjects",
+  "/subjectHierarchy": "/subjectHierarchy"
 }

@@ -110,26 +110,26 @@ namespace vite_api.Classes
             }
         }
 
-        public List<MessageDto> GetMessages2()
-        {
-            var res = _msgRepo.GetAll().Select(x => new MessageDto
-            {
-                SequenceNumber = 2323,
-                Timestamp = DateTime.Now,
-                Stream = "Test",
-                Subject = "Subject",
-            }).ToList();
-
-            return res;
-
-            static string GetData(byte[] data)
-            {
-                if (data.All(x => char.IsAscii((char) x)))
-                    return Encoding.ASCII.GetString(data);
-
-                return Convert.ToBase64String(data);
-            }
-        }
+        // public List<MessageDto> GetMessages2()
+        // {
+        //     var res = _msgRepo.GetAll().Select(x => new MessageDto
+        //     {
+        //         SequenceNumber = 2323,
+        //         Timestamp = DateTime.Now,
+        //         Stream = "Test",
+        //         Subject = "Subject",
+        //     }).ToList();
+        //
+        //     return res;
+        //
+        //     static string GetData(byte[] data)
+        //     {
+        //         if (data.All(x => char.IsAscii((char) x)))
+        //             return Encoding.ASCII.GetString(data);
+        //
+        //         return Convert.ToBase64String(data);
+        //     }
+        // }
 
 
         public string GetMessages()
