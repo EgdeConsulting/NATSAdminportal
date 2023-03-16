@@ -45,7 +45,7 @@ function MsgView() {
 
   return (
     <Stack w={"100%"} spacing={4}>
-      {viewContext.isVisiable && (
+      {viewContext.isVisible && (
         <Card variant={"outline"} h={"100%"} w={"100%"} mb={2}>
           <CardHeader>
             <Flex>

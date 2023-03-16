@@ -1,27 +1,24 @@
 import {
   Card,
   CardBody,
-  Text,
   HStack,
   Button,
   VStack,
   Flex,
   Spacer,
 } from "@chakra-ui/react";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import {
   MsgView,
   MsgTable,
   SubjectSidebar,
   MsgPublishModal,
   MsgContextProvider,
-  MsgContext,
   MsgViewContextProvider,
 } from "components";
 
 function HomePage() {
   const [allMessages, setAllMessages] = useState<any[]>([]);
-  const currentMsgContex = useContext(MsgContext);
 
   function getAllMessages() {
     fetch("/api/messages") // "http://localhost:3000/message1"
@@ -46,8 +43,6 @@ function HomePage() {
       setButtonText(initialButtonText);
     }
   }
-
-  const [showMsg, setShowMsg] = useState(false);
 
   return (
     <MsgContextProvider>
