@@ -1,9 +1,14 @@
-import { Card, CardBody, VStack } from "@chakra-ui/react";
+import { Card, CardBody, Flex, HStack, Spacer, VStack } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { StreamView } from "components";
+import {
+  StreamView,
+  StreamTable,
+  StreamContextProvider,
+  StreamViewContextProvider,
+} from "components";
 
 function StreamPage() {
-  const [streams, setStreams] = useState<[]>([]);
+  const [streams, setStreams] = useState<any[]>([]);
 
   useEffect(() => {
     getStreams();
@@ -18,13 +23,24 @@ function StreamPage() {
   }
 
   return (
-    <VStack align="stretch" paddingTop={2}>
-      <Card variant={"outline"} width={"1115px"} padding={2}>
-        <CardBody>
-          <StreamView streamInfo={streams} />
-        </CardBody>
-      </Card>
-    </VStack>
+    <StreamContextProvider>
+      <StreamViewContextProvider>
+        <HStack w={"100%"} align={"stretch"} pt={2}>
+          <Flex w={"100%"}>
+            <Card variant={"outline"} width={"75%"} mr={2}>
+              <CardBody>
+                <StreamTable streamInfo={streams} />
+              </CardBody>
+            </Card>
+
+            <Spacer />
+            <VStack w={"25%"} h={"100%"} mr={2}>
+              <StreamView />
+            </VStack>
+          </Flex>
+        </HStack>
+      </StreamViewContextProvider>
+    </StreamContextProvider>
   );
 }
 

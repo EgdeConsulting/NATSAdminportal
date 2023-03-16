@@ -1,12 +1,12 @@
 import { createContext, useState } from "react";
 
 export type MsgViewContextType = {
-  isVisiable: boolean;
+  isVisible: boolean;
   changeVisibility: (state: boolean) => void;
 };
 
 const DefaultMsgViewState = {
-  isVisiable: false,
+  isVisible: false,
   changeVisibility: () => {},
 };
 
@@ -15,15 +15,15 @@ const MsgViewContext = createContext<MsgViewContextType>(DefaultMsgViewState);
 function MsgViewContextProvider(props: {
   children: JSX.Element | JSX.Element[];
 }) {
-  const [isVisiable, setIsVisiable] = useState<boolean>(
-    DefaultMsgViewState.isVisiable
+  const [isVisible, setIsVisible] = useState<boolean>(
+    DefaultMsgViewState.isVisible
   );
   function changeVisibility(state: boolean) {
-    setIsVisiable(state);
+    setIsVisible(state);
   }
 
   return (
-    <MsgViewContext.Provider value={{ isVisiable, changeVisibility }}>
+    <MsgViewContext.Provider value={{ isVisible: isVisible, changeVisibility }}>
       {props.children}
     </MsgViewContext.Provider>
   );
