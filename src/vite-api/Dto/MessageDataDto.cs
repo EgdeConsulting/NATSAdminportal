@@ -2,7 +2,7 @@
 
 public class MessageDataDto
 {
-    public Dictionary<string, string> Headers { get; set; } = new();
+    public List<MessageHeaderDTO> Headers { get; set; } = new();
     public string? Payload { get; set; }
     public string? Subject { get; set; }
 }

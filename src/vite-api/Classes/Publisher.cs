@@ -33,7 +33,7 @@ namespace vite_api.Classes
             this.appConfig = appConfig;
         }
 
-        public void SendNewMessage(PublishMessageDto message)
+        public void SendNewMessage(MessageDataDto message)
         {
             logger.LogInformation("{} > {} created a new message (subject, sequence number): {}, {}", 
             DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), UserAccount.Name ,message.Subject, 1);
@@ -75,7 +75,7 @@ namespace vite_api.Classes
             MsgHeader msgHeader = new();
             foreach (var headerPair in message.Headers)
             {
-                msgHeader.Add(headerPair.Key, headerPair.Value);
+                msgHeader.Add(headerPair.Name, headerPair.Value);
             }
             using IConnection c = new ConnectionFactory().CreateConnection(opts);
            

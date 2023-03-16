@@ -82,14 +82,26 @@ namespace vite_api.Classes
         public MessageDataDto GetMessageData(ulong sequenceNumber)
         {
             var msg = ReceiveJetStreamPullSubscribe().First(x => x.MetaData.StreamSequence == sequenceNumber);
+            
+                List<MessageHeaderDTO> msgHeaders = new();
+            
+                foreach (string headerName in msg.Header)
+                {
+                    msgHeaders.AddRange(msg.Header.GetValues(headerName).Select(headerValue => 
+                        new MessageHeaderDTO()
+                        {
+                            Name = headerName, 
+                            Value = headerValue
+                        }));
+                }
+                return new MessageDataDto()
+                {
+                    Headers = msgHeaders,
+                    Payload = GetData(msg.Data),
+                    Subject = msg.Subject
+                };
 
-            return new MessageDataDto()
-            {
-                Headers = msg.Header.Cast<string>().ToDictionary(k => k, v => msg.Header[v]),
-                Payload = GetData(msg.Data),
-                Subject = msg.Subject
-            };
-
+            
             static string GetData(byte[] data)
             {
                 return data.All(x => char.IsAscii((char)x)) ? Encoding.ASCII.GetString(data) : Convert.ToBase64String(data);

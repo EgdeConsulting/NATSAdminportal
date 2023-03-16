@@ -38,7 +38,7 @@ public class ApiController : ControllerBase
     }
 
     [HttpPost("publishFullMessage")]
-    public IActionResult PublishFullMessage([FromBody] PublishMessageDto msg)
+    public IActionResult PublishFullMessage([FromBody] MessageDataDto msg)
     {
         try
         {

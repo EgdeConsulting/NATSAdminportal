@@ -68,25 +68,23 @@ function MsgView() {
           </CardHeader>
           <VStack ml={5} mb={5} align={"flex-start"} spacing={6}>
             <Box>
-              <Heading size={"sm"} marginBottom={2}>
+              <Heading size={"sm"} mb={2}>
                 Headers
               </Heading>
               {messageData &&
               messageData.headers != undefined &&
               Object.entries(messageData.headers).length != 0 ? (
-                Object.entries(messageData.headers).map(
-                  ([key, value], index: number) => (
-                    <Text key={index} fontSize={"md"}>
-                      {key + " : " + value}
-                    </Text>
-                  )
-                )
+                messageData.headers.map((headerPair: any, index: number) => (
+                  <Text key={index} fontSize={"md"}>
+                    {headerPair.name + " : " + headerPair.value}
+                  </Text>
+                ))
               ) : (
                 <Text fontSize={"md"}>No Headers...</Text>
               )}
             </Box>
             <Box>
-              <Heading size={"sm"} marginBottom={2}>
+              <Heading size={"sm"} mb={2}>
                 Payload
               </Heading>
               <Text fontSize={"md"}>{messageData.payload}</Text>
