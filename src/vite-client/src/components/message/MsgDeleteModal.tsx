@@ -11,7 +11,14 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { DeleteIcon } from "@chakra-ui/icons";
-import { MsgDeleteForm, MsgContext, ActionConfirmation } from "components";
+import {
+  MsgDeleteForm,
+  MsgContext,
+  ActionConfirmation,
+  MsgContextType,
+  MsgViewContext,
+  DefaultMsgState,
+} from "components";
 import { useContext, useState } from "react";
 
 function MsgDeleteModal() {
@@ -24,6 +31,8 @@ function MsgDeleteModal() {
   } = useDisclosure();
   const [erase, setErase] = useState(true);
   const currentMsgContext = useContext(MsgContext);
+  const { changeCurrentMsg } = useContext(MsgContext) as MsgContextType;
+  const { changeVisibility } = useContext(MsgViewContext);
 
   function deleteMessage() {
     const msg = currentMsgContext?.currentMsg;
@@ -37,6 +46,13 @@ function MsgDeleteModal() {
         erase;
       fetch("/api/deleteMessage?" + queryString, {
         method: "DELETE",
+      }).then((res) => {
+        if (res.ok) {
+          changeCurrentMsg(DefaultMsgState.currentMsg);
+          changeVisibility(false);
+        } else {
+          alert("There was an error deleting the message.");
+        }
       });
     }
   }

@@ -83,24 +83,25 @@ namespace vite_api.Classes
         {
             var msg = ReceiveJetStreamPullSubscribe().First(x => x.MetaData.StreamSequence == sequenceNumber);
             
-            List<MessageHeaderDTO> msgHeaders = new();
+                List<MessageHeaderDTO> msgHeaders = new();
             
-            foreach (string headerName in msg.Header)
-            {
-                msgHeaders.AddRange(msg.Header.GetValues(headerName).Select(headerValue => 
-                    new MessageHeaderDTO()
-                    {
-                        Name = headerName, 
-                        Value = headerValue
-                    }));
-            }
-            return new MessageDataDto()
-            {
-                Headers = msgHeaders,
-                Payload = GetData(msg.Data),
-                Subject = msg.Subject
-            };
+                foreach (string headerName in msg.Header)
+                {
+                    msgHeaders.AddRange(msg.Header.GetValues(headerName).Select(headerValue => 
+                        new MessageHeaderDTO()
+                        {
+                            Name = headerName, 
+                            Value = headerValue
+                        }));
+                }
+                return new MessageDataDto()
+                {
+                    Headers = msgHeaders,
+                    Payload = GetData(msg.Data),
+                    Subject = msg.Subject
+                };
 
+            
             static string GetData(byte[] data)
             {
                 return data.All(x => char.IsAscii((char)x)) ? Encoding.ASCII.GetString(data) : Convert.ToBase64String(data);

@@ -6,7 +6,6 @@ import {
   Box,
   Stack,
   Flex,
-  StackDivider,
   Text,
   Spacer,
   HStack,
@@ -65,14 +64,13 @@ function MsgView() {
           </CardHeader>
           <VStack ml={5} mb={5} align={"flex-start"} spacing={6}>
             <Box>
-              <Heading size={"sm"} marginBottom={2}>
+              <Heading size={"sm"} mb={2}>
                 Headers
               </Heading>
               {messageData &&
               messageData.headers != undefined &&
               Object.entries(messageData.headers).length != 0 ? (
                 messageData.headers.map((headerPair: any, index: number) => (
-                  //Snakk me gunther imåro...
                   <Text key={index} fontSize={"md"}>
                     {headerPair.name + " : " + headerPair.value}
                   </Text>
@@ -82,7 +80,7 @@ function MsgView() {
               )}
             </Box>
             <Box>
-              <Heading size={"sm"} marginBottom={2}>
+              <Heading size={"sm"} mb={2}>
                 Payload
               </Heading>
               <Text fontSize={"md"}>{messageData.payload}</Text>
