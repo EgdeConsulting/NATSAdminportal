@@ -1,0 +1,10 @@
+{
+  "/api/*": "/$1",
+  "/newSubject": "/apinewSubject",
+  "/subjectNames": "/apisubjectNames",
+  "/subjectHierarchy": "/apisubjectHierarchy",
+  "/streams": "/apistreams",
+  "/messages": "/apimessages",
+  "/messageData\\?streamName=:name&sequenceNumber=:sequenceNumber": "/apimessages?name=:name&sequenceNumber=:sequenceNumber",
+  "/streamData\\?streamName=:name": "/apistreams?name=:name"
+}
