@@ -28,7 +28,9 @@ function MsgModal(props: { content: any }) {
       props.content["sequenceNumber"];
     fetch("/api/messageData?" + queryString)
       .then((res) => res.json())
-      .then((data) => {
+      .then((rawData) => {
+        // JSON-server returns a JSON-array, whilst .NET-api returns a single JSON-object.
+        let data = rawData instanceof Array ? rawData[0] : rawData;
         setMessageData(data);
       });
   }

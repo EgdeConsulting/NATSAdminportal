@@ -5,6 +5,6 @@
   "/subjectHierarchy": "/apisubjectHierarchy",
   "/streams": "/apistreams",
   "/messages": "/apimessages",
-  "/messageData\\?streamName=:name&sequenceNumber=:sequenceNumber": "/apimessageData?name=:name&sequenceNumber=:sequenceNumber",
-  "/streamData\\?streamName=:name": "/apistreamData?name=:name"
+  "/messageData\\?streamName=:name&sequenceNumber=:sequenceNumber": "/apimessages?name=:name&sequenceNumber=:sequenceNumber",
+  "/streamData\\?streamName=:name": "/apistreams?name=:name"
 }

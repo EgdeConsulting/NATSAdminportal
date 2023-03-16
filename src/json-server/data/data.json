@@ -46,304 +46,19 @@
       "name": "stream1",
       "subjectCount": 3,
       "consumerCount": 2,
-      "messageCount": 46
-    },
-    {
-      "name": "stream2",
-      "subjectCount": 2,
-      "consumerCount": 1,
-      "messageCount": 16
-    },
-    {
-      "name": "stream3",
-      "subjectCount": 2,
-      "consumerCount": 1,
-      "messageCount": 8
-    },
-    {
-      "name": "stream4",
-      "subjectCount": 1,
-      "consumerCount": 0,
-      "messageCount": 13
-    },
-    {
-      "name": "stream5",
-      "subjectCount": 1,
-      "consumerCount": 0,
-      "messageCount": 1
-    },
-    {
-      "name": "streamtest",
-      "subjectCount": 1,
-      "consumerCount": 0,
-      "messageCount": 15
-    }
-  ],
-
-  "apimessages": [
-    {
-      "sequenceNumber": 58,
-      "timestamp": "2023-03-02T21:41:33.5422743Z",
-      "stream": "stream1",
-      "subject": "subject.A.*"
-    },
-    {
-      "sequenceNumber": 57,
-      "timestamp": "2023-03-02T14:11:45.7036823Z",
-      "stream": "stream1",
-      "subject": "subject.A.*"
-    },
-    {
-      "sequenceNumber": 56,
-      "timestamp": "2023-03-01T10:32:11.5906588Z",
-      "stream": "stream1",
-      "subject": "subject.A.*"
-    },
-    {
-      "sequenceNumber": 55,
-      "timestamp": "2023-02-24T13:05:30.9394227Z",
-      "stream": "stream1",
-      "subject": "subject.A.*"
-    },
-    {
-      "sequenceNumber": 54,
-      "timestamp": "2023-02-24T12:54:12.307516Z",
-      "stream": "stream1",
-      "subject": "subject.A.*"
-    },
-    {
-      "sequenceNumber": 53,
-      "timestamp": "2023-02-24T12:17:09.8729091Z",
-      "stream": "stream1",
-      "subject": "subject.A.*"
-    },
-    {
-      "sequenceNumber": 52,
-      "timestamp": "2023-02-24T12:12:07.0348007Z",
-      "stream": "stream1",
-      "subject": "subject.A.*"
-    },
-    {
-      "sequenceNumber": 51,
-      "timestamp": "2023-02-24T11:31:37.1990285Z",
-      "stream": "stream1",
-      "subject": "subject.A.*"
-    },
-    {
-      "sequenceNumber": 50,
-      "timestamp": "2023-02-24T10:45:49.516257Z",
-      "stream": "stream1",
-      "subject": "subject.A.*"
-    },
-    {
-      "sequenceNumber": 49,
-      "timestamp": "2023-02-19T12:11:17.1850432Z",
-      "stream": "stream1",
-      "subject": "subject.A.*"
-    },
-    {
-      "sequenceNumber": 48,
-      "timestamp": "2023-02-17T12:38:37.3333444Z",
-      "stream": "stream1",
-      "subject": "subject.A.*"
-    },
-    {
-      "sequenceNumber": 47,
-      "timestamp": "2023-02-17T12:29:50.0369643Z",
-      "stream": "stream1",
-      "subject": "subject.A.*"
-    },
-    {
-      "sequenceNumber": 46,
-      "timestamp": "2023-02-17T12:19:45.6266693Z",
-      "stream": "stream1",
-      "subject": "subject.A.*"
-    },
-    {
-      "sequenceNumber": 45,
-      "timestamp": "2023-02-17T10:10:10.3107479Z",
-      "stream": "stream1",
-      "subject": "subject.A.*"
-    },
-    {
-      "sequenceNumber": 44,
-      "timestamp": "2023-02-16T12:51:30.718468Z",
-      "stream": "stream1",
-      "subject": "subject.A.1"
-    },
-    {
-      "sequenceNumber": 43,
-      "timestamp": "2023-02-16T12:51:23.4976218Z",
-      "stream": "stream1",
-      "subject": "subject.A.1"
-    },
-    {
-      "sequenceNumber": 42,
-      "timestamp": "2023-02-16T12:51:11.818298Z",
-      "stream": "stream1",
-      "subject": "subject.A.*"
-    },
-    {
-      "sequenceNumber": 41,
-      "timestamp": "2023-02-16T12:50:38.1377744Z",
-      "stream": "stream1",
-      "subject": "subject.A.*"
-    },
-    {
-      "sequenceNumber": 40,
-      "timestamp": "2023-02-16T12:50:14.3587658Z",
-      "stream": "stream1",
-      "subject": "subject.A.*"
-    },
-    {
-      "sequenceNumber": 39,
-      "timestamp": "2023-02-16T12:49:17.0181901Z",
-      "stream": "stream1",
-      "subject": "subject.A.*"
-    },
-    {
-      "sequenceNumber": 38,
-      "timestamp": "2023-02-16T12:48:38.4571754Z",
-      "stream": "stream1",
-      "subject": "subject.A.*"
-    },
-    {
-      "sequenceNumber": 37,
-      "timestamp": "2023-02-16T12:47:22.5370774Z",
-      "stream": "stream1",
-      "subject": "subject.A.*"
-    },
-    {
-      "sequenceNumber": 36,
-      "timestamp": "2023-02-16T12:45:22.0037347Z",
-      "stream": "stream1",
-      "subject": "subject.A.*"
-    },
-    {
-      "sequenceNumber": 35,
-      "timestamp": "2023-02-16T12:45:14.7765333Z",
-      "stream": "stream1",
-      "subject": "subject.A.*"
-    },
-    {
-      "sequenceNumber": 34,
-      "timestamp": "2023-02-16T12:43:17.9468703Z",
-      "stream": "stream1",
-      "subject": "subject.A.*"
-    },
-    {
-      "sequenceNumber": 33,
-      "timestamp": "2023-02-16T12:42:53.6762183Z",
-      "stream": "stream1",
-      "subject": "subject.A.*"
-    },
-    {
-      "sequenceNumber": 32,
-      "timestamp": "2023-02-16T12:41:59.9475562Z",
-      "stream": "stream1",
-      "subject": "subject.A.*"
-    },
-    {
-      "sequenceNumber": 31,
-      "timestamp": "2023-02-16T12:41:58.7115425Z",
-      "stream": "stream1",
-      "subject": "subject.A.*"
-    },
-    {
-      "sequenceNumber": 30,
-      "timestamp": "2023-02-16T12:41:56.8682114Z",
-      "stream": "stream1",
-      "subject": "subject.A.*"
-    },
-    {
-      "sequenceNumber": 29,
-      "timestamp": "2023-02-16T12:41:10.8263954Z",
-      "stream": "stream1",
-      "subject": "subject.A.*"
-    },
-    {
-      "sequenceNumber": 28,
-      "timestamp": "2023-02-16T12:39:59.5429738Z",
-      "stream": "stream1",
-      "subject": "subject.A.*"
-    },
-    {
-      "sequenceNumber": 27,
-      "timestamp": "2023-02-16T12:38:54.6257525Z",
-      "stream": "stream1",
-      "subject": "subject.A.*"
-    },
-    {
-      "sequenceNumber": 26,
-      "timestamp": "2023-02-16T11:25:43.4187824Z",
-      "stream": "stream1",
-      "subject": "subject.A.*"
-    },
-    {
-      "sequenceNumber": 25,
-      "timestamp": "2023-02-16T11:24:16.8248268Z",
-      "stream": "stream1",
-      "subject": "subject.A.*"
-    },
-    {
-      "sequenceNumber": 24,
-      "timestamp": "2023-02-16T11:20:58.8682752Z",
-      "stream": "stream1",
-      "subject": "subject.A.*"
-    },
-    {
-      "sequenceNumber": 23,
-      "timestamp": "2023-02-16T09:45:11.5079003Z",
-      "stream": "stream1",
-      "subject": "subject.A.*"
-    },
-    {
-      "sequenceNumber": 21,
-      "timestamp": "2023-02-14T16:04:43.9488213Z",
-      "stream": "stream1",
-      "subject": "subject.A.*"
-    },
-    {
-      "sequenceNumber": 20,
-      "timestamp": "2023-02-14T16:03:23.2592386Z",
-      "stream": "stream1",
-      "subject": "subject.A.*"
-    },
-    {
-      "sequenceNumber": 19,
-      "timestamp": "2023-02-14T15:59:01.296722Z",
-      "stream": "stream1",
-      "subject": "subject.A.*"
-    },
-    {
-      "sequenceNumber": 18,
-      "timestamp": "2023-02-14T15:25:19.5533928Z",
-      "stream": "stream1",
-      "subject": "subject.A.*"
-    }
-  ],
-
-  "apimessageData": [
-    {
-      "name": "stream1",
-      "sequenceNumber": 1,
-      "headers": ["header1", "header2"],
-      "payload": "awdawdawdawdawd"
-    }
-  ],
-
-  "apistreamData": [
-    {
-      "name": "stream1",
+      "messageCount": 46,
       "subjects": ["subject.A.*"],
       "consumers": ["consumer1", "consumer3"],
       "description": "",
-      "messages": 57,
+      "messages": 56,
       "deleted": 10,
       "policies": { "discardPolicy": "old", "retentionPolicy": "limits" }
     },
     {
       "name": "stream2",
+      "subjectCount": 2,
+      "consumerCount": 1,
+      "messageCount": 16,
       "subjects": ["subject.B.*"],
       "consumers": ["consumer2"],
       "description": "",
@@ -353,6 +68,9 @@
     },
     {
       "name": "stream3",
+      "subjectCount": 2,
+      "consumerCount": 1,
+      "messageCount": 8,
       "subjects": ["subject.C.1", "subject.C.2"],
       "consumers": ["consumer4"],
       "description": "",
@@ -362,6 +80,9 @@
     },
     {
       "name": "stream4",
+      "subjectCount": 1,
+      "consumerCount": 0,
+      "messageCount": 13,
       "subjects": ["subject2.A.1"],
       "consumers": [],
       "description": "",
@@ -371,6 +92,9 @@
     },
     {
       "name": "stream5",
+      "subjectCount": 1,
+      "consumerCount": 0,
+      "messageCount": 1,
       "subjects": ["subject.C.3"],
       "consumers": [],
       "description": "",
@@ -380,12 +104,164 @@
     },
     {
       "name": "streamtest",
+      "subjectCount": 1,
+      "consumerCount": 0,
+      "messageCount": 15,
       "subjects": ["subject.A"],
       "consumers": [],
       "description": "",
       "messages": 29,
       "deleted": 0,
       "policies": { "discardPolicy": "old", "retentionPolicy": "limits" }
+    }
+  ],
+
+  "apimessages": [
+    {
+      "sequenceNumber": 1,
+      "timestamp": "2023-03-02T21:41:33.5422743Z",
+      "stream": "stream1",
+      "subject": "subject.A.*",
+      "headers": [{"name": "headerName1", "value": "headerValue1"},
+                  {"name": "headerName2", "value": "headerValue2"},
+                  {"name": "headerName3", "value": "headerValue3"}],
+      "payload": "payload1.1"
+    },
+    {
+      "sequenceNumber": 2,
+      "timestamp": "2023-03-02T14:11:45.7036823Z",
+      "stream": "stream1",
+      "subject": "subject.A.*",
+      "headers": ["header1.1", "header1.2", "header1.3"],
+      "payload": "payload1.2"
+    },
+    {
+      "sequenceNumber": 3,
+      "timestamp": "2023-03-01T10:32:11.5906588Z",
+      "stream": "stream1",
+      "subject": "subject.A.*",
+      "headers": ["header1.1", "header1.2", "header1.3"],
+      "payload": "payload1.3"
+    },
+    {
+      "sequenceNumber": 4,
+      "timestamp": "2023-02-24T13:05:30.9394227Z",
+      "stream": "stream2",
+      "subject": "subject.B.*",
+      "headers": ["header2.1", "header2.2", "header2.3"],
+      "payload": "payload2.1"
+    },
+    {
+      "sequenceNumber": 5,
+      "timestamp": "2023-02-24T12:54:12.307516Z",
+      "stream": "stream2",
+      "subject": "subject.B.*",
+      "headers": ["header2.1", "header2.2", "header2.3"],
+      "payload": "payload2.2"
+    },
+    {
+      "sequenceNumber": 6,
+      "timestamp": "2023-02-24T12:17:09.8729091Z",
+      "stream": "stream2",
+      "subject": "subject.B.*",
+      "headers": ["header2.1", "header2.2", "header2.3"],
+      "payload": "payload2.3"
+    },
+    {
+      "sequenceNumber": 7,
+      "timestamp": "2023-02-24T12:12:07.0348007Z",
+      "stream": "stream3",
+      "subject": "subject.C.1",
+      "headers": ["header3.1", "header3.2", "header3.3"],
+      "payload": "payload3.1"
+    },
+    {
+      "sequenceNumber": 8,
+      "timestamp": "2023-02-24T11:31:37.1990285Z",
+      "stream": "stream3",
+      "subject": "subject.C.1",
+      "headers": ["header3.1", "header3.2", "header3.3"],
+      "payload": "payload3.2"
+    },
+    {
+      "sequenceNumber": 9,
+      "timestamp": "2023-02-24T10:45:49.516257Z",
+      "stream": "stream3",
+      "subject": "subject.C.2",
+      "headers": ["header3.1", "header3.2", "header3.3"],
+      "payload": "payload3.3"
+    },
+    {
+      "sequenceNumber": 10,
+      "timestamp": "2023-02-24T12:12:07.0348007Z",
+      "stream": "stream4",
+      "subject": "subject2.A.1",
+      "headers": ["header4.1", "header4.2", "header4.3"],
+      "payload": "payload4.1"
+    },
+    {
+      "sequenceNumber": 11,
+      "timestamp": "2023-02-24T11:31:37.1990285Z",
+      "stream": "stream4",
+      "subject": "subject2.A.1",
+      "headers": ["header4.1", "header4.2", "header4.3"],
+      "payload": "payload4.2"
+    },
+    {
+      "sequenceNumber": 12,
+      "timestamp": "2023-02-24T10:45:49.516257Z",
+      "stream": "stream4",
+      "subject": "subject2.A.1",
+      "headers": ["header4.1", "header4.2", "header4.3"],
+      "payload": "payload4.3"
+    },
+    {
+      "sequenceNumber": 13,
+      "timestamp": "2023-02-24T12:12:07.0348007Z",
+      "stream": "stream5",
+      "subject": "subject.C.3",
+      "headers": ["header5.1", "header5.2", "header5.3"],
+      "payload": "payload5.1"
+    },
+    {
+      "sequenceNumber": 14,
+      "timestamp": "2023-02-24T11:31:37.1990285Z",
+      "stream": "stream5",
+      "subject": "subject.C.3",
+      "headers": ["header5.1", "header5.2", "header5.3"],
+      "payload": "payload5.2"
+    },
+    {
+      "sequenceNumber": 15,
+      "timestamp": "2023-02-24T10:45:49.516257Z",
+      "stream": "stream5",
+      "subject": "subject.C.3",
+      "headers": ["header5.1", "header5.2", "header5.3"],
+      "payload": "payload5.3"
+    },
+    {
+      "sequenceNumber": 16,
+      "timestamp": "2023-02-24T12:12:07.0348007Z",
+      "stream": "streamtest",
+      "subject": "subject.A",
+      "headers": ["headertest1", "headertest2", "headertest3"],
+      "payload": "payloadtest1"
+    },
+    {
+      "sequenceNumber": 17,
+      "timestamp": "2023-02-24T11:31:37.1990285Z",
+      "stream": "streamtest",
+      "subject": "subject.A",
+      "headers": ["headertest1", "headertest2", "headertest3"],
+      "payload": "payloadtest2"
+    },
+    {
+      "sequenceNumber": 18,
+      "timestamp": "2023-02-24T10:45:49.516257Z",
+      "stream": "streamtest",
+      "subject": "subject.A",
+      "headers": ["headertest1", "headertest2", "headertest3"],
+      "payload": "payloadtest3"
     }
   ]
 }
