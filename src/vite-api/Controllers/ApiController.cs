@@ -23,8 +23,8 @@ public class ApiController : ControllerBase
         _subscriberManager = subscriberManager;
     }
 
-    [HttpGet("streamName")]
-    public IActionResult GetStreamName([FromQuery] string streamName)
+    [HttpGet("streamData")]
+    public IActionResult GetStreamData([FromQuery] string streamName)
     {
         var res = _streamManager.GetExtendedStreamInfo(streamName);
         return Ok(res);
@@ -65,7 +65,7 @@ public class ApiController : ControllerBase
             return BadRequest();
         }
     }
-    
+
     [HttpDelete("deleteMessage")]
     public async Task<IActionResult> DeleteMessage([FromQuery] string streamName, [FromQuery] ulong sequenceNumber, [FromQuery] bool erase)
     {
@@ -113,8 +113,8 @@ public class ApiController : ControllerBase
     }
 
 #warning Which stream do we get it for? There's absolutely no parameters here?
-    [HttpGet("streamBasicInfo")]
-    public IActionResult GetBasicStreamInfo()
+    [HttpGet("streams")]
+    public IActionResult GetStreams()
     {
         var res = _streamManager.GetBasicStreamInfo();
         return Ok(res);

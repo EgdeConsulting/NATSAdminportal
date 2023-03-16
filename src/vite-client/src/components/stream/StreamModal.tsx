@@ -20,17 +20,19 @@ function StreamModal(props: { content: string }) {
   const { isOpen, onToggle, onClose } = useDisclosure();
   const [streamData, setStreamData] = useState<any>([]);
 
-  function sendStreamName(name: string) {
+  function getStreamData(name: string) {
     const queryString = "streamName=" + name;
-    fetch("/api/streamName?" + queryString)
+    fetch("/api/streamData?" + queryString)
       .then((res) => res.json())
-      .then((data) => {
+      .then((rawData) => {
+        // JSON-server returns an JSON-array, whilest .NET-api returns a single JSON-object.
+        let data = rawData instanceof Array ? rawData[0] : rawData;
         setStreamData(data);
       });
   }
 
   useEffect(() => {
-    sendStreamName(props.content);
+    getStreamData(props.content);
   }, [isOpen]);
 
   return (

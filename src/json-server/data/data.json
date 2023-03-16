@@ -1,10 +1,267 @@
 {
-  "message1": [
+  "apinewSubject": [
     {
       "messageSubject": "Testtt",
       "messageTimestamp": "01.26.2023 09:31:52",
       "messageAck": null,
       "messagePayload": "lmao ok time to check"
+    }
+  ],
+
+  "apisubjectNames": [
+    { "name": "subject" },
+    { "name": "subject.A" },
+    { "name": "subject.A.*" },
+    { "name": "subject.B" },
+    { "name": "subject.B.*" },
+    { "name": "subject.C" },
+    { "name": "subject.C.1" },
+    { "name": "subject.C.2" },
+    { "name": "subject.C.3" },
+    { "name": "subject2" },
+    { "name": "subject2.A" },
+    { "name": "subject2.A.1" }
+  ],
+
+  "apisubjectHierarchy": [
+    {
+      "name": "subject",
+      "subSubjects": [
+        { "name": "A", "subSubjects": [{ "name": "*" }] },
+        { "name": "B", "subSubjects": [{ "name": "*" }] },
+        {
+          "name": "C",
+          "subSubjects": [{ "name": "1" }, { "name": "2" }, { "name": "3" }]
+        }
+      ]
+    },
+    {
+      "name": "subject2",
+      "subSubjects": [{ "name": "A", "subSubjects": [{ "name": "1" }] }]
+    }
+  ],
+
+  "apistreams": [
+    {
+      "name": "stream1",
+      "subjectCount": 3,
+      "consumerCount": 2,
+      "messageCount": 46,
+      "subjects": ["subject.A.*"],
+      "consumers": ["consumer1", "consumer3"],
+      "description": "",
+      "messages": 56,
+      "deleted": 10,
+      "policies": { "discardPolicy": "old", "retentionPolicy": "limits" }
+    },
+    {
+      "name": "stream2",
+      "subjectCount": 2,
+      "consumerCount": 1,
+      "messageCount": 16,
+      "subjects": ["subject.B.*"],
+      "consumers": ["consumer2"],
+      "description": "",
+      "messages": 23,
+      "deleted": 0,
+      "policies": { "discardPolicy": "old", "retentionPolicy": "limits" }
+    },
+    {
+      "name": "stream3",
+      "subjectCount": 2,
+      "consumerCount": 1,
+      "messageCount": 8,
+      "subjects": ["subject.C.1", "subject.C.2"],
+      "consumers": ["consumer4"],
+      "description": "",
+      "messages": 17,
+      "deleted": 0,
+      "policies": { "discardPolicy": "old", "retentionPolicy": "limits" }
+    },
+    {
+      "name": "stream4",
+      "subjectCount": 1,
+      "consumerCount": 0,
+      "messageCount": 13,
+      "subjects": ["subject2.A.1"],
+      "consumers": [],
+      "description": "",
+      "messages": 14,
+      "deleted": 0,
+      "policies": { "discardPolicy": "old", "retentionPolicy": "limits" }
+    },
+    {
+      "name": "stream5",
+      "subjectCount": 1,
+      "consumerCount": 0,
+      "messageCount": 1,
+      "subjects": ["subject.C.3"],
+      "consumers": [],
+      "description": "",
+      "messages": 2,
+      "deleted": 0,
+      "policies": { "discardPolicy": "old", "retentionPolicy": "limits" }
+    },
+    {
+      "name": "streamtest",
+      "subjectCount": 1,
+      "consumerCount": 0,
+      "messageCount": 15,
+      "subjects": ["subject.A"],
+      "consumers": [],
+      "description": "",
+      "messages": 29,
+      "deleted": 0,
+      "policies": { "discardPolicy": "old", "retentionPolicy": "limits" }
+    }
+  ],
+
+  "apimessages": [
+    {
+      "sequenceNumber": 1,
+      "timestamp": "2023-03-02T21:41:33.5422743Z",
+      "stream": "stream1",
+      "subject": "subject.A.*",
+      "headers": [{"name": "headerName1", "value": "headerValue1"},
+                  {"name": "headerName2", "value": "headerValue2"},
+                  {"name": "headerName3", "value": "headerValue3"}],
+      "payload": "payload1.1"
+    },
+    {
+      "sequenceNumber": 2,
+      "timestamp": "2023-03-02T14:11:45.7036823Z",
+      "stream": "stream1",
+      "subject": "subject.A.*",
+      "headers": ["header1.1", "header1.2", "header1.3"],
+      "payload": "payload1.2"
+    },
+    {
+      "sequenceNumber": 3,
+      "timestamp": "2023-03-01T10:32:11.5906588Z",
+      "stream": "stream1",
+      "subject": "subject.A.*",
+      "headers": ["header1.1", "header1.2", "header1.3"],
+      "payload": "payload1.3"
+    },
+    {
+      "sequenceNumber": 4,
+      "timestamp": "2023-02-24T13:05:30.9394227Z",
+      "stream": "stream2",
+      "subject": "subject.B.*",
+      "headers": ["header2.1", "header2.2", "header2.3"],
+      "payload": "payload2.1"
+    },
+    {
+      "sequenceNumber": 5,
+      "timestamp": "2023-02-24T12:54:12.307516Z",
+      "stream": "stream2",
+      "subject": "subject.B.*",
+      "headers": ["header2.1", "header2.2", "header2.3"],
+      "payload": "payload2.2"
+    },
+    {
+      "sequenceNumber": 6,
+      "timestamp": "2023-02-24T12:17:09.8729091Z",
+      "stream": "stream2",
+      "subject": "subject.B.*",
+      "headers": ["header2.1", "header2.2", "header2.3"],
+      "payload": "payload2.3"
+    },
+    {
+      "sequenceNumber": 7,
+      "timestamp": "2023-02-24T12:12:07.0348007Z",
+      "stream": "stream3",
+      "subject": "subject.C.1",
+      "headers": ["header3.1", "header3.2", "header3.3"],
+      "payload": "payload3.1"
+    },
+    {
+      "sequenceNumber": 8,
+      "timestamp": "2023-02-24T11:31:37.1990285Z",
+      "stream": "stream3",
+      "subject": "subject.C.1",
+      "headers": ["header3.1", "header3.2", "header3.3"],
+      "payload": "payload3.2"
+    },
+    {
+      "sequenceNumber": 9,
+      "timestamp": "2023-02-24T10:45:49.516257Z",
+      "stream": "stream3",
+      "subject": "subject.C.2",
+      "headers": ["header3.1", "header3.2", "header3.3"],
+      "payload": "payload3.3"
+    },
+    {
+      "sequenceNumber": 10,
+      "timestamp": "2023-02-24T12:12:07.0348007Z",
+      "stream": "stream4",
+      "subject": "subject2.A.1",
+      "headers": ["header4.1", "header4.2", "header4.3"],
+      "payload": "payload4.1"
+    },
+    {
+      "sequenceNumber": 11,
+      "timestamp": "2023-02-24T11:31:37.1990285Z",
+      "stream": "stream4",
+      "subject": "subject2.A.1",
+      "headers": ["header4.1", "header4.2", "header4.3"],
+      "payload": "payload4.2"
+    },
+    {
+      "sequenceNumber": 12,
+      "timestamp": "2023-02-24T10:45:49.516257Z",
+      "stream": "stream4",
+      "subject": "subject2.A.1",
+      "headers": ["header4.1", "header4.2", "header4.3"],
+      "payload": "payload4.3"
+    },
+    {
+      "sequenceNumber": 13,
+      "timestamp": "2023-02-24T12:12:07.0348007Z",
+      "stream": "stream5",
+      "subject": "subject.C.3",
+      "headers": ["header5.1", "header5.2", "header5.3"],
+      "payload": "payload5.1"
+    },
+    {
+      "sequenceNumber": 14,
+      "timestamp": "2023-02-24T11:31:37.1990285Z",
+      "stream": "stream5",
+      "subject": "subject.C.3",
+      "headers": ["header5.1", "header5.2", "header5.3"],
+      "payload": "payload5.2"
+    },
+    {
+      "sequenceNumber": 15,
+      "timestamp": "2023-02-24T10:45:49.516257Z",
+      "stream": "stream5",
+      "subject": "subject.C.3",
+      "headers": ["header5.1", "header5.2", "header5.3"],
+      "payload": "payload5.3"
+    },
+    {
+      "sequenceNumber": 16,
+      "timestamp": "2023-02-24T12:12:07.0348007Z",
+      "stream": "streamtest",
+      "subject": "subject.A",
+      "headers": ["headertest1", "headertest2", "headertest3"],
+      "payload": "payloadtest1"
+    },
+    {
+      "sequenceNumber": 17,
+      "timestamp": "2023-02-24T11:31:37.1990285Z",
+      "stream": "streamtest",
+      "subject": "subject.A",
+      "headers": ["headertest1", "headertest2", "headertest3"],
+      "payload": "payloadtest2"
+    },
+    {
+      "sequenceNumber": 18,
+      "timestamp": "2023-02-24T10:45:49.516257Z",
+      "stream": "streamtest",
+      "subject": "subject.A",
+      "headers": ["headertest1", "headertest2", "headertest3"],
+      "payload": "payloadtest3"
     }
   ]
 }
