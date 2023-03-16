@@ -21,7 +21,7 @@ function HomePage() {
   const [allMessages, setAllMessages] = useState<any[]>([]);
 
   function getAllMessages() {
-    fetch("/api/messages") // "http://localhost:3000/message1"
+    fetch("/api/allMessages") // "http://localhost:3000/message1"
       .then((res: any) => res.json())
       .then((data) => {
         setAllMessages(data);

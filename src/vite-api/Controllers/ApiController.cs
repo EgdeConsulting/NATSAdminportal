@@ -23,22 +23,29 @@ public class ApiController : ControllerBase
         _subscriberManager = subscriberManager;
     }
 
-    [HttpGet("streamData")]
-    public IActionResult GetStreamData([FromQuery] string streamName)
+    [HttpGet("allMessages")]
+    public IActionResult AllMessages()
     {
-        var res = _streamManager.GetExtendedStreamInfo(streamName);
+        var res = _subscriberManager.GetAllMessages();
         return Ok(res);
     }
 
-    [HttpGet("messageData")]
-    public IActionResult GetMessageData([FromQuery] string streamName, [FromQuery] ulong sequenceNumber)
+    [HttpGet("specificMessage")]
+    public IActionResult SpecificMessage([FromQuery] string streamName, [FromQuery] ulong sequenceNumber)
     {
-        var res = _subscriberManager.GetSpecificMessage(streamName, sequenceNumber);
-        return Ok(res);
+        try
+        {
+            var res = _subscriberManager.GetSpecificMessage(streamName, sequenceNumber);
+            return Ok(res);
+        }
+        catch
+        {
+            return BadRequest();
+        }
     }
 
-    [HttpPost("publishFullMessage")]
-    public IActionResult PublishFullMessage([FromBody] MessageDataDto msg)
+    [HttpPost("newMessage")]
+    public IActionResult NewMessage([FromBody] MessageDataDto msg)
     {
         try
         {
@@ -67,44 +74,12 @@ public class ApiController : ControllerBase
     }
 
     [HttpDelete("deleteMessage")]
-    public async Task<IActionResult> DeleteMessage([FromQuery] string streamName, [FromQuery] ulong sequenceNumber, [FromQuery] bool erase)
-    {
-        var res = _streamManager.DeleteMessage(streamName, sequenceNumber, erase);
-        return Ok(res);
-    }
-
-    // #warning Why post and not delete?
-    // [HttpPost("deleteMessage")]
-    // public async Task<IActionResult> DeleteMessage()
-    // {
-    //     string content = "";
-    //     using (StreamReader stream = new StreamReader(Request.Body))
-    //     {
-    //         content = await stream.ReadToEndAsync();
-    //     }
-    //
-    //     var jsonObject = JsonNode.Parse(content);
-    //
-    //     if (jsonObject != null && jsonObject["name"] != null && jsonObject["sequenceNumber"] != null)
-    //     {
-    //         string streamName = jsonObject["name"]!.ToString();
-    //         ulong sequenceNumber = ulong.Parse(jsonObject["number"]!.ToString());
-    //         bool erase = jsonObject["erase"]!.ToString() == "true";
-    //
-    //         _streamManager.DeleteMessage(streamName, sequenceNumber, erase);
-    //     }
-    //
-    //     return Ok();
-    // }
-
-#warning This endpoint exists solely to allow for swapping between change dummy user accounts
-    [HttpPost("updateUserAccount")]
-    public IActionResult UpdateUserAccount([FromQuery] string username)
+    public IActionResult DeleteMessage([FromQuery] string streamName, [FromQuery] ulong sequenceNumber, [FromQuery] bool erase)
     {
         try
         {
-            UserAccount.Name = username;
-            return Ok();
+            var res = _streamManager.DeleteMessage(streamName, sequenceNumber, erase);
+            return Ok(res);
         }
         catch
         {
@@ -112,12 +87,32 @@ public class ApiController : ControllerBase
         }
     }
 
-#warning Which stream do we get it for? There's absolutely no parameters here?
-    [HttpGet("streams")]
-    public IActionResult GetStreams()
+    [HttpGet("allStreams")]
+    public IActionResult AllStreams()
     {
-        var res = _streamManager.GetBasicStreamInfo();
-        return Ok(res);
+        try
+        {
+            var res = _streamManager.GetAllStreams();
+            return Ok(res);
+        }
+        catch
+        {
+            return BadRequest();
+        }
+    }
+
+    [HttpGet("specificStream")]
+    public IActionResult SpecificStream([FromQuery] string streamName)
+    {
+        try
+        {
+            var res = _streamManager.GetSpecificStream(streamName);
+            return Ok(res);
+        }
+        catch
+        {
+            return BadRequest();
+        }
     }
 
 #warning Get which subject hierarchy? On what stream? No parameters.
@@ -135,7 +130,6 @@ public class ApiController : ControllerBase
         return Ok(res);
     }
 
-
     [HttpGet("subjectNames")]
     public IActionResult GetSubjectNames()
     {
@@ -144,11 +138,18 @@ public class ApiController : ControllerBase
         return Ok(res);
     }
 
-    [HttpGet("messages")]
-    public IActionResult GetMessages()
+#warning This endpoint exists solely to allow for swapping between change dummy user accounts
+    [HttpPost("updateUserAccount")]
+    public IActionResult UpdateUserAccount([FromQuery] string username)
     {
-#warning Get what messages? No parameters so no stream defined
-        var res = _subscriberManager.GetAllMessages();
-        return Ok(res);
+        try
+        {
+            UserAccount.Name = username;
+            return Ok();
+        }
+        catch
+        {
+            return BadRequest();
+        }
     }
 }

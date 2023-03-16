@@ -15,7 +15,7 @@ function StreamPage() {
   }, [streams.length != 0]);
 
   function getStreams() {
-    fetch("/api/streams")
+    fetch("/api/allStreams")
       .then((res) => res.json())
       .then((data) => {
         setStreams(data);

@@ -31,7 +31,7 @@ function MsgView() {
     if (msg.stream && msg.sequenceNumber) {
       const queryString =
         "streamName=" + msg.stream + "&sequenceNumber=" + msg.sequenceNumber;
-      fetch("/api/messageData?" + queryString)
+      fetch("/api/specificMessage?" + queryString)
         .then((res) => res.json())
         .then((data) => {
           setMessageData(data);

@@ -31,7 +31,7 @@ function MsgPublishModal() {
   const payloadInputRef = useRef<any>(null);
 
   function postNewMessage() {
-    fetch("/api/publishFullMessage", {
+    fetch("/api/newMessage", {
       method: "POST",
       headers: {
         Accept: "application/json",

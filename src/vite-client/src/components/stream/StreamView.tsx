@@ -25,7 +25,7 @@ function StreamView() {
     const stream = currentStreamContext.currentStream;
     if (stream.name) {
       const queryString = "streamName=" + stream.name;
-      fetch("/api/streamName?" + queryString)
+      fetch("/api/specificStream?" + queryString)
         .then((res) => res.json())
         .then((data) => {
           setStreamData(data);
