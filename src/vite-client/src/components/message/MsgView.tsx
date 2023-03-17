@@ -10,6 +10,7 @@ import {
   Spacer,
   HStack,
   VStack,
+  StackDivider,
 } from "@chakra-ui/react";
 import { useContext, useEffect, useState } from "react";
 import {
@@ -66,7 +67,13 @@ function MsgView() {
               </HStack>
             </Flex>
           </CardHeader>
-          <VStack ml={5} mb={5} align={"flex-start"} spacing={6}>
+          <VStack
+            ml={5}
+            mb={5}
+            align={"flex-start"}
+            spacing={6}
+            divider={<StackDivider />}
+          >
             <Box>
               <Heading size={"sm"} mb={2}>
                 Headers
