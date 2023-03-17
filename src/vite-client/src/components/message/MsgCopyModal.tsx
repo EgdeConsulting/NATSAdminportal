@@ -28,15 +28,46 @@ function MsgCopyModal() {
   function copyMessage() {
     const msg = currentMsgContext?.currentMsg;
     if (msg) {
-      const queryString =
-        "streamName=" +
-        msg.stream +
-        "&sequenceNumber=" +
-        msg.sequenceNumber +
-        "&newSubject=" +
-        subjectInputRef.current.value;
-      fetch("/api/copyMessage?" + queryString, {
-        method: "POST",
+      let url = "/api/copyMessage";
+      let requestMethod = "POST";
+      let bodyContent;
+
+      if (
+        !process.env.NODE_ENV ||
+        process.env.NODE_ENV === "development+json-server"
+      ) {
+        url += "/" + msg.sequenceNumber;
+        requestMethod = "PUT";
+        bodyContent = {
+          id: msg.sequenceNumber,
+          sequenceNumber: msg.sequenceNumber,
+          timestamp: new Date(),
+          stream: msg.stream,
+          subject: subjectInputRef.current.value,
+          headers: [],
+          payload: "",
+        };
+      } else {
+        bodyContent = {
+          sequenceNumber: msg.sequenceNumber,
+          stream: msg.stream,
+          subject: subjectInputRef.current.value,
+        };
+      }
+
+      fetch(url, {
+        method: requestMethod,
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(bodyContent),
+      }).then((res) => {
+        if (!res.ok) {
+          alert(
+            "An error occurred while copying the message: " + res.statusText
+          );
+        }
       });
     }
   }

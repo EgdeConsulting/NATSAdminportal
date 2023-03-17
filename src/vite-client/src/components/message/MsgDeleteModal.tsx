@@ -37,21 +37,34 @@ function MsgDeleteModal() {
   function deleteMessage() {
     const msg = currentMsgContext?.currentMsg;
     if (msg) {
-      const queryString =
-        "streamName=" +
-        msg.stream +
-        "&sequenceNumber=" +
-        msg.sequenceNumber +
-        "&erase=" +
-        erase;
-      fetch("/api/deleteMessage?" + queryString, {
+      let url = "/api/deleteMessage";
+
+      if (
+        !process.env.NODE_ENV ||
+        process.env.NODE_ENV === "development+json-server"
+      ) {
+        url += "/" + msg.sequenceNumber;
+      }
+
+      fetch(url, {
         method: "DELETE",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          sequenceNumber: msg.sequenceNumber,
+          stream: msg.stream,
+          erase: erase,
+        }),
       }).then((res) => {
         if (res.ok) {
           changeCurrentMsg(DefaultMsgState.currentMsg);
           changeVisibility(false);
         } else {
-          alert("There was an error deleting the message.");
+          alert(
+            "An error occurred while deleting the message: " + res.statusText
+          );
         }
       });
     }

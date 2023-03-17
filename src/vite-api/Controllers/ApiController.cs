@@ -45,11 +45,11 @@ public class ApiController : ControllerBase
     }
 
     [HttpPost("newMessage")]
-    public IActionResult NewMessage([FromBody] MessageDataDto msg)
+    public IActionResult NewMessage([FromBody] MessageDataDto msgDto)
     {
         try
         {
-            _publisher.SendNewMessage(msg);
+            _publisher.SendNewMessage(msgDto);
             return Ok();
         }
         catch
@@ -57,14 +57,14 @@ public class ApiController : ControllerBase
             return BadRequest();
         }
     }
-
+    
     [HttpPost("copyMessage")]
-    public IActionResult CopyMessage([FromQuery] string streamName, [FromQuery] ulong sequenceNumber, [FromQuery] string newSubject)
+    public IActionResult CopyMessage([FromBody] MessageDto msgDto)
     {
         try
         {
-            var msg = _subscriberManager.GetSpecificMessage(streamName, sequenceNumber);
-            _publisher.CopyMessage(msg!, newSubject);
+            var msg = _subscriberManager.GetSpecificMessage(msgDto.Stream, msgDto.SequenceNumber);
+            _publisher.CopyMessage(msg!, msgDto.Subject);
             return Ok();
         }
         catch
@@ -74,11 +74,11 @@ public class ApiController : ControllerBase
     }
 
     [HttpDelete("deleteMessage")]
-    public IActionResult DeleteMessage([FromQuery] string streamName, [FromQuery] ulong sequenceNumber, [FromQuery] bool erase)
+    public IActionResult DeleteMessage([FromBody] MessageDto msgDto)
     {
         try
         {
-            var res = _streamManager.DeleteMessage(streamName, sequenceNumber, erase);
+            var res = _streamManager.DeleteMessage(msgDto.Stream, msgDto.SequenceNumber, msgDto.Erase);
             return Ok(res);
         }
         catch

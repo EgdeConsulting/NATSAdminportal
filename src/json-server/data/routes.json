@@ -1,10 +1,10 @@
 {
   "/api/*": "/$1",
   "/allMessages": "/messages",
-  "/specificMessage\\?streamName=:stream&sequenceNumber=:sequenceNumber": "/messages?stream=:stream&sequenceNumber=:sequenceNumber",
   "/newMessage": "/messages",
-  "/copyMessage\\?streamName=:name&sequenceNumber=:sequenceNumber&newSubject=:subject": "/messages?name=:name&sequenceNumber=:sequenceNumber&subject=:subject",
-  "/deleteMessage\\?streamName=:stream&sequenceNumber=:sequenceNumber&erase=:erase": "/messages?stream=:stream&id=:sequenceNumber",
+  "/copyMessage/:id": "/messages/:id",
+  "/deleteMessage/:id": "/messages/:id",
+  "/specificMessage\\?streamName=:stream&sequenceNumber=:sequenceNumber": "/messages?stream=:stream&sequenceNumber=:sequenceNumber",
   "/allStreams": "/streams",
   "/specificStream\\?streamName=:name": "/streams?name=:name",
   "/allSubjects": "/allSubjects",

@@ -31,24 +31,46 @@ function MsgPublishModal() {
   const payloadInputRef = useRef<any>(null);
 
   function postNewMessage() {
+    let bodyContent;
+
+    if (
+      !process.env.NODE_ENV ||
+      process.env.NODE_ENV === "development+json-server"
+    ) {
+      const id = Math.round(Math.random() * (10000 - 100));
+      bodyContent = {
+        id: id,
+        sequenceNumber: id,
+        timestamp: new Date(),
+        stream: "stream1",
+        subject: subjectInputRef.current.value,
+        headers: headerList,
+        payload: payloadInputRef.current.value,
+      };
+    } else {
+      bodyContent = {
+        subject: subjectInputRef.current.value,
+        headers: headerList,
+        payload: payloadInputRef.current.value,
+      };
+    }
+
     fetch("/api/newMessage", {
       method: "POST",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        subject: subjectInputRef.current.value,
-        headers: headerList,
-        payload: payloadInputRef.current.value,
-      }),
+      body: JSON.stringify(bodyContent),
     }).then((res) => {
       if (res.ok) {
         subjectInputRef.current.value = "";
         setHeaderList([{ name: "", value: "" }]);
         payloadInputRef.current.value = "";
       } else {
-        alert("Network error: " + res.statusText);
+        alert(
+          "An error occurred while publishing the message: " + res.statusText
+        );
       }
     });
   }

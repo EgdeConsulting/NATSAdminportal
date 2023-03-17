@@ -286,17 +286,6 @@
         }
       ],
       "payload": "payloadtest3"
-    },
-    {
-      "subject": "subject.A.*",
-      "headers": [
-        {
-          "name": "awdawdwad",
-          "value": "awdawd"
-        }
-      ],
-      "payload": "awdawd",
-      "id": 8
     }
   ]
 }

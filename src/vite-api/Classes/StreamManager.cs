@@ -5,6 +5,7 @@ using NATS.Client;
 using NATS.Client.JetStream;
 using vite_api.Config;
 using vite_api.Dto;
+using Options = NATS.Client.Options;
 
 namespace vite_api.Classes
 {
@@ -58,12 +59,11 @@ namespace vite_api.Classes
         {
             _logger.LogInformation("{} > {} deleted message (stream name, sequence number): {}, {}",
             DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), UserAccount.Name, streamName, sequenceNumber);
-
-            using (IConnection c = new ConnectionFactory().CreateConnection(Url))
-            {
-                IJetStreamManagement jsm = c.CreateJetStreamManagementContext();
-                return jsm.DeleteMessage(streamName, sequenceNumber, erase);
-            }
+            
+            using var connection = _provider.GetRequiredService<IConnection>();
+            var jsm = connection.CreateJetStreamManagementContext();
+            
+            return jsm.DeleteMessage(streamName, sequenceNumber, erase);
         }
 
         /// <summary>
