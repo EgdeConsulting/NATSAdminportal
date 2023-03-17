@@ -6,8 +6,10 @@ import {
   VStack,
   Flex,
   Spacer,
+  Box,
 } from "@chakra-ui/react";
 import { useState } from "react";
+import StickyBox from "react-sticky-box";
 import {
   MsgView,
   MsgTable,
@@ -49,7 +51,7 @@ function HomePage() {
       <MsgViewContextProvider>
         <HStack w={"100%"} align={"stretch"} pt={2}>
           <Flex w={"100%"}>
-            <Card variant={"outline"} w={"75%"} mr={2}>
+            <Card variant={"outline"} w={"75%"} mr={-2}>
               <CardBody>
                 <HStack>
                   <Card border={"none"}>
@@ -70,8 +72,12 @@ function HomePage() {
             </Card>
             <Spacer />
             <VStack w={"25%"} h={"100%"} mr={2}>
-              <MsgView />
-              <SubjectSidebar />
+              <Box w={"95%"} h={"100%"} ml={4}>
+                <StickyBox offsetTop={10}>
+                  <MsgView />
+                  <SubjectSidebar />
+                </StickyBox>
+              </Box>
             </VStack>
           </Flex>
         </HStack>

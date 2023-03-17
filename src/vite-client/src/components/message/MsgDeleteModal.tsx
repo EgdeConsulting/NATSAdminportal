@@ -22,7 +22,6 @@ import {
 import { useContext, useState } from "react";
 
 function MsgDeleteModal() {
-  const [buttonDisable, toggleButtonDisable] = useState<boolean>(true);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
     isOpen: isOpenAC,
