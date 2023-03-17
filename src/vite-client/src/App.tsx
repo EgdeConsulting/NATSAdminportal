@@ -26,6 +26,7 @@ function App() {
                 <Route path="/log" element={<LogPage />} />
                 <Route path="/settings" element={<SettingsPage />} />
                 <Route path="/" element={<HomePage />} />
+                <Route path="/*" element={<HomePage />} />
               </Routes>
             </Box>
           </HStack>
