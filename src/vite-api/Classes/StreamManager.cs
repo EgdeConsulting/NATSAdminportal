@@ -5,6 +5,7 @@ using NATS.Client;
 using NATS.Client.JetStream;
 using vite_api.Config;
 using vite_api.Dto;
+using Options = NATS.Client.Options;
 
 namespace vite_api.Classes
 {
@@ -58,33 +59,38 @@ namespace vite_api.Classes
         {
             _logger.LogInformation("{} > {} deleted message (stream name, sequence number): {}, {}",
             DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), UserAccount.Name, streamName, sequenceNumber);
-
-            using (IConnection c = new ConnectionFactory().CreateConnection(Url))
-            {
-                IJetStreamManagement jsm = c.CreateJetStreamManagementContext();
-                return jsm.DeleteMessage(streamName, sequenceNumber, erase);
-            }
+            
+            using var connection = _provider.GetRequiredService<IConnection>();
+            var jsm = connection.CreateJetStreamManagementContext();
+            
+            return jsm.DeleteMessage(streamName, sequenceNumber, erase);
         }
-        
+
         /// <summary>
-        /// Gets extended information about a all stream on a NATS-server. Returns JSON.
+        /// Gets basic information about all streams on the NATS-server.
         /// </summary>
-        public BasicStreamInfoDto[] GetBasicStreamInfo()
+        /// <returns>A collection of Dto's containing the basic information.</returns>
+        public BasicStreamInfoDto[] GetAllStreams()
         {
             using var connection = _provider.GetRequiredService<IConnection>();
             var jsm = connection.CreateJetStreamManagementContext();
 
             return jsm.GetStreams()
                .Select(x => new BasicStreamInfoDto
-                {
-                    Name = x.Config.Name,
-                    SubjectCount = x.State.SubjectCount,
-                    ConsumerCount = x.State.ConsumerCount,
-                    MessageCount = x.State.Messages
-                }).ToArray();
+               {
+                   Name = x.Config.Name,
+                   SubjectCount = x.State.SubjectCount,
+                   ConsumerCount = x.State.ConsumerCount,
+                   MessageCount = x.State.Messages
+               }).ToArray();
         }
-        
-        public ExtendedStreamInfoDto GetExtendedStreamInfo(string streamName)
+
+        /// <summary>
+        /// Gets extended information about a stream.
+        /// </summary>
+        /// <param name="streamName">The name of the stream.</param>
+        /// <returns>Dto containing extended information about the stream.</returns>
+        public ExtendedStreamInfoDto GetSpecificStream(string streamName)
         {
             using var connection = _provider.GetRequiredService<IConnection>();
             var jsm = connection.CreateJetStreamManagementContext();
