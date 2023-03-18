@@ -82,27 +82,41 @@ namespace vite_api.Classes
         {
             return allSubjects.FirstOrDefault(x => x.SubjectName.Equals(subjectName));
         }
-
-        public string GetSubjectNames()
+        
+        /// <summary>
+        /// Gets all unique subjects on all streams on the NATS-server.
+        /// </summary>
+        /// <returns>A collection containing the subject names.</returns>
+        public List<string> GetAllSubjects()
         {
-            string json = "[";
-            allSubjects.Where(a => a.ParentLinks.Count == 0).ToList().
-                ForEach(b =>
-                {
-                    List<string> subjects = b.ToString(-1, b.ChildrenLinks.Count).Split(",").ToList();
-                    for (int i = 0; i < subjects.Count; i++)
-                    {
-                        json += JsonSerializer.Serialize(
-                            new
-                            {
-                                name = subjects[i]
-                            }
-                        );
-                        json = i < subjects.Count - 1 ? json + "," : json;
-                    }
-                    json += ",";   
-                });
-            return json.Substring(0, json.Length - 1) + "]";
+            // string json = "[";
+            // allSubjects.Where(a => a.ParentLinks.Count == 0).ToList().
+            //     ForEach(b =>
+            //     {
+            //         List<string> subjects = b.ToString(-1, b.ChildrenLinks.Count).Split(",").ToList();
+            //         for (int i = 0; i < subjects.Count; i++)
+            //         {
+            //             json += JsonSerializer.Serialize(
+            //                 new
+            //                 {
+            //                     name = subjects[i]
+            //                 }
+            //             );
+            //             json = i < subjects.Count - 1 ? json + "," : json;
+            //         }
+            //         json += ",";   
+            //     });
+            // return json.Substring(0, json.Length - 1) + "]";
+            var url = appConfig.Value.NatsServerUrl ?? Defaults.Url;
+            using var connection = new ConnectionFactory().CreateConnection(url);
+            var subjects = connection
+                .CreateJetStreamManagementContext()
+                .GetStreams()
+                .SelectMany(x => x.Config.Subjects)
+                .Distinct()
+                .ToList();
+            subjects.Sort();
+            return subjects;
         }
 
         public bool SubjectExists(string subjectName)
@@ -117,18 +131,24 @@ namespace vite_api.Classes
             return matches.Count > 0;
         }
 
-        public string GetSubjectHierarchy()
-        {
-            string hierarchyJSON = "[";
-            allSubjects.Where(a => a.ParentLinks.Count == 0).ToList().
-                ForEach(b =>
-                {
-                    hierarchyJSON += b.ToJSON(-1, b.ChildrenLinks.Count) + ", ";
-                });
-            return hierarchyJSON.Substring(0, hierarchyJSON.Length - 2) + "]";
-        }
+        // public string GetSubjectHierarchy2()
+        // {
+        //     string hierarchyJSON = "[";
+        //     allSubjects.Where(a => a.ParentLinks.Count == 0).ToList().
+        //         ForEach(b =>
+        //         {
+        //             hierarchyJSON += b.ToJSON(-1, b.ChildrenLinks.Count) + ", ";
+        //         });
+        //     return hierarchyJSON.Substring(0, hierarchyJSON.Length - 2) + "]";
+        // }
         
-        public NodeMember<object?> GetSubjectHierarch2()
+        /// <summary>
+        /// Creates a hierarchy trees based on all of the subjects on the NATS-server.
+        /// The hierarchy tree shows all of the subjects and their respective parent
+        /// and child subjects independent of which stream the subjects may belong to.   
+        /// </summary>
+        /// <returns>A NodeMember object containing the hierarchy structure.</returns>
+        public NodeMember<object?> GetSubjectHierarchy()
         {
             var url = appConfig.Value.NatsServerUrl ?? Defaults.Url;
             using var connection = new ConnectionFactory().CreateConnection(url);

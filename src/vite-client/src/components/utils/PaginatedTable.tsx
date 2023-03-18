@@ -67,15 +67,17 @@ function PaginatedTable(props: {
   );
 
   return (
-    <div>
+    <>
       <TableContainer>
         <Table variant={"striped"} colorScheme={"gray"} {...getTableProps()}>
           <Thead>
             {headerGroups.map((headerGroup) => (
               <Tr {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map((column) => (
+                {headerGroup.headers.map((column: any) => (
                   <Th {...column.getHeaderProps()}>
-                    {column.render("Header")}
+                    {headerGroup.headers.length == 1
+                      ? null
+                      : column.render("Header")}
                   </Th>
                 ))}
               </Tr>
@@ -200,7 +202,7 @@ function PaginatedTable(props: {
           </Tooltip>
         </Flex>
       </Flex>
-    </div>
+    </>
   );
 }
 

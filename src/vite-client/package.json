@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev-js": "set NODE_ENV=development+json-server&& vite",
     "build": "tsc && vite build",
     "preview": "vite preview"
   },
@@ -18,10 +19,12 @@
     "react-dom": "^18.2.0",
     "react-icons": "^4.7.1",
     "react-router-dom": "^6.8.1",
+    "react-sticky-box": "^2.0.0",
     "react-table": "^7.8.0",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
+    "@types/node": "^18.15.3",
     "@types/react": "^18.0.26",
     "@types/react-dom": "^18.0.9",
     "@types/react-table": "^7.7.14",
