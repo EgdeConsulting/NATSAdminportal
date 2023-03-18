@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using NATS.Client;
 using vite_api.Classes;
+using Options = NATS.Client.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddUserSecrets<Program>();
@@ -61,5 +62,9 @@ static void ConfigureJsonOptions(JsonOptions options)
 static IConnection NatsConnectionFactory(IServiceProvider provider)
 {
     var config = provider.GetRequiredService<IOptions<AppConfig>>();
-    return new ConnectionFactory().CreateConnection(config.Value.NatsServerUrl);
+    Options opts = ConnectionFactory.GetDefaultOptions();
+    opts.Url = config.Value.NatsServerUrl;
+    opts.ClosedEventHandler += (sender, args) => { };
+    opts.DisconnectedEventHandler += (sender, args) => { };
+    return new ConnectionFactory().CreateConnection(opts);
 }

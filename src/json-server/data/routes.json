@@ -1,0 +1,12 @@
+{
+  "/api/*": "/$1",
+  "/allMessages": "/messages",
+  "/newMessage": "/messages",
+  "/copyMessage/:id": "/messages/:id",
+  "/deleteMessage/:id": "/messages/:id",
+  "/specificMessage\\?streamName=:stream&sequenceNumber=:sequenceNumber": "/messages?stream=:stream&sequenceNumber=:sequenceNumber",
+  "/allStreams": "/streams",
+  "/specificStream\\?streamName=:name": "/streams?name=:name",
+  "/allSubjects": "/allSubjects",
+  "/subjectHierarchy": "/subjectHierarchy"
+}

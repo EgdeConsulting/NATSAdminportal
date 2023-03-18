@@ -1,4 +1,3 @@
-export * from "./SettingsPage";
-export * from "./LogPage";
+export * from "./MessagesPage";
 export * from "./HomePage";
-export * from "./StreamPage";
+export * from "./StreamsPage";

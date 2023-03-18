@@ -6,4 +6,5 @@ public class MessageDto
     public DateTime Timestamp { get; set; }
     public string? Stream { get; set; }
     public string? Subject { get; set; }
+    public bool Erase { get; set; }
 }

@@ -7,16 +7,12 @@ import {
   AlertDialogOverlay,
   Button,
 } from "@chakra-ui/react";
-import { SetStateAction, useRef } from "react";
+import { Dispatch, SetStateAction, useRef } from "react";
 
 function ActionConfirmation(props: {
   action: any;
-  buttonText: string;
-  alertHeader: string;
   isOpen: boolean;
   onClose: () => void;
-  buttonDisable: boolean;
-  toggleButtonDisable: any; //SetStateAction<boolean>;
 }) {
   const cancelRef = useRef<any>();
 
@@ -30,7 +26,7 @@ function ActionConfirmation(props: {
       <AlertDialogOverlay>
         <AlertDialogContent>
           <AlertDialogHeader fontSize="lg" fontWeight="bold">
-            {props.alertHeader}
+            Action Confirmation
           </AlertDialogHeader>
 
           <AlertDialogBody>
@@ -44,10 +40,9 @@ function ActionConfirmation(props: {
               onClick={() => {
                 props.onClose();
                 props.action();
-                props.toggleButtonDisable(true);
               }}
             >
-              {props.buttonText}
+              Confirm
             </Button>
             <Button
               ref={cancelRef}

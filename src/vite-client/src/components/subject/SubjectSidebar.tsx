@@ -26,7 +26,7 @@ function SubjectSidebar() {
   }): JSX.Element => {
     return (
       <>
-        <Checkbox margin={1} paddingLeft={padding} defaultChecked>
+        <Checkbox m={1} pl={padding} defaultChecked>
           {parent["name"]}
         </Checkbox>
         {parent["subSubjects"] != undefined &&
@@ -44,21 +44,19 @@ function SubjectSidebar() {
   };
 
   return (
-    <VStack margin={2} w={"245px"} h={"100%"}>
-      <Card variant={"outline"} h={"100%"} w={"100%"}>
-        <CardHeader>
-          <Heading size={"md"}>Subject Hierarchy</Heading>
-        </CardHeader>
+    <Card variant={"outline"} w={"100%"} mt={"0 !important"}>
+      <CardHeader>
+        <Heading size={"md"}>Subject Hierarchy</Heading>
+      </CardHeader>
 
-        {subjects.map((subject: any, index: number) => {
-          return (
-            <Card key={index} marginLeft={4} marginBottom={3} border={"none"}>
-              <HierarchyCheckbox key={uuidv4()} parent={subject} padding={0} />
-            </Card>
-          );
-        })}
-      </Card>
-    </VStack>
+      {subjects.map((subject: any, index: number) => {
+        return (
+          <Card key={index} ml={4} mb={3} border={"none"}>
+            <HierarchyCheckbox key={uuidv4()} parent={subject} padding={0} />
+          </Card>
+        );
+      })}
+    </Card>
   );
 }
 
