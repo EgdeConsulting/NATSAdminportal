@@ -3,7 +3,7 @@ import { PaginatedTable, StreamViewButton } from "components";
 function StreamTable(props: { streamInfo: any[] }) {
   const columns = [
     {
-      Header: "All Streams",
+      Header: "StreamTable",
       columns: [
         {
           Header: "Name",

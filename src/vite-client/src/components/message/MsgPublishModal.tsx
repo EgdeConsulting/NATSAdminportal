@@ -1,5 +1,4 @@
 import {
-  IconButton,
   Button,
   Modal,
   ModalOverlay,
@@ -77,7 +76,7 @@ function MsgPublishModal() {
 
   return (
     <>
-      <IconButton
+      <Button
         margin={2}
         size={"md"}
         onClick={() => {
@@ -85,8 +84,10 @@ function MsgPublishModal() {
           onOpen();
         }}
         aria-label="Publish a message"
-        icon={<ChatIcon />}
-      />
+        leftIcon={<ChatIcon />}
+      >
+        Publish new Message
+      </Button>
 
       <Modal size={"md"} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />

@@ -8,7 +8,7 @@ import {
 
 import { Topbar, Sidebar } from "./components";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { SettingsPage, LogPage, HomePage, StreamPage } from "./routes";
+import { MessagesPage, HomePage, StreamsPage } from "./routes";
 import { theme } from "./styles";
 
 function App() {
@@ -22,9 +22,8 @@ function App() {
             <Sidebar />
             <Box w={"100%"} h={"100%"} pb={2}>
               <Routes>
-                <Route path="/streams" element={<StreamPage />} />
-                <Route path="/log" element={<LogPage />} />
-                <Route path="/settings" element={<SettingsPage />} />
+                <Route path="/streams" element={<StreamsPage />} />
+                <Route path="/messages" element={<MessagesPage />} />
                 <Route path="/" element={<HomePage />} />
                 <Route path="/*" element={<HomePage />} />
               </Routes>

@@ -3,7 +3,7 @@ import { PaginatedTable, MsgViewButton } from "components";
 function MsgTable(props: { messages: any[] }) {
   const columns = [
     {
-      Header: "All Messages",
+      Header: "MsgTable",
       columns: [
         {
           Header: "Sequence Number",
