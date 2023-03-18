@@ -1,6 +1,7 @@
-import { Flex, Spacer, useColorMode, Box } from "@chakra-ui/react";
+import { Flex, Spacer, useColorMode, Box, HStack } from "@chakra-ui/react";
 import { ColorModeButton, AccountMenu } from "components";
-import { NatsLetterIcon } from "assets";
+import { EgdeLogo, NatsLetterIcon } from "assets";
+import { AddIcon } from "@chakra-ui/icons";
 
 function Topbar() {
   const { colorMode, toggleColorMode } = useColorMode();
@@ -10,9 +11,13 @@ function Topbar() {
       borderBottom={"1px solid"}
       borderColor={colorMode === "dark" ? "whiteAlpha.300" : "gray.200"}
     >
-      <Box marginLeft={3}>
+      <HStack ml={3} w={"300px"}>
         <NatsLetterIcon />
-      </Box>
+        <Box>
+          <AddIcon mt={-3} />
+        </Box>
+        <EgdeLogo />
+      </HStack>
       <Spacer />
       <Box>
         <ColorModeButton />

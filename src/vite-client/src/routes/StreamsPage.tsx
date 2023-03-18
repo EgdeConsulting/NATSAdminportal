@@ -14,9 +14,10 @@ import {
   StreamTable,
   StreamContextProvider,
   StreamViewContextProvider,
+  PageHeader,
 } from "components";
 
-function StreamPage() {
+function StreamsPage() {
   const [streams, setStreams] = useState<any[]>([]);
 
   useEffect(() => {
@@ -36,13 +37,19 @@ function StreamPage() {
       <StreamViewContextProvider>
         <HStack w={"100%"} align={"stretch"} pt={2}>
           <Flex w={"100%"}>
-            <Card variant={"outline"} w={"75%"} mr={-2}>
+            <Card variant={"outline"} w={"70%"} mr={-2}>
               <CardBody>
+                <PageHeader
+                  heading={"All streams"}
+                  introduction={
+                    "This page shows all streams on the NATS-server."
+                  }
+                />
                 <StreamTable streamInfo={streams} />
               </CardBody>
             </Card>
             <Spacer />
-            <VStack w={"25%"} h={"100%"} mr={2}>
+            <VStack w={"30%"} h={"100%"} mr={2}>
               <Box w={"95%"} h={"100%"} ml={4}>
                 <StickyBox offsetTop={10}>
                   <StreamView />
@@ -56,4 +63,4 @@ function StreamPage() {
   );
 }
 
-export { StreamPage };
+export { StreamsPage };
