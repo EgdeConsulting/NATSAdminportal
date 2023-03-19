@@ -26,11 +26,17 @@ function MessagesPage() {
   const [isIntervalRunning, setIsIntervalRunning] = useState(false);
 
   function getAllMessages() {
-    fetch("/api/allMessages")
-      .then((res: any) => res.json())
-      .then((data) => {
-        setAllMessages(data);
-      });
+    fetch("/api/allMessages").then((res: any) => {
+      if (res.ok) {
+        res.json().then((data: any) => {
+          setAllMessages(data);
+        });
+      } else {
+        alert(
+          "An error occurred while fetching all messages: " + res.statusText
+        );
+      }
+    });
   }
 
   useEffect(() => {
