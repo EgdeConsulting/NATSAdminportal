@@ -46,4 +46,4 @@ The JSON server and the client runs on different ports. The client accesses the 
 
 Scripts, dependencies, and other metadata can be found in `package.json`.
 
-For more infromation regarding JSON server please see https://github.com/typicode/json-server
+For more information regarding JSON server see: https://github.com/typicode/json-server
