@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Runtime.ExceptionServices;
+using System.Collections.Concurrent;
 using System.Text;
 using NATS.Client;
 using NATS.Client.JetStream;
@@ -10,38 +9,19 @@ namespace vite_api.Classes
     public class JetStreamSubscriber
     {
         private readonly List<string> _subjects;
-        // The amount of messages which max should be pulled from a stream at the same time
+        // The amount of messages which max should be pulled from a stream at the same time.
         private const int BatchSize = 1000;
+        // Maximum character limit of the message payload.
         private const int MaxPayloadLength = 200;
         private readonly IServiceProvider _provider;
-        //private readonly string? _url = Defaults.Url;
-        //private readonly string? _creds = null;
         public string StreamName { get; }
 
         public JetStreamSubscriber(IServiceProvider provider, string streamName, List<string> subjects)
         {
-            //_url = url;
             _provider = provider;
             StreamName = streamName;
             _subjects = subjects;
         }
-
-        // /// <summary>
-        // /// Starts the subscribers so that is fetches all previous, current and future messages on a stream. 
-        // /// </summary>
-        // /// 
-        // public void Run()
-        // {
-        //     Options opts = ConnectionFactory.GetDefaultOptions();
-        //     opts.Url = _url;
-        //     if (_creds != null)
-        //         opts.SetUserCredentials(_creds);
-        //
-        //     using (IConnection c = new ConnectionFactory().CreateConnection(opts))
-        //     {
-        //         //TimeSpan elapsed = receiveJetStreamPullSubscribe(c);
-        //     }
-        // }
 
         // The following method was created based on: https://stackoverflow.com/questions/75181157/pull-last-batch-of-messages-from-a-nats-jetstream
         /// <summary>
@@ -51,19 +31,17 @@ namespace vite_api.Classes
         /// <returns>List of all message objects</returns>
         private IEnumerable<Msg> ReceiveJetStreamPullSubscribe()
         {
-            var currentMessages = new List<Msg>();
-
             using var connection = _provider.GetRequiredService<IConnection>();
             var js = connection.CreateJetStreamContext();
             var pullOptions = PullSubscribeOptions.Builder().WithStream(StreamName).Build();
 
-            foreach (var subject in _subjects)
-            {
+            var currentMessages = new ConcurrentBag<IList<Msg>>();
+            Parallel.ForEach(_subjects, subject => { 
                 var sub = js.PullSubscribe(subject, pullOptions);
-                currentMessages = new List<Msg>(currentMessages.Concat(sub.Fetch(BatchSize, 1000)));
-            }
-            
-            return currentMessages.OrderByDescending(x => x.MetaData.StreamSequence).ToList();
+                currentMessages.Add(sub.Fetch(BatchSize, 1000)); 
+            });
+
+            return currentMessages.SelectMany(x => x).ToList().OrderBy(x=>x.Subject).ToList();
         }
 
         /// <summary>
@@ -92,11 +70,11 @@ namespace vite_api.Classes
                     Payload = GetData(msg.Data),
                     Subject = msg.Subject
                 };
-
-            
+                
             static string GetData(byte[] data)
             {
-                return data.All(x => char.IsAscii((char)x)) ? Encoding.ASCII.GetString(data) : Convert.ToBase64String(data);
+                var result = data.All(x => char.IsAscii((char)x)) ? Encoding.ASCII.GetString(data) : Convert.ToBase64String(data);
+                return result.Length > MaxPayloadLength ? result.Substring(0, MaxPayloadLength) : result;
             }
         }
 
@@ -104,7 +82,7 @@ namespace vite_api.Classes
         /// Gets an object representation of all the messages that the subscribers holds.
         /// </summary>
         /// <returns>List containing all of the message-objects</returns>
-        public IEnumerable<MessageDto> GetMessages()
+        public List<MessageDto> GetMessages()
         {
             return ReceiveJetStreamPullSubscribe().Select(x => new MessageDto
             {

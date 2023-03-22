@@ -35,7 +35,7 @@ function MessagesPage() {
 
   useEffect(() => {
     setIsIntervalRunning(true);
-    const interval = setInterval(getAllMessages, 9000);
+    const interval = setInterval(getAllMessages, 1000);
     return () => {
       clearInterval(interval);
       setIsIntervalRunning(false);
