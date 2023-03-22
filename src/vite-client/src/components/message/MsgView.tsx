@@ -32,9 +32,11 @@ function MsgView() {
     if (msg.stream && msg.sequenceNumber) {
       const queryString =
         "streamName=" + msg.stream + "&sequenceNumber=" + msg.sequenceNumber;
-      fetch("/api/messageData?" + queryString)
+      fetch("/api/specificMessage?" + queryString)
         .then((res) => res.json())
-        .then((data) => {
+        .then((rawData) => {
+          // JSON-server returns a JSON-array, whilest .NET-api returns a single JSON-object.
+          let data = rawData instanceof Array ? rawData[0] : rawData;
           setMessageData(data);
         });
     }
@@ -48,54 +50,57 @@ function MsgView() {
     <Stack w={"100%"} spacing={4}>
       {viewContext.isVisible && (
         <Card variant={"outline"} h={"100%"} w={"100%"} mb={2}>
-          <CardHeader>
-            <Flex>
-              <Heading size={"md"}>Message Details</Heading>
-              <Spacer />
-              <HStack mt={-2} mr={-2}>
-                <MsgCopyModal />
-                <MsgDeleteModal />
-                <Button
-                  variant="ghost"
-                  w={"25px"}
-                  onClick={() => {
-                    changeVisibility(false);
-                  }}
-                >
-                  <CloseIcon />
-                </Button>
-              </HStack>
-            </Flex>
-          </CardHeader>
-          <VStack
-            ml={5}
-            mb={5}
-            align={"flex-start"}
-            spacing={6}
-            divider={<StackDivider />}
-          >
-            <Box>
-              <Heading size={"sm"} mb={2}>
-                Headers
-              </Heading>
-              {messageData &&
-              messageData.headers != undefined &&
-              Object.entries(messageData.headers).length != 0 ? (
-                messageData.headers.map((headerPair: any, index: number) => (
-                  <Text key={index} fontSize={"md"}>
-                    {headerPair.name + " : " + headerPair.value}
-                  </Text>
-                ))
-              ) : (
-                <Text fontSize={"md"}>No Headers...</Text>
-              )}
-            </Box>
-            <Box>
-              <Heading size={"sm"} mb={2}>
-                Payload
-              </Heading>
-              <Text fontSize={"md"}>{messageData.payload}</Text>
-            </Box>
+          <VStack ml={5} divider={<StackDivider ml={5} w={"93%"} />}>
+            <CardHeader w={"100%"} ml={-10}>
+              <Flex>
+                <Heading size={"md"}>Message Details</Heading>
+                <Spacer />
+                <HStack mt={-2} mr={-7}>
+                  <MsgCopyModal />
+                  <MsgDeleteModal />
+                  <Button
+                    variant="ghost"
+                    w={"25px"}
+                    onClick={() => {
+                      changeVisibility(false);
+                    }}
+                  >
+                    <CloseIcon />
+                  </Button>
+                </HStack>
+              </Flex>
+            </CardHeader>
+            <VStack
+              w={"100%"}
+              mt={4}
+              mb={5}
+              align={"flex-start"}
+              spacing={6}
+              divider={<StackDivider w={"93%"} />}
+            >
+              <Box>
+                <Heading size={"sm"} mb={2}>
+                  Headers
+                </Heading>
+                {messageData &&
+                messageData.headers != undefined &&
+                Object.entries(messageData.headers).length != 0 ? (
+                  messageData.headers.map((headerPair: any, index: number) => (
+                    <Text key={index} fontSize={"md"}>
+                      {headerPair.name + " : " + headerPair.value}
+                    </Text>
+                  ))
+                ) : (
+                  <Text fontSize={"md"}>No Headers...</Text>
+                )}
+              </Box>
+              <Box>
+                <Heading size={"sm"} mb={2}>
+                  Payload
+                </Heading>
+                <Text fontSize={"md"}>{messageData.payload}</Text>
+              </Box>
+            </VStack>
           </VStack>
         </Card>
       )}

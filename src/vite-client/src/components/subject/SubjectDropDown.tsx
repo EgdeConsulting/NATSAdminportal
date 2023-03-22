@@ -8,7 +8,7 @@ function SubjectDropDown(props: {
   const [subjects, setSubjects] = useState<[]>([]);
 
   function getSubjects() {
-    fetch("/api/subjectNames")
+    fetch("/api/allSubjects")
       .then((res) => res.json())
       .then((data) => {
         setSubjects(data);
@@ -28,7 +28,7 @@ function SubjectDropDown(props: {
       }}
     >
       {subjects.map((subject: any, index: number) => {
-        return <option key={index}>{subject["name"]}</option>;
+        return <option key={index}>{subject}</option>;
       })}
     </Select>
   );

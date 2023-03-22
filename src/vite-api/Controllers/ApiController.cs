@@ -23,27 +23,20 @@ public class ApiController : ControllerBase
         _subscriberManager = subscriberManager;
     }
 
-    [HttpGet("streamData")]
-    public IActionResult GetStreamData([FromQuery] string streamName)
+    [HttpGet("allMessages")]
+    public IActionResult AllMessages()
     {
-        var res = _streamManager.GetExtendedStreamInfo(streamName);
+        var res = _subscriberManager.GetAllMessages();
         return Ok(res);
     }
 
-    [HttpGet("messageData")]
-    public IActionResult GetMessageData([FromQuery] string streamName, [FromQuery] ulong sequenceNumber)
-    {
-        var res = _subscriberManager.GetSpecificMessage(streamName, sequenceNumber);
-        return Ok(res);
-    }
-
-    [HttpPost("publishFullMessage")]
-    public IActionResult PublishFullMessage([FromBody] MessageDataDto msg)
+    [HttpGet("specificMessage")]
+    public IActionResult SpecificMessage([FromQuery] string streamName, [FromQuery] ulong sequenceNumber)
     {
         try
         {
-            _publisher.SendNewMessage(msg);
-            return Ok();
+            var res = _subscriberManager.GetSpecificMessage(streamName, sequenceNumber);
+            return Ok(res);
         }
         catch
         {
@@ -51,13 +44,27 @@ public class ApiController : ControllerBase
         }
     }
 
-    [HttpPost("copyMessage")]
-    public IActionResult CopyMessage([FromQuery] string streamName, [FromQuery] ulong sequenceNumber, [FromQuery] string newSubject)
+    [HttpPost("newMessage")]
+    public IActionResult NewMessage([FromBody] MessageDataDto msgDto)
     {
         try
         {
-            var msg = _subscriberManager.GetSpecificMessage(streamName, sequenceNumber);
-            _publisher.CopyMessage(msg!, newSubject);
+            _publisher.SendNewMessage(msgDto);
+            return Ok();
+        }
+        catch
+        {
+            return BadRequest();
+        }
+    }
+    
+    [HttpPost("copyMessage")]
+    public IActionResult CopyMessage([FromBody] MessageDto msgDto)
+    {
+        try
+        {
+            var msg = _subscriberManager.GetSpecificMessage(msgDto.Stream, msgDto.SequenceNumber);
+            _publisher.CopyMessage(msg!, msgDto.Subject);
             return Ok();
         }
         catch
@@ -67,35 +74,74 @@ public class ApiController : ControllerBase
     }
 
     [HttpDelete("deleteMessage")]
-    public async Task<IActionResult> DeleteMessage([FromQuery] string streamName, [FromQuery] ulong sequenceNumber, [FromQuery] bool erase)
+    public IActionResult DeleteMessage([FromBody] MessageDto msgDto)
     {
-        var res = _streamManager.DeleteMessage(streamName, sequenceNumber, erase);
-        return Ok(res);
+        try
+        {
+            var res = _streamManager.DeleteMessage(msgDto.Stream, msgDto.SequenceNumber, msgDto.Erase);
+            return Ok(res);
+        }
+        catch
+        {
+            return BadRequest();
+        }
     }
 
-    // #warning Why post and not delete?
-    // [HttpPost("deleteMessage")]
-    // public async Task<IActionResult> DeleteMessage()
-    // {
-    //     string content = "";
-    //     using (StreamReader stream = new StreamReader(Request.Body))
-    //     {
-    //         content = await stream.ReadToEndAsync();
-    //     }
-    //
-    //     var jsonObject = JsonNode.Parse(content);
-    //
-    //     if (jsonObject != null && jsonObject["name"] != null && jsonObject["sequenceNumber"] != null)
-    //     {
-    //         string streamName = jsonObject["name"]!.ToString();
-    //         ulong sequenceNumber = ulong.Parse(jsonObject["number"]!.ToString());
-    //         bool erase = jsonObject["erase"]!.ToString() == "true";
-    //
-    //         _streamManager.DeleteMessage(streamName, sequenceNumber, erase);
-    //     }
-    //
-    //     return Ok();
-    // }
+    [HttpGet("allStreams")]
+    public IActionResult AllStreams()
+    {
+        try
+        {
+            var res = _streamManager.GetAllStreams();
+            return Ok(res);
+        }
+        catch
+        {
+            return BadRequest();
+        }
+    }
+
+    [HttpGet("specificStream")]
+    public IActionResult SpecificStream([FromQuery] string streamName)
+    {
+        try
+        {
+            var res = _streamManager.GetSpecificStream(streamName);
+            return Ok(res);
+        }
+        catch
+        {
+            return BadRequest();
+        }
+    }
+    
+    [HttpGet("subjectHierarchy")]
+    public IActionResult GetSubjectHierarchy()
+    {
+        try
+        {
+            var res = _subjectManager.GetSubjectHierarchy();
+            return Ok(res);
+        }
+        catch
+        {
+            return BadRequest();
+        }
+    }
+
+    [HttpGet("allSubjects")]
+    public IActionResult AllSubjects()
+    {
+        try
+        {
+            var res = _subjectManager.GetAllSubjects();
+            return Ok(res);
+        }
+        catch
+        {
+            return BadRequest();
+        }
+    }
 
 #warning This endpoint exists solely to allow for swapping between change dummy user accounts
     [HttpPost("updateUserAccount")]
@@ -110,45 +156,5 @@ public class ApiController : ControllerBase
         {
             return BadRequest();
         }
-    }
-
-#warning Which stream do we get it for? There's absolutely no parameters here?
-    [HttpGet("streams")]
-    public IActionResult GetStreams()
-    {
-        var res = _streamManager.GetBasicStreamInfo();
-        return Ok(res);
-    }
-
-#warning Get which subject hierarchy? On what stream? No parameters.
-    [HttpGet("subjectHierarchy")]
-    public IActionResult GetSubjectHierarch()
-    {
-        var res = _subjectManager.GetSubjectHierarchy();
-        return Ok(res);
-    }
-
-    [HttpGet("subjectHierarchy2")]
-    public IActionResult GetSubjectHierarch2()
-    {
-        var res = _subjectManager.GetSubjectHierarch2();
-        return Ok(res);
-    }
-
-
-    [HttpGet("subjectNames")]
-    public IActionResult GetSubjectNames()
-    {
-#warning Get subject names for what stream?
-        var res = _subjectManager.GetSubjectNames();
-        return Ok(res);
-    }
-
-    [HttpGet("messages")]
-    public IActionResult GetMessages()
-    {
-#warning Get what messages? No parameters so no stream defined
-        var res = _subscriberManager.GetAllMessages();
-        return Ok(res);
     }
 }
