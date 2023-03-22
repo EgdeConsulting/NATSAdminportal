@@ -62,7 +62,10 @@ static IConnection NatsConnectionFactory(IServiceProvider provider)
     var config = provider.GetRequiredService<IOptions<AppConfig>>();
     Options opts = ConnectionFactory.GetDefaultOptions();
     opts.Url = config.Value.NatsServerUrl;
+    
+    // The default handlers write a newline for each event, pretty annoying.
     opts.ClosedEventHandler += (sender, args) => { };
     opts.DisconnectedEventHandler += (sender, args) => { };
+    
     return new ConnectionFactory().CreateConnection(opts);
 }

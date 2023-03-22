@@ -24,44 +24,39 @@ namespace vite_api.Classes
     {
         private readonly ILogger _logger;
         private readonly IOptions<AppConfig> _appConfig;
+        private readonly IServiceProvider _provider;
         private readonly int _count = 1;
-        private readonly string? _creds = null;
 
-        public Publisher(ILogger<Publisher> logger, IOptions<AppConfig> appConfig)
+        public Publisher(ILogger<Publisher> logger, IOptions<AppConfig> appConfig, IServiceProvider provider)
         {
             _logger = logger;
             _appConfig = appConfig;
+            _provider = provider;
         }
 
         public void SendNewMessage(MessageDataDto message)
         {
             _logger.LogInformation("{} > {} created a new message (subject, sequence number): {}, {}", 
             DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), UserAccount.Name ,message.Subject, 1);
-
-            Options opts = ConnectionFactory.GetDefaultOptions();
-            opts.Url = _appConfig.Value.NatsServerUrl ?? Defaults.Url;
-            if (_creds != null)
-            {
-                opts.SetUserCredentials(_creds);
-            }
-
+            
             MsgHeader msgHeader = new();
             foreach (var headerPair in message.Headers)
             {
                 msgHeader.Add(headerPair.Name, headerPair.Value);
             }
-            using IConnection c = new ConnectionFactory().CreateConnection(opts);
+            
+            using var connection = _provider.GetRequiredService<IConnection>();
 
             if (message.Payload != null)
             {
                 Msg msg = new Msg(message.Subject, msgHeader, Encoding.UTF8.GetBytes(message.Payload));
                 for (int i = 0; i < _count; i++)
                 {
-                    c.Publish(msg);
+                    connection.Publish(msg);
                 }
             }
 
-            c.Flush();
+            connection.Flush();
         }
         
         public void CopyMessage(MessageDataDto message, string newSubject)
@@ -69,26 +64,20 @@ namespace vite_api.Classes
             _logger.LogInformation("{} > {} copied message (old subject, new subject, sequence number): {}, {}, {}", 
                 DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), UserAccount.Name ,message.Subject, newSubject, 1);
 
-            Options opts = ConnectionFactory.GetDefaultOptions();
-            opts.Url = _appConfig.Value.NatsServerUrl ?? Defaults.Url;
-            if (_creds != null)
-            {
-                opts.SetUserCredentials(_creds);
-            }
-
             MsgHeader msgHeader = new();
             foreach (var headerPair in message.Headers)
             {
                 msgHeader.Add(headerPair.Name, headerPair.Value);
             }
-            using IConnection c = new ConnectionFactory().CreateConnection(opts);
-           
+            
+            using var connection = _provider.GetRequiredService<IConnection>();
+
             Msg msg = new Msg(newSubject, msgHeader, Encoding.UTF8.GetBytes(message.Payload!));
             for (int i = 0; i < _count; i++)
             {
-                c.Publish(msg);
+                connection.Publish(msg);
             }
-            c.Flush();
+            connection.Flush();
         }
 
 

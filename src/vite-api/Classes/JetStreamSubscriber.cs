@@ -13,13 +13,15 @@ namespace vite_api.Classes
         // The amount of messages which max should be pulled from a stream at the same time
         private const int BatchSize = 1000;
         private const int MaxPayloadLength = 200;
-        private readonly string? _url = Defaults.Url;
-        private readonly string? _creds = null;
+        private readonly IServiceProvider _provider;
+        //private readonly string? _url = Defaults.Url;
+        //private readonly string? _creds = null;
         public string StreamName { get; }
 
-        public JetStreamSubscriber(string url, string streamName, List<string> subjects)
+        public JetStreamSubscriber(IServiceProvider provider, string streamName, List<string> subjects)
         {
-            _url = url;
+            //_url = url;
+            _provider = provider;
             StreamName = streamName;
             _subjects = subjects;
         }
@@ -50,27 +52,17 @@ namespace vite_api.Classes
         private IEnumerable<Msg> ReceiveJetStreamPullSubscribe()
         {
             var currentMessages = new List<Msg>();
-            var opts = ConnectionFactory.GetDefaultOptions();
-            opts.Url = _url;
-            
-            // The default handlers write a newline for each event, pretty annoying.
-            opts.ClosedEventHandler += (sender, args) => { };
-            opts.DisconnectedEventHandler += (sender, args) => { };
-            
-            if (_creds != null)
-                opts.SetUserCredentials(_creds);
 
-            using (var c = new ConnectionFactory().CreateConnection(opts))
+            using var connection = _provider.GetRequiredService<IConnection>();
+            var js = connection.CreateJetStreamContext();
+            var pullOptions = PullSubscribeOptions.Builder().WithStream(StreamName).Build();
+
+            foreach (var subject in _subjects)
             {
-                var js = c.CreateJetStreamContext();
-                var pullOptions = PullSubscribeOptions.Builder().WithStream(StreamName).Build();
-
-                foreach (var subject in _subjects)
-                {
-                    var sub = js.PullSubscribe(subject, pullOptions);
-                    currentMessages = new List<Msg>(currentMessages.Concat(sub.Fetch(BatchSize, 1000)));
-                }
+                var sub = js.PullSubscribe(subject, pullOptions);
+                currentMessages = new List<Msg>(currentMessages.Concat(sub.Fetch(BatchSize, 1000)));
             }
+            
             return currentMessages.OrderByDescending(x => x.MetaData.StreamSequence).ToList();
         }
 

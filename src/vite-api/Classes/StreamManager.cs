@@ -12,45 +12,45 @@ namespace vite_api.Classes
     public class StreamManager
     {
         private readonly ILogger _logger;
-        private readonly IOptions<AppConfig> _appConfig;
+        //private readonly IOptions<AppConfig> _appConfig;
         private readonly IServiceProvider _provider;
 
-        private string Url => _appConfig.Value.NatsServerUrl ?? Defaults.Url;
+        //private string Url => _appConfig.Value.NatsServerUrl ?? Defaults.Url;
 
-        public StreamManager(ILogger<StreamManager> logger, IOptions<AppConfig> appConfig, IServiceProvider provider)
+        public StreamManager(ILogger<StreamManager> logger, IServiceProvider provider)
         {
             _logger = logger;
-            _appConfig = appConfig;
+            //_appConfig = appConfig;
             _provider = provider;
         }
 
-        /// <summary>
-        /// Gets the subject names of all subjects that reside within all streams.
-        /// </summary>
-        public List<string[]> GetStreamSubjects()
-        {
-            List<StreamInfo> streamInfo;
-            List<string> subjects = new List<string>();
-            List<string[]> listOfSubjectArray = new List<string[]>();
-
-            using (IConnection c = new ConnectionFactory().CreateConnection(Url))
-            {
-                IJetStreamManagement jsm = c.CreateJetStreamManagementContext();
-                streamInfo = GetStreamInfoArray(jsm).ToList<StreamInfo>();
-
-                for (int i = 0; i < streamInfo.Count; i++)
-                    // Gets all subjects in form ["Subject.A.1", "Subject.A.2", ....]
-                    subjects.AddRange(streamInfo[i].Config.Subjects);
-
-                subjects.Sort();
-            }
-
-            for (int i = 0; i < subjects.Count; i++)
-                // Gets all subjects in form [[Subject, A, 1], [Subject, A, 2], ....]
-                listOfSubjectArray.Add(subjects[i].Split("."));
-
-            return listOfSubjectArray;
-        }
+        // /// <summary>
+        // /// Gets the subject names of all subjects that reside within all streams.
+        // /// </summary>
+        // public List<string[]> GetStreamSubjects()
+        // {
+        //     List<StreamInfo> streamInfo;
+        //     List<string> subjects = new List<string>();
+        //     List<string[]> listOfSubjectArray = new List<string[]>();
+        //
+        //     using (IConnection c = new ConnectionFactory().CreateConnection(Url))
+        //     {
+        //         IJetStreamManagement jsm = c.CreateJetStreamManagementContext();
+        //         streamInfo = GetStreamInfoArray(jsm).ToList<StreamInfo>();
+        //
+        //         for (int i = 0; i < streamInfo.Count; i++)
+        //             // Gets all subjects in form ["Subject.A.1", "Subject.A.2", ....]
+        //             subjects.AddRange(streamInfo[i].Config.Subjects);
+        //
+        //         subjects.Sort();
+        //     }
+        //
+        //     for (int i = 0; i < subjects.Count; i++)
+        //         // Gets all subjects in form [[Subject, A, 1], [Subject, A, 2], ....]
+        //         listOfSubjectArray.Add(subjects[i].Split("."));
+        //
+        //     return listOfSubjectArray;
+        // }
 
         /// <summary>
         /// Deletes a message from a stream based on the message sequence number.
@@ -111,36 +111,37 @@ namespace vite_api.Classes
                 }
             };
         }
-        /// <summary>
-        /// Creates a stream from a HttpRequest.         
-        /// </summary>
-        /// <param name="request">This request contains the name of the stream and its subjects.</param>
-        public async void CreateStreamFromRequest(HttpRequest request)
-        {
-            string content = "";
-
-            using (StreamReader stream = new StreamReader(request.Body))
-            {
-                content = await stream.ReadToEndAsync();
-            }
-
-            var jsonObject = JsonNode.Parse(content);
-
-            if (jsonObject != null && jsonObject["name"] != null)
-            {
-                var streamName = jsonObject["name"];
-                //var subject = jsonObject["Subject"]!;
-
-                if (streamName != null && !string.IsNullOrWhiteSpace(streamName.ToString()))
-                {
-                    using (IConnection c = new ConnectionFactory().CreateConnection(Url))
-                    {
-                        IJetStreamManagement jsm = c.CreateJetStreamManagementContext();
-                        CreateStreamWhenDoesNotExist(jsm, StorageType.File, streamName.ToString(), "Daniel");
-                    }
-                }
-            }
-        }
+        
+        // /// <summary>
+        // /// Creates a stream from a HttpRequest.         
+        // /// </summary>
+        // /// <param name="request">This request contains the name of the stream and its subjects.</param>
+        // public async void CreateStreamFromRequest(HttpRequest request)
+        // {
+        //     string content = "";
+        //
+        //     using (StreamReader stream = new StreamReader(request.Body))
+        //     {
+        //         content = await stream.ReadToEndAsync();
+        //     }
+        //
+        //     var jsonObject = JsonNode.Parse(content);
+        //
+        //     if (jsonObject != null && jsonObject["name"] != null)
+        //     {
+        //         var streamName = jsonObject["name"];
+        //         //var subject = jsonObject["Subject"]!;
+        //
+        //         if (streamName != null && !string.IsNullOrWhiteSpace(streamName.ToString()))
+        //         {
+        //             using (IConnection c = new ConnectionFactory().CreateConnection(Url))
+        //             {
+        //                 IJetStreamManagement jsm = c.CreateJetStreamManagementContext();
+        //                 CreateStreamWhenDoesNotExist(jsm, StorageType.File, streamName.ToString(), "Daniel");
+        //             }
+        //         }
+        //     }
+        // }
 
         public StreamInfo? GetStreamInfoOrNullWhenNotExist(IJetStreamManagement jsm, string streamName)
         {

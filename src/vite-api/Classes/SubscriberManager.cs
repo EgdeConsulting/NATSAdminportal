@@ -10,15 +10,17 @@ namespace vite_api.Classes
 {
     public class SubscriberManager
     {
-        private readonly IOptions<AppConfig> _appConfig;
+        //private readonly IOptions<AppConfig> _appConfig;
         private readonly ILogger _logger;
+        private readonly IServiceProvider _provider;
         private readonly List<JetStreamSubscriber> _allSubscribers;
-        private string Url => _appConfig.Value.NatsServerUrl ?? Defaults.Url;
+        //private string Url => _appConfig.Value.NatsServerUrl ?? Defaults.Url;
         
-        public SubscriberManager(IOptions<AppConfig> appConfig, ILogger<SubscriberManager> logger)
+        public SubscriberManager(ILogger<SubscriberManager> logger, IServiceProvider provider)
         {
-            _appConfig = appConfig;
+            //_appConfig = appConfig;
             _logger = logger;
+            _provider = provider;
             _allSubscribers = new List<JetStreamSubscriber>();
             InitializeSubscribers();
         }
@@ -28,9 +30,9 @@ namespace vite_api.Classes
         /// </summary>
         private void InitializeSubscribers()
         {
-            using var c = new ConnectionFactory().CreateConnection(Url);
-            var streamInfo = c.CreateJetStreamManagementContext().GetStreams().ToList<StreamInfo>();
-            streamInfo.ForEach(a => _allSubscribers.Add(new JetStreamSubscriber(Url, a.Config.Name, a.Config.Subjects)));
+            using var connection = _provider.GetRequiredService<IConnection>();
+            var streamInfo = connection.CreateJetStreamManagementContext().GetStreams().ToList<StreamInfo>();
+            streamInfo.ForEach(a => _allSubscribers.Add(new JetStreamSubscriber(_provider, a.Config.Name, a.Config.Subjects)));
         }
 
         /// <summary>

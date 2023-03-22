@@ -9,79 +9,79 @@ namespace vite_api.Classes
 {
     public class SubjectManager
     {
-        private readonly IOptions<AppConfig> appConfig;
-        private List<Subject> allSubjects;
+        //private readonly IOptions<AppConfig> _appConfig;
+        private readonly IServiceProvider _provider;
+        //private List<Subject> _allSubjects;
 
-        private string Url => appConfig.Value.NatsServerUrl ?? Defaults.Url;
+        //private string Url => _appConfig.Value.NatsServerUrl ?? Defaults.Url;
 
-        public SubjectManager(IOptions<AppConfig> appConfig)
+        public SubjectManager(IServiceProvider provider)
         {
-            this.appConfig = appConfig;
-            allSubjects = new List<Subject>();
-            InitializeSubjects(Url);
+            //_appConfig = appConfig;
+            _provider = provider;
+            //_allSubjects = new List<Subject>();
+            //InitializeSubjects(Url);
         }
+        
+        // private void InitializeSubjects(string? url)
+        // {
+        //     List<string> rawSubjects = new List<string>();
+        //     List<string[]> refinedSubjects = new List<string[]>();
+        //
+        //     using (IConnection c = new ConnectionFactory().CreateConnection(url))
+        //     {
+        //         List<StreamInfo> streamInfo = c.CreateJetStreamManagementContext().GetStreams().ToList<StreamInfo>();
+        //
+        //         // Gets all subjects in form ["Subject.A.1", "Subject.A.2", ....]
+        //         streamInfo.ForEach(a => rawSubjects.AddRange(a.Config.Subjects));
+        //     }
+        //
+        //     rawSubjects.Sort();
+        //     rawSubjects.ForEach(a => refinedSubjects.Add(a.Split(".")));
+        //
+        //
+        //     for (int i = 0; i < refinedSubjects.Count; i++)
+        //     {
+        //         // Adding all unique subjects to list.
+        //         for (int k = 0; k < refinedSubjects[i].Length; k++)
+        //         {
+        //             string subjectName = refinedSubjects[i][k];
+        //             if (_allSubjects.FirstOrDefault(x => x.SubjectName.Equals(subjectName)) is null)
+        //                 _allSubjects.Add(new Subject(subjectName));
+        //         }
+        //
+        //         // Initializing the hierarchy links between all the subjects. 
+        //         for (int k = 0; k < refinedSubjects[i].Length; k++)
+        //         {
+        //             string? parentName = k - 1 < 0 ? null : refinedSubjects[i][k - 1];
+        //             string? childName = k + 1 > refinedSubjects[i].Length - 1 ? null : refinedSubjects[i][k + 1];
+        //             AddSubjectLinks(refinedSubjects[i][k], parentName, childName, i);
+        //         }
+        //     }
+        // }
 
-
-
-        private void InitializeSubjects(string? url)
-        {
-            List<string> rawSubjects = new List<string>();
-            List<string[]> refinedSubjects = new List<string[]>();
-
-            using (IConnection c = new ConnectionFactory().CreateConnection(url))
-            {
-                List<StreamInfo> streamInfo = c.CreateJetStreamManagementContext().GetStreams().ToList<StreamInfo>();
-
-                // Gets all subjects in form ["Subject.A.1", "Subject.A.2", ....]
-                streamInfo.ForEach(a => rawSubjects.AddRange(a.Config.Subjects));
-            }
-
-            rawSubjects.Sort();
-            rawSubjects.ForEach(a => refinedSubjects.Add(a.Split(".")));
-
-
-            for (int i = 0; i < refinedSubjects.Count; i++)
-            {
-                // Adding all unique subjects to list.
-                for (int k = 0; k < refinedSubjects[i].Length; k++)
-                {
-                    string subjectName = refinedSubjects[i][k];
-                    if (allSubjects.FirstOrDefault(x => x.SubjectName.Equals(subjectName)) is null)
-                        allSubjects.Add(new Subject(subjectName));
-                }
-
-                // Initializing the hierarchy links between all the subjects. 
-                for (int k = 0; k < refinedSubjects[i].Length; k++)
-                {
-                    string? parentName = k - 1 < 0 ? null : refinedSubjects[i][k - 1];
-                    string? childName = k + 1 > refinedSubjects[i].Length - 1 ? null : refinedSubjects[i][k + 1];
-                    AddSubjectLinks(refinedSubjects[i][k], parentName, childName, i);
-                }
-            }
-        }
-
-        private void AddSubjectLinks(string subjectName, string? parentName, string? childName, int branchID)
-        {
-            Subject? obj = SubjectObjectExists(subjectName);
-            if (parentName is Object)
-            {
-                Subject? parent = SubjectObjectExists(parentName);
-                if (parent is Object && obj is Object && !obj.ParentLinkExists(parent))
-                    obj.ParentLinks.Add(new Dictionary<int, Subject>() { { branchID, parent } });
-            }
-
-            if (childName is Object)
-            {
-                Subject? child = SubjectObjectExists(childName);
-                if (child is Object && obj is Object && !obj.ChildrenLinkExists(child))
-                    obj.ChildrenLinks.Add(new Dictionary<int, Subject>() { { branchID, child } });
-            }
-        }
-
-        private Subject? SubjectObjectExists(string subjectName)
-        {
-            return allSubjects.FirstOrDefault(x => x.SubjectName.Equals(subjectName));
-        }
+        // private void AddSubjectLinks(string subjectName, string? parentName, string? childName, int branchId)
+        // {
+        //     Subject? obj = SubjectObjectExists(subjectName);
+        //     if (parentName is Object)
+        //     {
+        //         Subject? parent = SubjectObjectExists(parentName);
+        //         if (parent is Object && obj is Object && !obj.ParentLinkExists(parent))
+        //             obj.ParentLinks.Add(new Dictionary<int, Subject>() { { branchId, parent } });
+        //     }
+        //
+        //     if (childName is Object)
+        //     {
+        //         Subject? child = SubjectObjectExists(childName);
+        //         if (child is Object && obj is Object && !obj.ChildrenLinkExists(child))
+        //             obj.ChildrenLinks.Add(new Dictionary<int, Subject>() { { branchId, child } });
+        //     }
+        // }
+        //
+        // private Subject? SubjectObjectExists(string subjectName)
+        // {
+        //     return _allSubjects.FirstOrDefault(x => x.SubjectName.Equals(subjectName));
+        // }
         
         /// <summary>
         /// Gets all unique subjects on all streams on the NATS-server.
@@ -107,8 +107,7 @@ namespace vite_api.Classes
             //         json += ",";   
             //     });
             // return json.Substring(0, json.Length - 1) + "]";
-            var url = appConfig.Value.NatsServerUrl ?? Defaults.Url;
-            using var connection = new ConnectionFactory().CreateConnection(url);
+            using var connection = _provider.GetRequiredService<IConnection>();
             var subjects = connection
                 .CreateJetStreamManagementContext()
                 .GetStreams()
@@ -119,17 +118,17 @@ namespace vite_api.Classes
             return subjects;
         }
 
-        public bool SubjectExists(string subjectName)
-        {
-            List<string> matches = new List<string>();
-            allSubjects.Where(a => a.ParentLinks.Count == 0).ToList().
-                ForEach(b =>
-                {
-                    List<string> subjects = b.ToString(-1, b.ChildrenLinks.Count).Split(",").ToList();
-                    matches = Enumerable.Concat(matches, subjects.Where(c => c.Equals(subjectName)).ToList()).ToList();
-                });
-            return matches.Count > 0;
-        }
+        // public bool SubjectExists(string subjectName)
+        // {
+        //     List<string> matches = new List<string>();
+        //     _allSubjects.Where(a => a.ParentLinks.Count == 0).ToList().
+        //         ForEach(b =>
+        //         {
+        //             List<string> subjects = b.ToString(-1, b.ChildrenLinks.Count).Split(",").ToList();
+        //             matches = Enumerable.Concat(matches, subjects.Where(c => c.Equals(subjectName)).ToList()).ToList();
+        //         });
+        //     return matches.Count > 0;
+        // }
 
         // public string GetSubjectHierarchy2()
         // {
@@ -150,8 +149,7 @@ namespace vite_api.Classes
         /// <returns>A NodeMember object containing the hierarchy structure.</returns>
         public NodeMember<object?> GetSubjectHierarchy()
         {
-            var url = appConfig.Value.NatsServerUrl ?? Defaults.Url;
-            using var connection = new ConnectionFactory().CreateConnection(url);
+            using var connection = _provider.GetRequiredService<IConnection>();
             var subjects = connection
                .CreateJetStreamManagementContext()
                .GetStreams()
