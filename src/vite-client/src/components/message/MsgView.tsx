@@ -88,6 +88,30 @@ function MsgView() {
             >
               <Box>
                 <Heading size={"sm"} mb={2}>
+                  Stream
+                </Heading>
+                <Text fontSize={"md"}>
+                  {currentMsgContext.currentMsg.stream}
+                </Text>
+              </Box>
+              <Box>
+                <Heading size={"sm"} mb={2}>
+                  Sequence number
+                </Heading>
+                <Text fontSize={"md"}>
+                  {currentMsgContext.currentMsg.sequenceNumber}
+                </Text>
+              </Box>
+              <Box>
+                <Heading size={"sm"} mb={2}>
+                  Subject
+                </Heading>
+                <Text fontSize={"md"}>
+                  {currentMsgContext.currentMsg.subject}
+                </Text>
+              </Box>
+              <Box>
+                <Heading size={"sm"} mb={2}>
                   Headers
                 </Heading>
                 {messageData &&
