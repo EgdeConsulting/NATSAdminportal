@@ -1,8 +1,4 @@
-import {
-  PlacementWithLogical,
-  ResponsiveValue,
-  Tooltip,
-} from "@chakra-ui/react";
+import { Box, PlacementWithLogical, Tooltip } from "@chakra-ui/react";
 
 function TooltipHover(props: {
   label: string;
@@ -16,7 +12,7 @@ function TooltipHover(props: {
       label={props.label}
       placement={props.placement ? props.placement : "bottom"}
     >
-      <span>{props.children}</span>
+      <Box>{props.children}</Box>
     </Tooltip>
   );
 }
