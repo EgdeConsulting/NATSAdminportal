@@ -11,6 +11,7 @@ import {
   HStack,
   VStack,
   StackDivider,
+  Tooltip,
 } from "@chakra-ui/react";
 import { useContext, useEffect, useState } from "react";
 import {
@@ -18,6 +19,7 @@ import {
   MsgContext,
   MsgViewContext,
   MsgCopyModal,
+  TooltipHover,
 } from "components";
 import { CloseIcon } from "@chakra-ui/icons";
 
@@ -35,7 +37,6 @@ function MsgView() {
       fetch("/api/specificMessage?" + queryString)
         .then((res) => res.json())
         .then((rawData) => {
-          // JSON-server returns a JSON-array, whilest .NET-api returns a single JSON-object.
           let data = rawData instanceof Array ? rawData[0] : rawData;
           setMessageData(data);
         });
@@ -56,8 +57,14 @@ function MsgView() {
                 <Heading size={"md"}>Message Details</Heading>
                 <Spacer />
                 <HStack mt={-2} mr={-7}>
-                  <MsgCopyModal />
-                  <MsgDeleteModal />
+                  <TooltipHover
+                    label={"Copy message"}
+                    children={<MsgCopyModal />}
+                  />
+                  <TooltipHover
+                    label={"Delete message"}
+                    children={<MsgDeleteModal />}
+                  />
                   <Button
                     variant="ghost"
                     w={"25px"}
