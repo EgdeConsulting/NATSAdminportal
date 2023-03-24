@@ -1,6 +1,7 @@
+import { useEffect, useState } from "react";
 import { PaginatedTable, StreamViewButton } from "components";
 
-function StreamTable(props: { streamInfo: any[] }) {
+function StreamTable() {
   const columns = [
     {
       Header: "StreamTable",
@@ -39,8 +40,22 @@ function StreamTable(props: { streamInfo: any[] }) {
     },
   ];
 
+  const [streams, setStreams] = useState<any[]>([]);
+
+  useEffect(() => {
+    getStreams();
+  }, [streams.length != 0]);
+
+  function getStreams() {
+    fetch("/api/allStreams")
+      .then((res) => res.json())
+      .then((data) => {
+        setStreams(data);
+      });
+  }
+
   return (
-    <PaginatedTable columns={columns} data={props.streamInfo}>
+    <PaginatedTable columns={columns} data={streams}>
       <StreamViewButton content={""} />
     </PaginatedTable>
   );
