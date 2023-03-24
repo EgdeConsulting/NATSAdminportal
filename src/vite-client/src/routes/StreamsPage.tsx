@@ -6,6 +6,9 @@ import {
   HStack,
   Spacer,
   VStack,
+  Spinner,
+  Container,
+  Center,
 } from "@chakra-ui/react";
 import StickyBox from "react-sticky-box";
 import {
@@ -14,6 +17,7 @@ import {
   StreamContextProvider,
   StreamViewContextProvider,
   PageHeader,
+  LoadingSpinner,
 } from "components";
 
 function StreamsPage() {
@@ -30,7 +34,11 @@ function StreamsPage() {
                     "This page shows all streams on the NATS-server."
                   }
                 />
-                <StreamTable />
+                {loading ? (
+                  <LoadingSpinner />
+                ) : (
+                  <StreamTable />
+                )}
               </CardBody>
             </Card>
             <Spacer />

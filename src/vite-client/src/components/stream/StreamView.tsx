@@ -13,7 +13,7 @@ import {
   StackDivider,
 } from "@chakra-ui/react";
 import { useContext, useEffect, useState } from "react";
-import { StreamContext, StreamViewContext } from "components";
+import { StreamContext, StreamViewContext, LoadingSpinner } from "components";
 import { CloseIcon } from "@chakra-ui/icons";
 
 function StreamView() {
@@ -21,8 +21,10 @@ function StreamView() {
   const { changeVisibility } = useContext(StreamViewContext);
   const viewContext = useContext(StreamViewContext);
   const [streamData, setStreamData] = useState<any>([]);
+  const [loading, setLoading] = useState(false);
 
   function getStreamData() {
+    setLoading(true);
     const stream = currentStreamContext.currentStream;
     if (stream.name) {
       const queryString = "streamName=" + stream.name;
@@ -32,6 +34,7 @@ function StreamView() {
           // JSON-server returns a JSON-array, whilest .NET-api returns a single JSON-object.
           let data = rawData instanceof Array ? rawData[0] : rawData;
           setStreamData(data);
+          setLoading(false);
         });
     }
   }
@@ -62,82 +65,90 @@ function StreamView() {
                 </HStack>
               </Flex>
             </CardHeader>
-            <VStack
-              w={"100%"}
-              mt={4}
-              mb={5}
-              align={"flex-start"}
-              spacing={6}
-              divider={<StackDivider w={"93%"} />}
-            >
-              <Box>
-                <Heading size={"sm"} mb={2}>
-                  Name
-                </Heading>
-                {streamData.name != undefined && <Text>{streamData.name}</Text>}
-              </Box>
-              <Box>
-                <Heading size={"sm"} mb={2}>
-                  Description
-                </Heading>
-                {streamData.description != undefined &&
-                streamData.description.length != 0 ? (
-                  streamData.desciption
-                ) : (
-                  <Text>No description...</Text>
-                )}
-              </Box>
-              <Box>
-                <Heading size={"sm"} mb={2}>
-                  Subjects
-                </Heading>
-                {streamData.subjects != undefined &&
-                  streamData.subjects.map((subject: string, key: number) => {
-                    return <Text key={key}>{subject}</Text>;
-                  })}
-              </Box>
-              <Box>
-                <Heading size={"sm"} mb={2}>
-                  Consumers
-                </Heading>
-                {streamData.consumers != undefined &&
-                streamData.consumers.length != 0 ? (
-                  streamData.consumers.map((consumer: string, key: number) => {
-                    return <Text key={key}>{consumer}</Text>;
-                  })
-                ) : (
-                  <Text>No consumers...</Text>
-                )}
-              </Box>
-              <Box>
-                <Heading size={"sm"} mb={2}>
-                  Policies
-                </Heading>
-                {streamData.policies != undefined &&
-                Object.entries(streamData.policies).length != 0 ? (
-                  Object.entries(streamData.policies).map(
-                    ([key, value], index: number) => (
-                      <Text key={index} fontSize={"md"}>
-                        {key + " : " + value}
-                      </Text>
+            {loading ? (
+              <LoadingSpinner />
+            ) : (
+              <VStack
+                w={"100%"}
+                mt={4}
+                mb={5}
+                align={"flex-start"}
+                spacing={6}
+                divider={<StackDivider w={"93%"} />}
+              >
+                <Box>
+                  <Heading size={"sm"} mb={2}>
+                    Name
+                  </Heading>
+                  {streamData.name != undefined && (
+                    <Text>{streamData.name}</Text>
+                  )}
+                </Box>
+                <Box>
+                  <Heading size={"sm"} mb={2}>
+                    Description
+                  </Heading>
+                  {streamData.description != undefined &&
+                  streamData.description.length != 0 ? (
+                    streamData.desciption
+                  ) : (
+                    <Text>No description...</Text>
+                  )}
+                </Box>
+                <Box>
+                  <Heading size={"sm"} mb={2}>
+                    Subjects
+                  </Heading>
+                  {streamData.subjects != undefined &&
+                    streamData.subjects.map((subject: string, key: number) => {
+                      return <Text key={key}>{subject}</Text>;
+                    })}
+                </Box>
+                <Box>
+                  <Heading size={"sm"} mb={2}>
+                    Consumers
+                  </Heading>
+                  {streamData.consumers != undefined &&
+                  streamData.consumers.length != 0 ? (
+                    streamData.consumers.map(
+                      (consumer: string, key: number) => {
+                        return <Text key={key}>{consumer}</Text>;
+                      }
                     )
-                  )
-                ) : (
-                  <Text fontSize={"md"}>No Policies...</Text>
-                )}
-              </Box>
-              <Box>
-                <Heading size={"sm"} mb={2}>
-                  Deleted
-                </Heading>
-                {
-                  <Text fontSize={"md"}>
-                    Deleted messages:{" "}
-                    {streamData.deleted != undefined && streamData.deleted}
-                  </Text>
-                }
-              </Box>
-            </VStack>
+                  ) : (
+                    <Text>No consumers...</Text>
+                  )}
+                </Box>
+                <Box>
+                  <Heading size={"sm"} mb={2}>
+                    Policies
+                  </Heading>
+                  {streamData.policies != undefined &&
+                  Object.entries(streamData.policies).length != 0 ? (
+                    Object.entries(streamData.policies).map(
+                      ([key, value], index: number) => (
+                        <Text key={index} fontSize={"md"}>
+                          {key + " : " + value}
+                        </Text>
+                      )
+                    )
+                  ) : (
+                    <Text fontSize={"md"}>No Policies...</Text>
+                  )}
+                </Box>
+                <Box>
+                  <Heading size={"sm"} mb={2}>
+                    Deleted
+                  </Heading>
+                  {
+                    <Text fontSize={"md"}>
+                      Deleted messages:{" "}
+                      {streamData.deleted != undefined && streamData.deleted}
+                    </Text>
+                  }
+                </Box>
+              </VStack>
+            )}
           </VStack>
         </Card>
       )}

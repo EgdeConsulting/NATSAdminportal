@@ -6,6 +6,9 @@ import {
   Flex,
   Spacer,
   Box,
+  Container,
+  Spinner,
+  Center,
 } from "@chakra-ui/react";
 import StickyBox from "react-sticky-box";
 import {
@@ -16,6 +19,7 @@ import {
   MsgContextProvider,
   MsgViewContextProvider,
   PageHeader,
+  LoadingSpinner,
 } from "components";
 
 function MessagesPage() {
@@ -38,7 +42,11 @@ function MessagesPage() {
                     <MsgPublishModal />
                   </Box>
                 </HStack>
-                <MsgTable />
+                {loading ? (
+                  <LoadingSpinner />
+                ) : (
+                  <MsgTable />
+                )}
               </CardBody>
             </Card>
             <Spacer />
