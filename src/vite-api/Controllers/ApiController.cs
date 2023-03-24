@@ -1,6 +1,4 @@
-using System.Text.Json.Nodes;
 using Microsoft.AspNetCore.Mvc;
-using NATS.Client;
 using vite_api.Classes;
 using vite_api.Dto;
 
@@ -63,9 +61,14 @@ public class ApiController : ControllerBase
     {
         try
         {
-            var msg = _subscriberManager.GetSpecificMessage(msgDto.Stream, msgDto.SequenceNumber);
-            _publisher.CopyMessage(msg!, msgDto.Subject);
-            return Ok();
+            if (msgDto.Stream != null && msgDto.Subject != null)
+            {
+                var msg = _subscriberManager.GetSpecificMessage(msgDto.Stream, msgDto.SequenceNumber);
+                _publisher.CopyMessage(msg!, msgDto.Subject);
+                return Ok();
+            }
+            
+            return BadRequest();
         }
         catch
         {
@@ -78,7 +81,7 @@ public class ApiController : ControllerBase
     {
         try
         {
-            var res = _streamManager.DeleteMessage(msgDto.Stream, msgDto.SequenceNumber, msgDto.Erase);
+            var res = msgDto.Stream != null && _streamManager.DeleteMessage(msgDto.Stream, msgDto.SequenceNumber, msgDto.Erase);
             return Ok(res);
         }
         catch
