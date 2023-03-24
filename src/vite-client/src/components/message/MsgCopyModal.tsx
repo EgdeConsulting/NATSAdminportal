@@ -17,7 +17,7 @@ import {
   MsgContext,
   TooltipHover,
 } from "components";
-import { LegacyRef, useContext, useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 
 function MsgCopyModal() {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -29,7 +29,7 @@ function MsgCopyModal() {
   const subjectInputRef = useRef<HTMLSelectElement>(null);
   const [buttonDisable, toggleButtonDisable] = useState<boolean>(true);
   const currentMsgContext = useContext(MsgContext);
-  const finalRef = useRef<any>(null);
+  const finalRef = useRef<HTMLElement>(null);
 
   function copyMessage() {
     const msg = currentMsgContext?.currentMsg;
@@ -107,7 +107,6 @@ function MsgCopyModal() {
           <ModalCloseButton />
           <ModalBody>
             <MsgCopyForm
-              content={""}
               subjectInputRef={subjectInputRef}
               buttonDisable={buttonDisable}
               toggleButtonDisable={toggleButtonDisable}

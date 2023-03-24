@@ -10,16 +10,16 @@ import {
   Box,
 } from "@chakra-ui/react";
 import { FiPlusCircle, FiMinusCircle } from "react-icons/fi";
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
-import { SubjectDropDown } from "components";
+import { Dispatch, RefObject, SetStateAction, useEffect } from "react";
+import { IHeaderProps, SubjectDropDown } from "components";
 
 function MsgPublishForm(props: {
-  subjectInputRef: any;
-  payloadInputRef: any;
+  subjectInputRef: RefObject<HTMLSelectElement>;
+  payloadInputRef: RefObject<HTMLInputElement>;
   buttonDisable: boolean;
   toggleButtonDisable: Dispatch<SetStateAction<boolean>>;
-  headerList: any[];
-  setHeaderList: Dispatch<SetStateAction<any[]>>;
+  headerList: IHeaderProps[];
+  setHeaderList: Dispatch<SetStateAction<IHeaderProps[]>>;
 }) {
   useEffect(() => {
     validateAllInputs();
@@ -30,7 +30,7 @@ function MsgPublishForm(props: {
   }
 
   function validateHeaders() {
-    return props.headerList.every((headerPair: any) => {
+    return props.headerList.every((headerPair: IHeaderProps) => {
       return isAscii(headerPair.name) && isAscii(headerPair.value)
         ? true
         : false;
@@ -40,8 +40,8 @@ function MsgPublishForm(props: {
   }
 
   function validateInputs() {
-    return isAscii(props.payloadInputRef.current.value) &&
-      isAscii(props.subjectInputRef.current.value)
+    return isAscii(props.payloadInputRef.current!.value) &&
+      isAscii(props.subjectInputRef.current!.value)
       ? true
       : false;
   }
@@ -63,9 +63,10 @@ function MsgPublishForm(props: {
   }
 
   function handleHeaderChange(e: any, index: number) {
+    //EVENT? Finna typen te event.
     const tempList = [...props.headerList];
-    const { id, value } = e.target;
-    tempList[index][id] = value;
+    const { id, value }: { id: string; value: string } = e.target;
+    //tempList[index][id] = value;
     props.setHeaderList(tempList);
   }
   return (
@@ -80,7 +81,7 @@ function MsgPublishForm(props: {
           Choose the subject you want to post your message to
         </FormHelperText>
         <FormLabel mt={3}>Headers</FormLabel>
-        {props.headerList.map((headerPair: any, index: number) => {
+        {props.headerList.map((headerPair: IHeaderProps, index: number) => {
           return (
             <Box key={index} w={"100%"}>
               <HStack align={"end"}>

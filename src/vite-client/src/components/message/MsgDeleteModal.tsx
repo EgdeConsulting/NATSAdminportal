@@ -33,7 +33,7 @@ function MsgDeleteModal() {
   const currentMsgContext = useContext(MsgContext);
   const { changeCurrentMsg } = useContext(MsgContext) as MsgContextType;
   const { changeVisibility } = useContext(MsgViewContext);
-  const finalRef = useRef<any>(null);
+  const finalRef = useRef<HTMLElement>(null);
 
   function deleteMessage() {
     const msg = currentMsgContext?.currentMsg;

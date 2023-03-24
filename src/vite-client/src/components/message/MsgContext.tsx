@@ -6,6 +6,11 @@ export interface IMsg {
   subject: string;
 }
 
+export interface IHeaderProps {
+  name: string;
+  value: string;
+}
+
 export type MsgContextType = {
   currentMsg: IMsg;
   changeCurrentMsg: (msg: IMsg) => void;
