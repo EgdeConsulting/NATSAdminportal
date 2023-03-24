@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { PaginatedTable, MsgViewButton } from "components";
+import { PaginatedTable, MsgViewButton, LoadingSpinner } from "components";
 
 function MsgTable() {
   const columns = [
@@ -42,12 +42,14 @@ function MsgTable() {
 
   const [allMessages, setAllMessages] = useState<any[]>([]);
   const [isIntervalRunning, setIsIntervalRunning] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   function getAllMessages() {
     fetch("/api/allMessages").then((res: any) => {
       if (res.ok) {
         res.json().then((data: any) => {
           setAllMessages(data);
+          setLoading(false);
         });
       } else {
         alert(
@@ -67,9 +69,15 @@ function MsgTable() {
   }, [!isIntervalRunning]);
 
   return (
-    <PaginatedTable columns={columns} data={allMessages}>
-      <MsgViewButton content={""} />
-    </PaginatedTable>
+    <>
+      {loading ? (
+        <LoadingSpinner />
+      ) : (
+        <PaginatedTable columns={columns} data={allMessages}>
+          <MsgViewButton content={""} />
+        </PaginatedTable>
+      )}
+    </>
   );
 }
 

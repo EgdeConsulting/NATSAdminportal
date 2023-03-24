@@ -19,7 +19,6 @@ import {
   MsgContextProvider,
   MsgViewContextProvider,
   PageHeader,
-  LoadingSpinner,
 } from "components";
 
 function MessagesPage() {
@@ -42,11 +41,7 @@ function MessagesPage() {
                     <MsgPublishModal />
                   </Box>
                 </HStack>
-                {loading ? (
-                  <LoadingSpinner />
-                ) : (
-                  <MsgTable />
-                )}
+                <MsgTable />
               </CardBody>
             </Card>
             <Spacer />
