@@ -13,14 +13,14 @@ import {
   StackDivider,
 } from "@chakra-ui/react";
 import { useContext, useEffect, useState } from "react";
-import { StreamContext, StreamViewContext } from "components";
+import { IStreamExtended, StreamContext, StreamViewContext } from "components";
 import { CloseIcon } from "@chakra-ui/icons";
 
 function StreamView() {
   const currentStreamContext = useContext(StreamContext);
   const { changeVisibility } = useContext(StreamViewContext);
   const viewContext = useContext(StreamViewContext);
-  const [streamData, setStreamData] = useState<any>([]);
+  const [streamData, setStreamData] = useState<IStreamExtended>();
 
   function getStreamData() {
     const stream = currentStreamContext.currentStream;
@@ -28,7 +28,7 @@ function StreamView() {
       const queryString = "streamName=" + stream.name;
       fetch("/api/specificStream?" + queryString)
         .then((res) => res.json())
-        .then((rawData) => {
+        .then((rawData: IStreamExtended) => {
           // JSON-server returns a JSON-array, whilest .NET-api returns a single JSON-object.
           let data = rawData instanceof Array ? rawData[0] : rawData;
           setStreamData(data);
@@ -42,7 +42,7 @@ function StreamView() {
 
   return (
     <Stack w={"100%"} spacing={4}>
-      {viewContext.isVisible && (
+      {viewContext.isVisible && streamData && (
         <Card variant={"outline"} h={"100%"} w={"100%"} mb={2}>
           <VStack ml={5} divider={<StackDivider ml={5} w={"93%"} />}>
             <CardHeader w={"100%"} ml={-10}>
@@ -78,7 +78,7 @@ function StreamView() {
                 </Heading>
                 {streamData.description != undefined &&
                 streamData.description.length != 0 ? (
-                  streamData.desciption
+                  streamData.description
                 ) : (
                   <Text>No description...</Text>
                 )}

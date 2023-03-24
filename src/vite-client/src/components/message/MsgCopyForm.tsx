@@ -1,10 +1,10 @@
 import { FormControl, FormLabel } from "@chakra-ui/react";
 import { SubjectDropDown } from "components/subject";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, LegacyRef, SetStateAction } from "react";
 
 function MsgCopyForm(props: {
   content: any;
-  subjectInputRef: any;
+  subjectInputRef: any; //LegacyRef<HTMLSelectElement>;
   buttonDisable: boolean;
   toggleButtonDisable: Dispatch<SetStateAction<boolean>>;
 }) {

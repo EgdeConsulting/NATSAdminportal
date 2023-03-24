@@ -16,7 +16,7 @@ function SubjectSidebar() {
         setSubjects(data);
       });
   }
-
+  // "ANY" type needs to changed
   const HierarchyCheckbox = ({
     parent,
     padding,

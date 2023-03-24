@@ -2,12 +2,10 @@ import {
   Card,
   CardBody,
   HStack,
-  Button,
   VStack,
   Flex,
   Spacer,
   Box,
-  Container,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import StickyBox from "react-sticky-box";
@@ -22,13 +20,20 @@ import {
 } from "components";
 
 function MessagesPage() {
-  const [allMessages, setAllMessages] = useState<any[]>([]);
+  const [allMessages, setAllMessages] = useState<IMessage[]>([]);
   const [isIntervalRunning, setIsIntervalRunning] = useState(false);
+
+  interface IMessage {
+    sequenceNumber: number;
+    stream: string;
+    subject: string;
+    timestamp: string;
+  }
 
   function getAllMessages() {
     fetch("/api/allMessages")
-      .then((res: any) => res.json())
-      .then((data) => {
+      .then((res) => res.json())
+      .then((data: IMessage[]) => {
         setAllMessages(data);
       });
   }

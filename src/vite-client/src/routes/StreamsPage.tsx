@@ -15,10 +15,11 @@ import {
   StreamContextProvider,
   StreamViewContextProvider,
   PageHeader,
+  IStream,
 } from "components";
 
 function StreamsPage() {
-  const [streams, setStreams] = useState<any[]>([]);
+  const [streams, setStreams] = useState<IStream[]>([]);
 
   useEffect(() => {
     getStreams();
@@ -27,7 +28,7 @@ function StreamsPage() {
   function getStreams() {
     fetch("/api/allStreams")
       .then((res) => res.json())
-      .then((data) => {
+      .then((data: IStream[]) => {
         setStreams(data);
       });
   }

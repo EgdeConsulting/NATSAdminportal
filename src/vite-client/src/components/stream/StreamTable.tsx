@@ -1,6 +1,6 @@
-import { PaginatedTable, StreamViewButton } from "components";
+import { PaginatedTable, StreamViewButton, IStream } from "components";
 
-function StreamTable(props: { streamInfo: any[] }) {
+function StreamTable(props: { streamInfo: IStream[] }) {
   const columns = [
     {
       Header: "StreamTable",
@@ -42,6 +42,7 @@ function StreamTable(props: { streamInfo: any[] }) {
   return (
     <PaginatedTable columns={columns} data={props.streamInfo}>
       <StreamViewButton content={""} />
+      {/* What type is content? Regarding StreamViewButton.tsx */}
     </PaginatedTable>
   );
 }

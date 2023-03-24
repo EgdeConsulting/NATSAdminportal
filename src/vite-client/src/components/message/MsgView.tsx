@@ -13,13 +13,15 @@ import {
   StackDivider,
   Tooltip,
 } from "@chakra-ui/react";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import {
   MsgDeleteModal,
   MsgContext,
   MsgViewContext,
   MsgCopyModal,
   TooltipHover,
+  MsgContextType,
+  DefaultMsgState,
 } from "components";
 import { CloseIcon } from "@chakra-ui/icons";
 
@@ -27,6 +29,7 @@ function MsgView() {
   const [messageData, setMessageData] = useState<any>([]);
   const currentMsgContext = useContext(MsgContext);
   const { changeVisibility } = useContext(MsgViewContext);
+  const { changeCurrentMsg } = useContext(MsgContext) as MsgContextType;
   const viewContext = useContext(MsgViewContext);
 
   function getMessageData() {
@@ -57,19 +60,14 @@ function MsgView() {
                 <Heading size={"md"}>Message Details</Heading>
                 <Spacer />
                 <HStack mt={-2} mr={-7}>
-                  <TooltipHover
-                    label={"Copy message"}
-                    children={<MsgCopyModal />}
-                  />
-                  <TooltipHover
-                    label={"Delete message"}
-                    children={<MsgDeleteModal />}
-                  />
+                  <MsgCopyModal />
+                  <MsgDeleteModal />
                   <Button
                     variant="ghost"
                     w={"25px"}
                     onClick={() => {
                       changeVisibility(false);
+                      changeCurrentMsg(DefaultMsgState.currentMsg);
                     }}
                   >
                     <CloseIcon />
