@@ -19,6 +19,7 @@ import {
   MsgViewContext,
   MsgCopyModal,
   LoadingSpinner,
+  TooltipHover,
 } from "components";
 import { CloseIcon } from "@chakra-ui/icons";
 
@@ -38,8 +39,8 @@ function MsgView() {
       fetch("/api/specificMessage?" + queryString)
         .then((res) => res.json())
         .then((rawData) => {
-          // JSON-server returns a JSON-array, whilest .NET-api returns a single JSON-object.
           let data = rawData instanceof Array ? rawData[0] : rawData;
+          console.log(data);
           setMessageData(data);
           setLoading(false);
         });
@@ -60,8 +61,14 @@ function MsgView() {
                 <Heading size={"md"}>Message Details</Heading>
                 <Spacer />
                 <HStack mt={-2} mr={-7}>
-                  <MsgCopyModal />
-                  <MsgDeleteModal />
+                  <TooltipHover
+                    label={"Copy message"}
+                    children={<MsgCopyModal />}
+                  />
+                  <TooltipHover
+                    label={"Delete message"}
+                    children={<MsgDeleteModal />}
+                  />
                   <Button
                     variant="ghost"
                     w={"25px"}
@@ -85,6 +92,30 @@ function MsgView() {
                 spacing={6}
                 divider={<StackDivider w={"93%"} />}
               >
+                <Box>
+                  <Heading size={"sm"} mb={2}>
+                    Stream
+                  </Heading>
+                  <Text fontSize={"md"}>
+                    {currentMsgContext.currentMsg.stream}
+                  </Text>
+                </Box>
+                <Box>
+                  <Heading size={"sm"} mb={2}>
+                    Sequence number
+                  </Heading>
+                  <Text fontSize={"md"}>
+                    {currentMsgContext.currentMsg.sequenceNumber}
+                  </Text>
+                </Box>
+                <Box>
+                  <Heading size={"sm"} mb={2}>
+                    Subject
+                  </Heading>
+                  <Text fontSize={"md"}>
+                    {currentMsgContext.currentMsg.subject}
+                  </Text>
+                </Box>
                 <Box>
                   <Heading size={"sm"} mb={2}>
                     Headers

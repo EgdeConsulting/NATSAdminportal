@@ -50,9 +50,7 @@ function StreamView() {
           <VStack ml={5} divider={<StackDivider ml={5} w={"93%"} />}>
             <CardHeader w={"100%"} ml={-10}>
               <Flex>
-                <Heading size={"md"}>
-                  Details for stream: "{streamData.name}"
-                </Heading>
+                <Heading size={"md"}>Message Details</Heading>
                 <Spacer />
                 <HStack mt={-1} mr={-7}>
                   <Button
@@ -78,6 +76,14 @@ function StreamView() {
                 spacing={6}
                 divider={<StackDivider w={"93%"} />}
               >
+                <Box>
+                  <Heading size={"sm"} mb={2}>
+                    Name
+                  </Heading>
+                  {streamData.name != undefined && (
+                    <Text>{streamData.name}</Text>
+                  )}
+                </Box>
                 <Box>
                   <Heading size={"sm"} mb={2}>
                     Description

@@ -1,24 +1,20 @@
-using System.Text.Json;
-using Microsoft.Extensions.Options;
+using System.Collections.Concurrent;
 using NATS.Client;
 using NATS.Client.JetStream;
-using vite_api.Config;
 using vite_api.Dto;
-using vite_api.Internal;
 
 namespace vite_api.Classes
 {
     public class SubscriberManager
     {
-        private readonly IOptions<AppConfig> _appConfig;
         private readonly ILogger _logger;
+        private readonly IServiceProvider _provider;
         private readonly List<JetStreamSubscriber> _allSubscribers;
-        private string Url => _appConfig.Value.NatsServerUrl ?? Defaults.Url;
-        
-        public SubscriberManager(IOptions<AppConfig> appConfig, ILogger<SubscriberManager> logger)
+
+        public SubscriberManager(ILogger<SubscriberManager> logger, IServiceProvider provider)
         {
-            _appConfig = appConfig;
             _logger = logger;
+            _provider = provider;
             _allSubscribers = new List<JetStreamSubscriber>();
             InitializeSubscribers();
         }
@@ -28,9 +24,9 @@ namespace vite_api.Classes
         /// </summary>
         private void InitializeSubscribers()
         {
-            using var c = new ConnectionFactory().CreateConnection(Url);
-            var streamInfo = c.CreateJetStreamManagementContext().GetStreams().ToList<StreamInfo>();
-            streamInfo.ForEach(a => _allSubscribers.Add(new JetStreamSubscriber(Url, a.Config.Name, a.Config.Subjects)));
+            using var connection = _provider.GetRequiredService<IConnection>();
+            var streamInfo = connection.CreateJetStreamManagementContext().GetStreams().ToList<StreamInfo>();
+            streamInfo.ForEach(a => _allSubscribers.Add(new JetStreamSubscriber(_provider, a.Config.Name, a.Config.Subjects)));
         }
 
         /// <summary>
@@ -41,12 +37,11 @@ namespace vite_api.Classes
         {
             _logger.LogInformation("{} > {} viewed all messages",
             DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), UserAccount.Name);
-
-            var allMessages = new List<MessageDto>();
-            foreach (var sub in _allSubscribers)
-                allMessages.AddRange(sub.GetMessages());
             
-            return allMessages;
+            var allMessages = new ConcurrentBag<List<MessageDto>>();
+            Parallel.ForEach(_allSubscribers, sub => { allMessages.Add(sub.GetMessages()); });
+
+            return allMessages.SelectMany(x => x).ToList().OrderBy(x=>x.Stream).ToList();
         }
    
         /// <summary>
@@ -61,13 +56,11 @@ namespace vite_api.Classes
             _logger.LogInformation("{} > {} viewed message (stream, sequence number): {}, {}",
             DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), UserAccount.Name, streamName, sequenceNumber);
 
-            foreach (var sub in _allSubscribers.Where(sub => sub.StreamName == streamName))
-            {
+            var sub = _allSubscribers.FirstOrDefault(sub => sub.StreamName == streamName);
+            if (sub != null)
                 return sub.GetMessageData(sequenceNumber);
-            }
-
-            throw new ArgumentException(
-                "There exists no message that matches provided stream name and sequence number!");
+            
+            throw new ArgumentException("There exists no message that matches provided stream name and sequence number!");
         }
     }
 }
