@@ -67,7 +67,7 @@ function MessagesPage() {
                   </Box>
                 </HStack>
                 {loading ? (
-                  <LoadingSpinner spinnerHeight={"300px"} />
+                  <LoadingSpinner />
                 ) : (
                   <MsgTable messages={allMessages} />
                 )}

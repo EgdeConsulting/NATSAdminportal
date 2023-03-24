@@ -66,7 +66,7 @@ function StreamView() {
               </Flex>
             </CardHeader>
             {loading ? (
-              <LoadingSpinner spinnerHeight={"300px"} />
+              <LoadingSpinner />
             ) : (
               <VStack
                 w={"100%"}

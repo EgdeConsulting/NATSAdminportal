@@ -52,7 +52,7 @@ function StreamsPage() {
                   }
                 />
                 {loading ? (
-                  <LoadingSpinner spinnerHeight={"300px"} />
+                  <LoadingSpinner />
                 ) : (
                   <StreamTable streamInfo={streams} />
                 )}

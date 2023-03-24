@@ -1,9 +1,9 @@
 import { Container, Center, Spinner } from "@chakra-ui/react";
 
-function LoadingSpinner({ spinnerHeight }: { spinnerHeight: string }) {
+function LoadingSpinner() {
   return (
     <Container centerContent={true}>
-      <Center height={spinnerHeight}>
+      <Center height={"300px"}>
         <Spinner
           size={"xl"}
           thickness={"4px"}
