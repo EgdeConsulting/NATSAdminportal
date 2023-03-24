@@ -6,6 +6,9 @@ import {
   HStack,
   Spacer,
   VStack,
+  Spinner,
+  Container,
+  Center,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import StickyBox from "react-sticky-box";
@@ -15,10 +18,12 @@ import {
   StreamContextProvider,
   StreamViewContextProvider,
   PageHeader,
+  LoadingSpinner,
 } from "components";
 
 function StreamsPage() {
   const [streams, setStreams] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     getStreams();
@@ -29,6 +34,7 @@ function StreamsPage() {
       .then((res) => res.json())
       .then((data) => {
         setStreams(data);
+        setLoading(false);
       });
   }
 
@@ -45,7 +51,11 @@ function StreamsPage() {
                     "This page shows all streams on the NATS-server."
                   }
                 />
-                <StreamTable streamInfo={streams} />
+                {loading ? (
+                  <LoadingSpinner spinnerHeight={"300px"} />
+                ) : (
+                  <StreamTable streamInfo={streams} />
+                )}
               </CardBody>
             </Card>
             <Spacer />

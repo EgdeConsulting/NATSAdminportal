@@ -8,6 +8,8 @@ import {
   Spacer,
   Box,
   Container,
+  Spinner,
+  Center,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import StickyBox from "react-sticky-box";
@@ -19,17 +21,20 @@ import {
   MsgContextProvider,
   MsgViewContextProvider,
   PageHeader,
+  LoadingSpinner,
 } from "components";
 
 function MessagesPage() {
   const [allMessages, setAllMessages] = useState<any[]>([]);
   const [isIntervalRunning, setIsIntervalRunning] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   function getAllMessages() {
     fetch("/api/allMessages")
       .then((res: any) => res.json())
       .then((data) => {
         setAllMessages(data);
+        setLoading(false);
       });
   }
 
@@ -61,7 +66,11 @@ function MessagesPage() {
                     <MsgPublishModal />
                   </Box>
                 </HStack>
-                <MsgTable messages={allMessages} />
+                {loading ? (
+                  <LoadingSpinner spinnerHeight={"300px"} />
+                ) : (
+                  <MsgTable messages={allMessages} />
+                )}
               </CardBody>
             </Card>
             <Spacer />
