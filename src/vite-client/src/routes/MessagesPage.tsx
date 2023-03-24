@@ -2,7 +2,6 @@ import {
   Card,
   CardBody,
   HStack,
-  Button,
   VStack,
   Flex,
   Spacer,
@@ -11,7 +10,6 @@ import {
   Spinner,
   Center,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
 import StickyBox from "react-sticky-box";
 import {
   MsgView,
@@ -25,28 +23,6 @@ import {
 } from "components";
 
 function MessagesPage() {
-  const [allMessages, setAllMessages] = useState<any[]>([]);
-  const [isIntervalRunning, setIsIntervalRunning] = useState(false);
-  const [loading, setLoading] = useState(true);
-
-  function getAllMessages() {
-    fetch("/api/allMessages")
-      .then((res: any) => res.json())
-      .then((data) => {
-        setAllMessages(data);
-        setLoading(false);
-      });
-  }
-
-  useEffect(() => {
-    setIsIntervalRunning(true);
-    const interval = setInterval(getAllMessages, 1000);
-    return () => {
-      clearInterval(interval);
-      setIsIntervalRunning(false);
-    };
-  }, [!isIntervalRunning]);
-
   return (
     <MsgContextProvider>
       <MsgViewContextProvider>
@@ -69,7 +45,7 @@ function MessagesPage() {
                 {loading ? (
                   <LoadingSpinner />
                 ) : (
-                  <MsgTable messages={allMessages} />
+                  <MsgTable />
                 )}
               </CardBody>
             </Card>

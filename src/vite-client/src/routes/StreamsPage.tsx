@@ -10,7 +10,6 @@ import {
   Container,
   Center,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
 import StickyBox from "react-sticky-box";
 import {
   StreamView,
@@ -22,22 +21,6 @@ import {
 } from "components";
 
 function StreamsPage() {
-  const [streams, setStreams] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    getStreams();
-  }, [streams.length != 0]);
-
-  function getStreams() {
-    fetch("/api/allStreams")
-      .then((res) => res.json())
-      .then((data) => {
-        setStreams(data);
-        setLoading(false);
-      });
-  }
-
   return (
     <StreamContextProvider>
       <StreamViewContextProvider>
@@ -54,7 +37,7 @@ function StreamsPage() {
                 {loading ? (
                   <LoadingSpinner />
                 ) : (
-                  <StreamTable streamInfo={streams} />
+                  <StreamTable />
                 )}
               </CardBody>
             </Card>

@@ -40,7 +40,6 @@ function MsgView() {
         .then((res) => res.json())
         .then((rawData) => {
           let data = rawData instanceof Array ? rawData[0] : rawData;
-          console.log(data);
           setMessageData(data);
           setLoading(false);
         });
