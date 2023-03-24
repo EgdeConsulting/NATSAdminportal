@@ -41,7 +41,7 @@ namespace vite_api.Classes
             var allMessages = new ConcurrentBag<List<MessageDto>>();
             Parallel.ForEach(_allSubscribers, sub => { allMessages.Add(sub.GetMessages()); });
 
-            return allMessages.SelectMany(x => x).ToList().OrderBy(x=>x.Stream).ToList();
+            return allMessages.SelectMany(x => x).ToList().OrderBy(x=>x.Stream).ThenByDescending(x=>x.SequenceNumber).ToList();
         }
    
         /// <summary>

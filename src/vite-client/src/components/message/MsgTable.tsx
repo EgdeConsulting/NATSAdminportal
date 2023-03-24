@@ -61,7 +61,7 @@ function MsgTable() {
 
   useEffect(() => {
     setIsIntervalRunning(true);
-    const interval = setInterval(getAllMessages, 1000);
+    const interval = setInterval(getAllMessages, 3000);
     return () => {
       clearInterval(interval);
       setIsIntervalRunning(false);
