@@ -40,7 +40,7 @@ function Sidebar() {
               }}
               size="sm"
               icon={<HamburgerIcon boxSize={6} />}
-            ></IconButton>
+            />
           </Box>
 
           <VStack>

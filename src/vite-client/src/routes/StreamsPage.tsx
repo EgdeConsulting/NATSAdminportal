@@ -7,7 +7,6 @@ import {
   Spacer,
   VStack,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
 import StickyBox from "react-sticky-box";
 import {
   StreamView,
@@ -18,20 +17,6 @@ import {
 } from "components";
 
 function StreamsPage() {
-  const [streams, setStreams] = useState<any[]>([]);
-
-  useEffect(() => {
-    getStreams();
-  }, [streams.length != 0]);
-
-  function getStreams() {
-    fetch("/api/allStreams")
-      .then((res) => res.json())
-      .then((data) => {
-        setStreams(data);
-      });
-  }
-
   return (
     <StreamContextProvider>
       <StreamViewContextProvider>
@@ -45,7 +30,7 @@ function StreamsPage() {
                     "This page shows all streams on the NATS-server."
                   }
                 />
-                <StreamTable streamInfo={streams} />
+                <StreamTable />
               </CardBody>
             </Card>
             <Spacer />
