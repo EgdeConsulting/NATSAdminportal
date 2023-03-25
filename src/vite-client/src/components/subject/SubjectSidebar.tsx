@@ -1,4 +1,4 @@
-import { Checkbox, Card, CardHeader, VStack, Heading } from "@chakra-ui/react";
+import { Checkbox, Card, CardHeader, Heading } from "@chakra-ui/react";
 import { v4 as uuidv4 } from "uuid";
 import { useState, useEffect } from "react";
 

@@ -10,7 +10,13 @@ import {
   Box,
 } from "@chakra-ui/react";
 import { FiPlusCircle, FiMinusCircle } from "react-icons/fi";
-import { Dispatch, RefObject, SetStateAction, useEffect } from "react";
+import {
+  ChangeEvent,
+  Dispatch,
+  RefObject,
+  SetStateAction,
+  useEffect,
+} from "react";
 import { IHeaderProps, SubjectDropDown } from "components";
 
 function MsgPublishForm(props: {
@@ -62,11 +68,10 @@ function MsgPublishForm(props: {
     props.setHeaderList(tempList);
   }
 
-  function handleHeaderChange(e: any, index: number) {
-    //EVENT? Finna typen te event.
+  function handleHeaderChange(e: ChangeEvent<HTMLInputElement>, index: number) {
     const tempList = [...props.headerList];
     const { id, value }: { id: string; value: string } = e.target;
-    //tempList[index][id] = value;
+    tempList[index][id] = value;
     props.setHeaderList(tempList);
   }
   return (

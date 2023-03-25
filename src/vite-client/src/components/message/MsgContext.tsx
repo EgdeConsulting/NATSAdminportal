@@ -4,9 +4,11 @@ export interface IMsg {
   sequenceNumber: string;
   stream: string;
   subject: string;
+  timestamp?: string;
 }
 
 export interface IHeaderProps {
+  [key: string]: string;
   name: string;
   value: string;
 }

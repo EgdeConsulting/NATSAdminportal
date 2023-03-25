@@ -10,6 +10,7 @@ import {
 import { useEffect, useState } from "react";
 import StickyBox from "react-sticky-box";
 import {
+  IMsg,
   MsgView,
   MsgTable,
   SubjectSidebar,
@@ -20,20 +21,13 @@ import {
 } from "components";
 
 function MessagesPage() {
-  const [allMessages, setAllMessages] = useState<IMessage[]>([]);
+  const [allMessages, setAllMessages] = useState<IMsg[]>([]);
   const [isIntervalRunning, setIsIntervalRunning] = useState(false);
-
-  interface IMessage {
-    sequenceNumber: number;
-    stream: string;
-    subject: string;
-    timestamp: string;
-  }
 
   function getAllMessages() {
     fetch("/api/allMessages")
       .then((res) => res.json())
-      .then((data: IMessage[]) => {
+      .then((data: IMsg[]) => {
         setAllMessages(data);
       });
   }

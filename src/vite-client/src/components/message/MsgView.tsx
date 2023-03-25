@@ -11,22 +11,22 @@ import {
   HStack,
   VStack,
   StackDivider,
-  Tooltip,
 } from "@chakra-ui/react";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   MsgDeleteModal,
   MsgContext,
   MsgViewContext,
   MsgCopyModal,
-  TooltipHover,
   MsgContextType,
   DefaultMsgState,
+  ISpecificMsg,
+  IHeaderProps,
 } from "components";
 import { CloseIcon } from "@chakra-ui/icons";
 
 function MsgView() {
-  const [messageData, setMessageData] = useState<any>([]);
+  const [messageData, setMessageData] = useState<ISpecificMsg>();
   const currentMsgContext = useContext(MsgContext);
   const { changeVisibility } = useContext(MsgViewContext);
   const { changeCurrentMsg } = useContext(MsgContext) as MsgContextType;
@@ -90,11 +90,13 @@ function MsgView() {
                 {messageData &&
                 messageData.headers != undefined &&
                 Object.entries(messageData.headers).length != 0 ? (
-                  messageData.headers.map((headerPair: any, index: number) => (
-                    <Text key={index} fontSize={"md"}>
-                      {headerPair.name + " : " + headerPair.value}
-                    </Text>
-                  ))
+                  messageData.headers.map(
+                    (headerPair: IHeaderProps, index: number) => (
+                      <Text key={index} fontSize={"md"}>
+                        {headerPair.name + ": " + headerPair.value}
+                      </Text>
+                    )
+                  )
                 ) : (
                   <Text fontSize={"md"}>No Headers...</Text>
                 )}
@@ -103,7 +105,9 @@ function MsgView() {
                 <Heading size={"sm"} mb={2}>
                   Payload
                 </Heading>
-                <Text fontSize={"md"}>{messageData.payload}</Text>
+                {messageData && (
+                  <Text fontSize={"md"}>{messageData.payload}</Text>
+                )}
               </Box>
             </VStack>
           </VStack>

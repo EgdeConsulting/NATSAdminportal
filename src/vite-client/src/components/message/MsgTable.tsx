@@ -1,6 +1,6 @@
-import { PaginatedTable, MsgViewButton } from "components";
+import { PaginatedTable, MsgViewButton, IMsg } from "components";
 
-function MsgTable(props: { messages: any[] }) {
+function MsgTable(props: { messages: IMsg[] }) {
   const columns = [
     {
       Header: "MsgTable",
