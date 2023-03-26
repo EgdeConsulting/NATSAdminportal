@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
-import { PaginatedTable, StreamViewButton, LoadingSpinner } from "components";
+import {
+  PaginatedTable,
+  StreamViewButton,
+  LoadingSpinner,
+  SelectColumnFilter,
+} from "components";
 
 function StreamTable() {
   const columns = [
@@ -9,32 +14,32 @@ function StreamTable() {
         {
           Header: "Name",
           accessor: "name",
-          appendChildren: "false",
-          rowBound: "false",
+          disableFilters: true,
         },
         {
           Header: "No. Subjects",
           accessor: "subjectCount",
-          appendChildren: "false",
-          rowBound: "false",
+          Filter: SelectColumnFilter,
+          filter: "equals",
         },
         {
           Header: "No. Consumers",
           accessor: "consumerCount",
-          appendChildren: "false",
-          rowBound: "false",
+          Filter: SelectColumnFilter,
+          filter: "equals",
         },
         {
           Header: "No. Messages",
           accessor: "messageCount",
-          appendChildren: "false",
-          rowBound: "false",
+          disableFilters: true,
         },
         {
           Header: "Data",
           accessor: "data",
-          appendChildren: "true",
-          rowBound: "true",
+          disableFilters: true,
+          Cell: (props: { row: any }) => {
+            return <StreamViewButton content={props.row.values} />;
+          },
         },
       ],
     },
@@ -45,15 +50,21 @@ function StreamTable() {
 
   useEffect(() => {
     getStreams();
-  }, [streams.length != 0]);
+  }, [!streams]);
 
   function getStreams() {
-    fetch("/api/allStreams")
-      .then((res) => res.json())
-      .then((data) => {
-        setStreams(data);
-        setLoading(false);
-      });
+    fetch("/api/allStreams").then((res: any) => {
+      if (res.ok) {
+        res.json().then((data: any) => {
+          setStreams(data);
+          setLoading(false);
+        });
+      } else {
+        alert(
+          "An error occurred while fetching all streams: " + res.statusText
+        );
+      }
+    });
   }
 
   return (
@@ -61,9 +72,7 @@ function StreamTable() {
       {loading ? (
         <LoadingSpinner />
       ) : (
-        <PaginatedTable columns={columns} data={streams}>
-          <StreamViewButton content={""} />
-        </PaginatedTable>
+        <PaginatedTable columns={columns} data={streams} />
       )}
     </>
   );

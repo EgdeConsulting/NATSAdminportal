@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
-import { PaginatedTable, MsgViewButton, LoadingSpinner } from "components";
+import {
+  PaginatedTable,
+  MsgViewButton,
+  LoadingSpinner,
+  SelectColumnFilter,
+} from "components";
 
 function MsgTable() {
   const columns = [
@@ -9,32 +14,33 @@ function MsgTable() {
         {
           Header: "Sequence Number",
           accessor: "sequenceNumber",
-          appendChildren: "false",
-          rowBound: "false",
+          disableFilters: true,
         },
         {
           Header: "Timestamp",
           accessor: "timestamp",
-          appendChildren: "false",
-          rowBound: "false",
+          Filter: SelectColumnFilter,
+          filter: "includes",
         },
         {
           Header: "Stream",
           accessor: "stream",
-          appendChildren: "false",
-          rowBound: "false",
+          Filter: SelectColumnFilter,
+          filter: "includes",
         },
         {
           Header: "Subject",
           accessor: "subject",
-          appendChildren: "false",
-          rowBound: "false",
+          Filter: SelectColumnFilter,
+          filter: "includes",
         },
         {
           Header: "Data",
           accessor: "data",
-          appendChildren: "true",
-          rowBound: "true",
+          disableFilters: true,
+          Cell: (props: { row: any }) => {
+            return <MsgViewButton content={props.row.values} />;
+          },
         },
       ],
     },
@@ -73,9 +79,7 @@ function MsgTable() {
       {loading ? (
         <LoadingSpinner />
       ) : (
-        <PaginatedTable columns={columns} data={allMessages}>
-          <MsgViewButton content={""} />
-        </PaginatedTable>
+        <PaginatedTable columns={columns} data={allMessages} />
       )}
     </>
   );
