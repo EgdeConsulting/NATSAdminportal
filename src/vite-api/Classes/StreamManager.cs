@@ -59,10 +59,10 @@ namespace vite_api.Classes
         {
             _logger.LogInformation("{} > {} deleted message (stream name, sequence number): {}, {}",
             DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), UserAccount.Name, streamName, sequenceNumber);
-            
+
             using var connection = _provider.GetRequiredService<IConnection>();
             var jsm = connection.CreateJetStreamManagementContext();
-            
+
             return jsm.DeleteMessage(streamName, sequenceNumber, erase);
         }
 
@@ -179,16 +179,6 @@ namespace vite_api.Classes
             }
         }
 
-        // public static void ExitIfStreamNotExists(IConnection c, string streamName)
-        // {
-        //     if (!StreamExists(c, streamName))
-        //     {
-        //         Console.WriteLine("\nThe example cannot run since the stream '" + streamName + "' does not exist.\n" +
-        //                            "It depends on the stream existing and having data.");
-        //         Environment.Exit(-1);
-        //     }
-        // }
-
         public StreamInfo CreateStream(IJetStreamManagement jsm, string streamName, StorageType storageType, params string[] subjects)
         {
             // Create a stream, here will use a file storage type, and one subject,
@@ -204,27 +194,6 @@ namespace vite_api.Classes
             Console.WriteLine("Created stream '{0}' with subject(s) [{1}]\n", streamName, string.Join(",", si.Config.Subjects));
             return si;
         }
-
-        // public static StreamInfo CreateStream(IJetStreamManagement jsm, string stream, params string[] subjects)
-        // {
-        //     return CreateStream(jsm, stream, StorageType.Memory, subjects);
-        // }
-
-        // public static StreamInfo CreateStream(IConnection c, string stream, params string[] subjects)
-        // {
-        //     return CreateStream(c.CreateJetStreamManagementContext(), stream, StorageType.Memory, subjects);
-        // }
-
-        // public static StreamInfo CreateStreamExitWhenExists(IConnection c, string streamName, params string[] subjects)
-        // {
-        //     return CreateStreamExitWhenExists(c.CreateJetStreamManagementContext(), streamName, subjects);
-        // }
-
-        // public static StreamInfo CreateStreamExitWhenExists(IJetStreamManagement jsm, string streamName, params string[] subjects)
-        // {
-        //     ExitIfStreamExists(jsm, streamName);
-        //     return CreateStream(jsm, streamName, StorageType.Memory, subjects);
-        // }
 
         public void CreateStreamWhenDoesNotExist(IJetStreamManagement jsm, StorageType storageType, string stream, params string[] subjects)
         {
@@ -246,11 +215,6 @@ namespace vite_api.Classes
                 .Build();
             jsm.AddStream(sc);
         }
-
-        // public static void CreateStreamWhenDoesNotExist(IConnection c, string stream, params string[] subjects)
-        // {
-        //     CreateStreamWhenDoesNotExist(c.CreateJetStreamManagementContext(), stream, subjects);
-        // }
 
         public StreamInfo CreateStreamOrUpdateSubjects(IJetStreamManagement jsm, string streamName, StorageType storageType, params string[] subjects)
         {
@@ -297,15 +261,5 @@ namespace vite_api.Classes
         {
             return jsm.GetStreams();
         }
-
-        // public static StreamInfo CreateStreamOrUpdateSubjects(IJetStreamManagement jsm, string streamName, params string[] subjects)
-        // {
-        //     return CreateStreamOrUpdateSubjects(jsm, streamName, StorageType.Memory, subjects);
-        // }
-
-        // public static StreamInfo CreateStreamOrUpdateSubjects(IConnection c, string stream, params string[] subjects)
-        // {
-        //     return CreateStreamOrUpdateSubjects(c.CreateJetStreamManagementContext(), stream, StorageType.Memory, subjects);
-        // }
     }
 }
