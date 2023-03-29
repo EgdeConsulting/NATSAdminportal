@@ -138,7 +138,9 @@ function MsgView() {
                   <Heading size={"sm"} mb={2}>
                     Payload
                   </Heading>
-                  <Text fontSize={"md"}>{messageData!.payload.data}</Text>
+                  <Text mb={3} fontSize={"md"}>
+                    {messageData!.payload.data}
+                  </Text>
                   <MsgPayloadModal />
                 </Box>
               </VStack>

@@ -9,7 +9,8 @@ import {
   useDisclosure,
   Button,
   Text,
-  useEditable,
+  Divider,
+  Center,
 } from "@chakra-ui/react";
 import { IPayload, LoadingSpinner, MsgContext } from "components";
 import { useContext, useState } from "react";
@@ -43,14 +44,18 @@ function MsgPayloadModal() {
           getPayload();
         }}
       >
-        View all
+        View full payload
       </Button>
 
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal size={"2xl"} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Payload</ModalHeader>
           <ModalCloseButton />
+          <Center>
+            <Divider w={"93%"} />
+          </Center>
+
           {loading ? (
             <ModalBody>
               <LoadingSpinner />

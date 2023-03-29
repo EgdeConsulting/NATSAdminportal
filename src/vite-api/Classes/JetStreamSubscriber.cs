@@ -86,7 +86,9 @@ namespace vite_api.Classes
         private string GetData(byte[] data, bool isShortPayload)
         {
             var result = data.All(x => char.IsAscii((char)x)) ? Encoding.ASCII.GetString(data) : Convert.ToBase64String(data);
-            return result.Length > MaxPayloadLength && isShortPayload ? result.Substring(0, MaxPayloadLength) : result;
+            return result.Length > MaxPayloadLength && isShortPayload ? result.Substring(0, MaxPayloadLength)
+            + " ..." // 3 dots to indicate that the message is incomplete.
+            : result;
         }
 
         /// <summary>
