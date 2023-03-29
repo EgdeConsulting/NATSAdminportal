@@ -7,14 +7,15 @@ import {
   AlertDialogOverlay,
   Button,
 } from "@chakra-ui/react";
-import { Dispatch, SetStateAction, useRef } from "react";
+
+import { useRef } from "react";
 
 function ActionConfirmation(props: {
-  action: any;
+  action: () => void;
   isOpen: boolean;
   onClose: () => void;
 }) {
-  const cancelRef = useRef<any>();
+  const cancelRef = useRef<HTMLButtonElement>(null);
 
   return (
     <AlertDialog

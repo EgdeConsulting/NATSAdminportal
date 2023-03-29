@@ -18,15 +18,19 @@ import {
   MsgContext,
   MsgViewContext,
   MsgCopyModal,
+  MsgContextType,
+  DefaultMsgState,
+  ISpecificMsg,
+  IHeaderProps,
   LoadingSpinner,
-  TooltipHover,
 } from "components";
 import { CloseIcon } from "@chakra-ui/icons";
 
 function MsgView() {
-  const [messageData, setMessageData] = useState<any>([]);
+  const [messageData, setMessageData] = useState<ISpecificMsg>();
   const currentMsgContext = useContext(MsgContext);
   const { changeVisibility } = useContext(MsgViewContext);
+  const { changeCurrentMsg } = useContext(MsgContext) as MsgContextType;
   const viewContext = useContext(MsgViewContext);
   const [loading, setLoading] = useState(false);
 
@@ -60,19 +64,14 @@ function MsgView() {
                 <Heading size={"md"}>Message Details</Heading>
                 <Spacer />
                 <HStack mt={-2} mr={-7}>
-                  <TooltipHover
-                    label={"Copy message"}
-                    children={<MsgCopyModal />}
-                  />
-                  <TooltipHover
-                    label={"Delete message"}
-                    children={<MsgDeleteModal />}
-                  />
+                  <MsgCopyModal />
+                  <MsgDeleteModal />
                   <Button
                     variant="ghost"
                     w={"25px"}
                     onClick={() => {
                       changeVisibility(false);
+                      changeCurrentMsg(DefaultMsgState.currentMsg);
                     }}
                   >
                     <CloseIcon />
@@ -80,6 +79,7 @@ function MsgView() {
                 </HStack>
               </Flex>
             </CardHeader>
+
             {loading ? (
               <LoadingSpinner />
             ) : (
@@ -123,7 +123,7 @@ function MsgView() {
                   messageData.headers != undefined &&
                   Object.entries(messageData.headers).length != 0 ? (
                     messageData.headers.map(
-                      (headerPair: any, index: number) => (
+                      (headerPair: IHeaderProps, index: number) => (
                         <Text key={index} fontSize={"md"}>
                           {headerPair.name + " : " + headerPair.value}
                         </Text>
@@ -137,7 +137,7 @@ function MsgView() {
                   <Heading size={"sm"} mb={2}>
                     Payload
                   </Heading>
-                  <Text fontSize={"md"}>{messageData.payload}</Text>
+                  <Text fontSize={"md"}>{messageData!.payload}</Text>
                 </Box>
               </VStack>
             )}

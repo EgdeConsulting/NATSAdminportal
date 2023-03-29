@@ -14,7 +14,7 @@ namespace vite_api.Classes
             _logger = logger;
             _provider = provider;
         }
-        
+
         /// <summary>
         /// Deletes a message from a specific stream based on the sequence number of the message.
         /// </summary>
@@ -26,10 +26,10 @@ namespace vite_api.Classes
         {
             _logger.LogInformation("{} > {} deleted message (stream name, sequence number): {}, {}",
             DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), UserAccount.Name, streamName, sequenceNumber);
-            
+
             using var connection = _provider.GetRequiredService<IConnection>();
             var jsm = connection.CreateJetStreamManagementContext();
-            
+
             return jsm.DeleteMessage(streamName, sequenceNumber, erase);
         }
 
@@ -78,5 +78,6 @@ namespace vite_api.Classes
                 }
             };
         }
+
     }
 }

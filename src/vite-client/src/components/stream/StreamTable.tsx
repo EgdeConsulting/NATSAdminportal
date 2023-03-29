@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
-import { PaginatedTable, StreamViewButton, LoadingSpinner } from "components";
+import {
+  PaginatedTable,
+  StreamViewButton,
+  LoadingSpinner,
+  IStream,
+} from "components";
 
 function StreamTable() {
   const columns = [
@@ -40,7 +45,7 @@ function StreamTable() {
     },
   ];
 
-  const [streams, setStreams] = useState<any[]>([]);
+  const [streams, setStreams] = useState<IStream[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -50,7 +55,7 @@ function StreamTable() {
   function getStreams() {
     fetch("/api/allStreams")
       .then((res) => res.json())
-      .then((data) => {
+      .then((data: IStream[]) => {
         setStreams(data);
         setLoading(false);
       });
