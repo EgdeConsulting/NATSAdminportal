@@ -9,28 +9,30 @@ import {
   Heading,
   Stack,
   Text,
-  Icon,
   Link,
+  CardHeader,
+  Container,
 } from "@chakra-ui/react";
-import { IconType } from "react-icons";
 import { Link as RouteLink } from "react-router-dom";
 
 function QuickStartCard(props: {
   header: string;
   description: string;
-  image: IconType;
+  image: JSX.Element;
   route: string;
 }) {
   return (
-    <Card>
+    <Card width={"50%"} align={"center"}>
       <CardBody>
-        <Icon as={props.image}></Icon>
-        <Stack mt="6" spacing="3">
-          <Heading size="md">{props.header}</Heading>
-          <Text>{props.description}</Text>
-        </Stack>
+        <Container maxW={"500px"} centerContent={true}>
+          {props.image}
+          <Stack align={"center"} mt="6" spacing="3">
+            <Heading size="md">{props.header}</Heading>
+            <Text align={"center"}>{props.description}</Text>
+          </Stack>
+        </Container>
       </CardBody>
-      <Divider />
+      <Divider w={"93%"} />
       <CardFooter>
         <Link as={RouteLink} to={props.route}>
           <Button>{"Go to " + props.header}</Button>
