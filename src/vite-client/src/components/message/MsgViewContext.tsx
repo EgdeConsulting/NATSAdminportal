@@ -6,9 +6,13 @@ export type MsgViewContextType = {
   changeVisibility: (state: boolean) => void;
 };
 
+export interface IPayload {
+  data: string;
+}
+
 export interface ISpecificMsg {
   headers: IHeaderProps[];
-  payload: string; //This might not be a string later on
+  payload: IPayload;
   subject: string;
 }
 const DefaultMsgViewState = {

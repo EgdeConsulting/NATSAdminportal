@@ -9,3 +9,4 @@ export * from "./MsgViewButton";
 export * from "./MsgViewContext";
 export * from "./MsgCopyModal";
 export * from "./MsgCopyForm";
+export * from "./MsgPayloadModal";

@@ -23,6 +23,7 @@ import {
   ISpecificMsg,
   IHeaderProps,
   LoadingSpinner,
+  MsgPayloadModal,
 } from "components";
 import { CloseIcon } from "@chakra-ui/icons";
 
@@ -137,7 +138,10 @@ function MsgView() {
                   <Heading size={"sm"} mb={2}>
                     Payload
                   </Heading>
-                  <Text fontSize={"md"}>{messageData!.payload}</Text>
+                  <Text mb={3} fontSize={"md"}>
+                    {messageData!.payload.data}
+                  </Text>
+                  <MsgPayloadModal />
                 </Box>
               </VStack>
             )}
