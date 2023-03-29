@@ -22,6 +22,7 @@ import {
   DefaultMsgState,
   ISpecificMsg,
   IHeaderProps,
+  LoadingSpinner,
 } from "components";
 import { CloseIcon } from "@chakra-ui/icons";
 
@@ -31,8 +32,10 @@ function MsgView() {
   const { changeVisibility } = useContext(MsgViewContext);
   const { changeCurrentMsg } = useContext(MsgContext) as MsgContextType;
   const viewContext = useContext(MsgViewContext);
+  const [loading, setLoading] = useState(false);
 
   function getMessageData() {
+    setLoading(true);
     const msg = currentMsgContext.currentMsg;
     if (msg.stream && msg.sequenceNumber) {
       const queryString =
@@ -42,6 +45,7 @@ function MsgView() {
         .then((rawData) => {
           let data = rawData instanceof Array ? rawData[0] : rawData;
           setMessageData(data);
+          setLoading(false);
         });
     }
   }
@@ -75,41 +79,68 @@ function MsgView() {
                 </HStack>
               </Flex>
             </CardHeader>
-            <VStack
-              w={"100%"}
-              mt={4}
-              mb={5}
-              align={"flex-start"}
-              spacing={6}
-              divider={<StackDivider w={"93%"} />}
-            >
-              <Box>
-                <Heading size={"sm"} mb={2}>
-                  Headers
-                </Heading>
-                {messageData &&
-                messageData.headers != undefined &&
-                Object.entries(messageData.headers).length != 0 ? (
-                  messageData.headers.map(
-                    (headerPair: IHeaderProps, index: number) => (
-                      <Text key={index} fontSize={"md"}>
-                        {headerPair.name + ": " + headerPair.value}
-                      </Text>
+
+            {loading ? (
+              <LoadingSpinner />
+            ) : (
+              <VStack
+                w={"100%"}
+                mt={4}
+                mb={5}
+                align={"flex-start"}
+                spacing={6}
+                divider={<StackDivider w={"93%"} />}
+              >
+                <Box>
+                  <Heading size={"sm"} mb={2}>
+                    Stream
+                  </Heading>
+                  <Text fontSize={"md"}>
+                    {currentMsgContext.currentMsg.stream}
+                  </Text>
+                </Box>
+                <Box>
+                  <Heading size={"sm"} mb={2}>
+                    Sequence number
+                  </Heading>
+                  <Text fontSize={"md"}>
+                    {currentMsgContext.currentMsg.sequenceNumber}
+                  </Text>
+                </Box>
+                <Box>
+                  <Heading size={"sm"} mb={2}>
+                    Subject
+                  </Heading>
+                  <Text fontSize={"md"}>
+                    {currentMsgContext.currentMsg.subject}
+                  </Text>
+                </Box>
+                <Box>
+                  <Heading size={"sm"} mb={2}>
+                    Headers
+                  </Heading>
+                  {messageData &&
+                  messageData.headers != undefined &&
+                  Object.entries(messageData.headers).length != 0 ? (
+                    messageData.headers.map(
+                      (headerPair: IHeaderProps, index: number) => (
+                        <Text key={index} fontSize={"md"}>
+                          {headerPair.name + " : " + headerPair.value}
+                        </Text>
+                      )
                     )
-                  )
-                ) : (
-                  <Text fontSize={"md"}>No Headers...</Text>
-                )}
-              </Box>
-              <Box>
-                <Heading size={"sm"} mb={2}>
-                  Payload
-                </Heading>
-                {messageData && (
-                  <Text fontSize={"md"}>{messageData.payload}</Text>
-                )}
-              </Box>
-            </VStack>
+                  ) : (
+                    <Text fontSize={"md"}>No Headers...</Text>
+                  )}
+                </Box>
+                <Box>
+                  <Heading size={"sm"} mb={2}>
+                    Payload
+                  </Heading>
+                  <Text fontSize={"md"}>{messageData!.payload}</Text>
+                </Box>
+              </VStack>
+            )}
           </VStack>
         </Card>
       )}

@@ -1,6 +1,12 @@
-import { PaginatedTable, MsgViewButton, IMsg } from "components";
+import { useEffect, useState } from "react";
+import {
+  PaginatedTable,
+  MsgViewButton,
+  LoadingSpinner,
+  IMsg,
+} from "components";
 
-function MsgTable(props: { messages: IMsg[] }) {
+function MsgTable() {
   const columns = [
     {
       Header: "MsgTable",
@@ -39,10 +45,44 @@ function MsgTable(props: { messages: IMsg[] }) {
     },
   ];
 
+  const [allMessages, setAllMessages] = useState<IMsg[]>([]);
+  const [isIntervalRunning, setIsIntervalRunning] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  function getAllMessages() {
+    fetch("/api/allMessages").then((res) => {
+      if (res.ok) {
+        res.json().then((data: IMsg[]) => {
+          setAllMessages(data);
+          setLoading(false);
+        });
+      } else {
+        alert(
+          "An error occurred while fetching all messages: " + res.statusText
+        );
+      }
+    });
+  }
+
+  useEffect(() => {
+    setIsIntervalRunning(true);
+    const interval = setInterval(getAllMessages, 3000);
+    return () => {
+      clearInterval(interval);
+      setIsIntervalRunning(false);
+    };
+  }, [!isIntervalRunning]);
+
   return (
-    <PaginatedTable columns={columns} data={props.messages}>
-      <MsgViewButton content={""} />
-    </PaginatedTable>
+    <>
+      {loading ? (
+        <LoadingSpinner />
+      ) : (
+        <PaginatedTable columns={columns} data={allMessages}>
+          <MsgViewButton content={""} />
+        </PaginatedTable>
+      )}
+    </>
   );
 }
 

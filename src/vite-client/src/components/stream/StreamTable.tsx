@@ -1,6 +1,12 @@
-import { PaginatedTable, StreamViewButton, IStream } from "components";
+import { useEffect, useState } from "react";
+import {
+  PaginatedTable,
+  StreamViewButton,
+  LoadingSpinner,
+  IStream,
+} from "components";
 
-function StreamTable(props: { streamInfo: IStream[] }) {
+function StreamTable() {
   const columns = [
     {
       Header: "StreamTable",
@@ -39,11 +45,32 @@ function StreamTable(props: { streamInfo: IStream[] }) {
     },
   ];
 
+  const [streams, setStreams] = useState<IStream[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getStreams();
+  }, [streams.length != 0]);
+
+  function getStreams() {
+    fetch("/api/allStreams")
+      .then((res) => res.json())
+      .then((data: IStream[]) => {
+        setStreams(data);
+        setLoading(false);
+      });
+  }
+
   return (
-    <PaginatedTable columns={columns} data={props.streamInfo}>
-      <StreamViewButton content={""} />
-      {/* What type is content? Regarding StreamViewButton.tsx */}
-    </PaginatedTable>
+    <>
+      {loading ? (
+        <LoadingSpinner />
+      ) : (
+        <PaginatedTable columns={columns} data={streams}>
+          <StreamViewButton content={""} />
+        </PaginatedTable>
+      )}
+    </>
   );
 }
 export { StreamTable };

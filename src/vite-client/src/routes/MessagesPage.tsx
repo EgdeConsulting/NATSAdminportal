@@ -7,10 +7,8 @@ import {
   Spacer,
   Box,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
 import StickyBox from "react-sticky-box";
 import {
-  IMsg,
   MsgView,
   MsgTable,
   SubjectSidebar,
@@ -21,26 +19,6 @@ import {
 } from "components";
 
 function MessagesPage() {
-  const [allMessages, setAllMessages] = useState<IMsg[]>([]);
-  const [isIntervalRunning, setIsIntervalRunning] = useState(false);
-
-  function getAllMessages() {
-    fetch("/api/allMessages")
-      .then((res) => res.json())
-      .then((data: IMsg[]) => {
-        setAllMessages(data);
-      });
-  }
-
-  useEffect(() => {
-    setIsIntervalRunning(true);
-    const interval = setInterval(getAllMessages, 9000);
-    return () => {
-      clearInterval(interval);
-      setIsIntervalRunning(false);
-    };
-  }, [!isIntervalRunning]);
-
   return (
     <MsgContextProvider>
       <MsgViewContextProvider>
@@ -60,7 +38,7 @@ function MessagesPage() {
                     <MsgPublishModal />
                   </Box>
                 </HStack>
-                <MsgTable messages={allMessages} />
+                <MsgTable />
               </CardBody>
             </Card>
             <Spacer />

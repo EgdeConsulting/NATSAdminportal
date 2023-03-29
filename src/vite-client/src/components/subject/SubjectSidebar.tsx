@@ -1,13 +1,12 @@
-import { Checkbox, Card, CardHeader, Heading } from "@chakra-ui/react";
-import { v4 as uuidv4 } from "uuid";
-import { useState, useEffect } from "react";
+import { Checkbox, Card, CardHeader, Heading, VStack } from "@chakra-ui/react";
+import { useState, useEffect, memo } from "react";
 
 function SubjectSidebar() {
   const [subjects, setSubjects] = useState<[]>([]);
 
   useEffect(() => {
     getSubjects();
-  }, []);
+  }, [subjects.length == 0]);
 
   function getSubjects() {
     fetch("/api/subjectHierarchy")
@@ -16,32 +15,28 @@ function SubjectSidebar() {
         setSubjects(data);
       });
   }
-  // "ANY" type needs to changed
-  const HierarchyCheckbox = ({
-    parent,
-    padding,
-  }: {
-    parent: any;
-    padding: number;
-  }): JSX.Element => {
-    return (
-      <>
-        <Checkbox m={1} pl={padding} defaultChecked>
-          {parent["name"]}
-        </Checkbox>
-        {parent["subSubjects"] != undefined &&
-          parent["subSubjects"].map((child: any, index: number) => {
-            return (
-              <HierarchyCheckbox
-                key={uuidv4()}
-                parent={child}
-                padding={padding + 5}
-              />
-            );
-          })}
-      </>
-    );
-  };
+
+  const HierarchyCheckbox = memo(
+    ({ parent, padding }: { parent: any; padding: number }): JSX.Element => {
+      return (
+        <>
+          <Checkbox m={1} pl={padding} defaultChecked>
+            {parent.name}
+          </Checkbox>
+          {parent.subSubjects != undefined &&
+            parent.subSubjects.map((child: any) => {
+              return (
+                <HierarchyCheckbox
+                  key={parent.name + child.name}
+                  parent={child}
+                  padding={padding + 5}
+                />
+              );
+            })}
+        </>
+      );
+    }
+  );
 
   return (
     <Card variant={"outline"} w={"100%"} mt={"0 !important"}>
@@ -51,9 +46,9 @@ function SubjectSidebar() {
 
       {subjects.map((subject: any, index: number) => {
         return (
-          <Card key={index} ml={4} mb={3} border={"none"}>
-            <HierarchyCheckbox key={uuidv4()} parent={subject} padding={0} />
-          </Card>
+          <VStack key={index} ml={4} mb={3} alignItems={"left"}>
+            <HierarchyCheckbox parent={subject} padding={0} />
+          </VStack>
         );
       })}
     </Card>
