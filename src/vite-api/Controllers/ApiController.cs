@@ -42,6 +42,20 @@ public class ApiController : ControllerBase
         }
     }
 
+    [HttpGet("specificPayload")]
+    public IActionResult SpecificPayload([FromQuery] string streamName, [FromQuery] ulong sequenceNumber)
+    {
+        try
+        {
+            var res = _subscriberManager.GetSpecificPayload(streamName, sequenceNumber);
+            return Ok(res);
+        }
+        catch
+        {
+            return BadRequest();
+        }
+    }
+
     [HttpPost("newMessage")]
     public IActionResult NewMessage([FromBody] MessageDataDto msgDto)
     {
@@ -55,7 +69,7 @@ public class ApiController : ControllerBase
             return BadRequest();
         }
     }
-    
+
     [HttpPost("copyMessage")]
     public IActionResult CopyMessage([FromBody] MessageDto msgDto)
     {
@@ -67,7 +81,7 @@ public class ApiController : ControllerBase
                 _publisher.CopyMessage(msg!, msgDto.Subject);
                 return Ok();
             }
-            
+
             return BadRequest();
         }
         catch
@@ -117,7 +131,7 @@ public class ApiController : ControllerBase
             return BadRequest();
         }
     }
-    
+
     [HttpGet("subjectHierarchy")]
     public IActionResult GetSubjectHierarchy()
     {

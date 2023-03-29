@@ -36,7 +36,7 @@ namespace vite_api.Classes
 
             if (message.Payload != null)
             {
-                Msg msg = new Msg(message.Subject, msgHeader, Encoding.UTF8.GetBytes(message.Payload));
+                Msg msg = new Msg(message.Subject, msgHeader, Encoding.UTF8.GetBytes(message.Payload.Data!));
                 for (int i = 0; i < _count; i++)
                 {
                     connection.Publish(msg);
@@ -67,7 +67,7 @@ namespace vite_api.Classes
 
             using var connection = _provider.GetRequiredService<IConnection>();
 
-            Msg msg = new Msg(newSubject, msgHeader, Encoding.UTF8.GetBytes(message.Payload!));
+            Msg msg = new Msg(newSubject, msgHeader, Encoding.UTF8.GetBytes(message.Payload.Data!));
             for (int i = 0; i < _count; i++)
             {
                 connection.Publish(msg);

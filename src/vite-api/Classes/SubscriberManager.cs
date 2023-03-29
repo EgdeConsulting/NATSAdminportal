@@ -37,13 +37,13 @@ namespace vite_api.Classes
         {
             _logger.LogInformation("{} > {} viewed all messages",
             DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), UserAccount.Name);
-            
+
             var allMessages = new ConcurrentBag<List<MessageDto>>();
             Parallel.ForEach(_allSubscribers, sub => { allMessages.Add(sub.GetMessages()); });
 
-            return allMessages.SelectMany(x => x).ToList().OrderBy(x=>x.Stream).ThenByDescending(x=>x.SequenceNumber).ToList();
+            return allMessages.SelectMany(x => x).ToList().OrderBy(x => x.Stream).ThenByDescending(x => x.SequenceNumber).ToList();
         }
-   
+
         /// <summary>
         /// Gets an object representation of the contents of a specific message on a specific stream.
         /// </summary>
@@ -59,7 +59,26 @@ namespace vite_api.Classes
             var sub = _allSubscribers.FirstOrDefault(sub => sub.StreamName == streamName);
             if (sub != null)
                 return sub.GetMessageData(sequenceNumber);
-            
+
+            throw new ArgumentException("There exists no message that matches provided stream name and sequence number!");
+        }
+
+        /// <summary>
+        /// Gets an object representation of the payload of a specific message on a specific stream.
+        /// </summary>
+        /// <param name="streamName">The name or identifier of the stream</param>
+        /// <param name="sequenceNumber">The identification number of the message</param>
+        /// <returns>A Dto containing the message payload</returns>
+        /// <exception cref="ArgumentException">If there isn't any message that matches the provided parameters</exception>
+        public MessagePayloadDto? GetSpecificPayload(string streamName, ulong sequenceNumber)
+        {
+            _logger.LogInformation("{} > {} viewed payload (stream, sequence number): {}, {}",
+            DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), UserAccount.Name, streamName, sequenceNumber);
+
+            var sub = _allSubscribers.FirstOrDefault(sub => sub.StreamName == streamName);
+            if (sub != null)
+                return sub.GetPayload(sequenceNumber);
+
             throw new ArgumentException("There exists no message that matches provided stream name and sequence number!");
         }
     }

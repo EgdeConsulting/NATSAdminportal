@@ -7,6 +7,9 @@ export interface IMsg {
   timestamp?: string;
 }
 
+export interface IPayload {
+  data: string;
+}
 export interface IHeaderProps {
   [key: string]: string;
   name: string;
