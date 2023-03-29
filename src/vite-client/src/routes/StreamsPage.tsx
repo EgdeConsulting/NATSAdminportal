@@ -25,6 +25,7 @@ function StreamsPage() {
             <Card variant={"outline"} w={"70%"} mr={-2}>
               <CardBody>
                 <PageHeader
+                  centerContent={false}
                   heading={"All streams"}
                   introduction={
                     "This page shows all streams on the NATS-server."

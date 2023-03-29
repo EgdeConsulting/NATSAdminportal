@@ -28,6 +28,7 @@ function MessagesPage() {
               <CardBody>
                 <HStack>
                   <PageHeader
+                    centerContent={false}
                     heading={"All messages"}
                     introduction={
                       "This page shows all messages on all streams on the NATS-server."
