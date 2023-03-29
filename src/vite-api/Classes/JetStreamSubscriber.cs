@@ -31,17 +31,19 @@ namespace vite_api.Classes
         /// <returns>List of all message objects</returns>
         private IEnumerable<Msg> ReceiveJetStreamPullSubscribe()
         {
+
             using var connection = _provider.GetRequiredService<IConnection>();
             var js = connection.CreateJetStreamContext();
             var pullOptions = PullSubscribeOptions.Builder().WithStream(StreamName).Build();
 
             var currentMessages = new ConcurrentBag<IList<Msg>>();
-            Parallel.ForEach(_subjects, subject => { 
+            Parallel.ForEach(_subjects, subject =>
+            {
                 var sub = js.PullSubscribe(subject, pullOptions);
-                currentMessages.Add(sub.Fetch(BatchSize, 1000)); 
+                currentMessages.Add(sub.Fetch(BatchSize, 1000));
             });
 
-            return currentMessages.SelectMany(x => x).ToList().OrderBy(x=>x.Subject).ToList();
+            return currentMessages.SelectMany(x => x).ToList().OrderBy(x => x.Subject).ToList();
         }
 
         /// <summary>
@@ -52,25 +54,25 @@ namespace vite_api.Classes
         public MessageDataDto GetMessageData(ulong sequenceNumber)
         {
             var msg = ReceiveJetStreamPullSubscribe().First(x => x.MetaData.StreamSequence == sequenceNumber);
-            
-                List<MessageHeaderDto> msgHeaders = new();
-            
-                foreach (string headerName in msg.Header)
-                {
-                    msgHeaders.AddRange(msg.Header.GetValues(headerName).Select(headerValue => 
-                        new MessageHeaderDto()
-                        {
-                            Name = headerName, 
-                            Value = headerValue
-                        }));
-                }
-                return new MessageDataDto()
-                {
-                    Headers = msgHeaders,
-                    Payload = GetData(msg.Data),
-                    Subject = msg.Subject
-                };
-                
+
+            List<MessageHeaderDto> msgHeaders = new();
+
+            foreach (string headerName in msg.Header)
+            {
+                msgHeaders.AddRange(msg.Header.GetValues(headerName).Select(headerValue =>
+                    new MessageHeaderDto()
+                    {
+                        Name = headerName,
+                        Value = headerValue
+                    }));
+            }
+            return new MessageDataDto()
+            {
+                Headers = msgHeaders,
+                Payload = GetData(msg.Data),
+                Subject = msg.Subject
+            };
+
             static string GetData(byte[] data)
             {
                 var result = data.All(x => char.IsAscii((char)x)) ? Encoding.ASCII.GetString(data) : Convert.ToBase64String(data);

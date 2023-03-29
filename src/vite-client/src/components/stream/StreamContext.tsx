@@ -2,6 +2,22 @@ import { createContext, useState } from "react";
 
 export interface IStream {
   name: string;
+  subjects?: number;
+  consumers?: number;
+  messages?: number;
+}
+
+interface IPolicies {
+  discard: string;
+  retention: string;
+}
+export interface IStreamExtended {
+  name: string;
+  description: string;
+  subjects: string[];
+  consumers: string[];
+  deleted: number;
+  policies: IPolicies;
 }
 
 export type StreamContextType = {

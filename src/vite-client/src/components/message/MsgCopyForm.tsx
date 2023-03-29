@@ -1,15 +1,14 @@
 import { FormControl, FormLabel } from "@chakra-ui/react";
 import { SubjectDropDown } from "components/subject";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, RefObject, SetStateAction } from "react";
 
 function MsgCopyForm(props: {
-  content: any;
-  subjectInputRef: any;
+  subjectInputRef: RefObject<HTMLSelectElement>;
   buttonDisable: boolean;
   toggleButtonDisable: Dispatch<SetStateAction<boolean>>;
 }) {
   function validateInput() {
-    props.subjectInputRef.current.value == ""
+    props.subjectInputRef.current!.value == ""
       ? props.toggleButtonDisable(true)
       : props.toggleButtonDisable(false);
   }

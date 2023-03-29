@@ -6,9 +6,6 @@ import {
   Flex,
   Spacer,
   Box,
-  Container,
-  Spinner,
-  Center,
 } from "@chakra-ui/react";
 import StickyBox from "react-sticky-box";
 import {
