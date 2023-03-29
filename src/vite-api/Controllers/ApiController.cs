@@ -24,8 +24,15 @@ public class ApiController : ControllerBase
     [HttpGet("allMessages")]
     public IActionResult AllMessages()
     {
-        var res = _subscriberManager.GetAllMessages();
-        return Ok(res);
+        try
+        {
+            var res = _subscriberManager.GetAllMessages();
+            return Ok(res);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(418);
+        }
     }
 
     [HttpGet("specificMessage")]
@@ -55,7 +62,7 @@ public class ApiController : ControllerBase
             return BadRequest();
         }
     }
-    
+
     [HttpPost("copyMessage")]
     public IActionResult CopyMessage([FromBody] MessageDto msgDto)
     {
@@ -67,7 +74,7 @@ public class ApiController : ControllerBase
                 _publisher.CopyMessage(msg!, msgDto.Subject);
                 return Ok();
             }
-            
+
             return BadRequest();
         }
         catch
@@ -117,7 +124,7 @@ public class ApiController : ControllerBase
             return BadRequest();
         }
     }
-    
+
     [HttpGet("subjectHierarchy")]
     public IActionResult GetSubjectHierarchy()
     {

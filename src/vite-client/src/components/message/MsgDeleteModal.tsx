@@ -72,6 +72,7 @@ function MsgDeleteModal() {
   return (
     <>
       <IconButton
+        mt={0.4}
         size={"md"}
         aria-label="Delete a message"
         onClick={onOpen}

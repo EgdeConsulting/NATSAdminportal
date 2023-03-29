@@ -50,7 +50,7 @@ function StreamView() {
           <VStack ml={5} divider={<StackDivider ml={5} w={"93%"} />}>
             <CardHeader w={"100%"} ml={-10}>
               <Flex>
-                <Heading size={"md"}>Message Details</Heading>
+                <Heading size={"md"}>Stream Details</Heading>
                 <Spacer />
                 <HStack mt={-1} mr={-7}>
                   <Button

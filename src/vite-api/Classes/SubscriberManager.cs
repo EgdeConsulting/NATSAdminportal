@@ -35,15 +35,22 @@ namespace vite_api.Classes
         /// <returns>List containing Dto's of all messages</returns>
         public List<MessageDto> GetAllMessages()
         {
-            _logger.LogInformation("{} > {} viewed all messages",
-            DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), UserAccount.Name);
-            
-            var allMessages = new ConcurrentBag<List<MessageDto>>();
-            Parallel.ForEach(_allSubscribers, sub => { allMessages.Add(sub.GetMessages()); });
+            try
+            {
+                _logger.LogInformation("{} > {} viewed all messages",
+                DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), UserAccount.Name);
 
-            return allMessages.SelectMany(x => x).ToList().OrderBy(x=>x.Stream).ThenByDescending(x=>x.SequenceNumber).ToList();
+                var allMessages = new ConcurrentBag<List<MessageDto>>();
+                Parallel.ForEach(_allSubscribers, sub => { allMessages.Add(sub.GetMessages()); });
+
+                return allMessages.SelectMany(x => x).ToList().OrderBy(x => x.Stream).ThenByDescending(x => x.SequenceNumber).ToList();
+            }
+            catch (Exception ex)
+            {
+                throw new AggregateException(ex.Message);
+            }
         }
-   
+
         /// <summary>
         /// Gets an object representation of the contents of a specific message on a specific stream.
         /// </summary>
@@ -59,7 +66,7 @@ namespace vite_api.Classes
             var sub = _allSubscribers.FirstOrDefault(sub => sub.StreamName == streamName);
             if (sub != null)
                 return sub.GetMessageData(sequenceNumber);
-            
+
             throw new ArgumentException("There exists no message that matches provided stream name and sequence number!");
         }
     }

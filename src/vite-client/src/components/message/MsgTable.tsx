@@ -19,8 +19,7 @@ function MsgTable() {
         {
           Header: "Timestamp",
           accessor: "timestamp",
-          Filter: SelectColumnFilter,
-          filter: "includes",
+          disableFilters: true,
         },
         {
           Header: "Stream",
@@ -57,6 +56,8 @@ function MsgTable() {
           setAllMessages(data);
           setLoading(false);
         });
+      } else if (res.status(418)) {
+        console.log("API was too busy to handle request.");
       } else {
         alert(
           "An error occurred while fetching all messages: " + res.statusText

@@ -2,9 +2,8 @@
 
 import { useMemo, useState } from "react";
 import { useAsyncDebounce } from "react-table";
-import { Text, Input, Select } from "@chakra-ui/react";
+import { Input, Select, FormControl, FormLabel } from "@chakra-ui/react";
 
-// Not in use!!!
 export function GlobalFilter(props: {
   preGlobalFilteredRows: any;
   globalFilter: any;
@@ -17,23 +16,21 @@ export function GlobalFilter(props: {
   }, 200);
 
   return (
-    <>
-      <Text>Search Table: </Text>
-      <Input
-        value={value || ""}
-        onChange={(e) => {
-          setValue(e.target.value);
-          onChange(e.target.value);
-        }}
-        placeholder=" Enter value "
-        className="w-25"
-        style={{
-          fontSize: "1.1rem",
-          margin: "15px",
-          display: "inline",
-        }}
-      />
-    </>
+    <FormControl p={0} m={0}>
+      <FormLabel mt={-1}>
+        Search Table:
+        <Input
+          mt={0}
+          ml={4}
+          value={value || ""}
+          onChange={(e) => {
+            setValue(e.target.value);
+            onChange(e.target.value);
+          }}
+          placeholder="Enter value"
+        />
+      </FormLabel>
+    </FormControl>
   );
 }
 
@@ -45,17 +42,7 @@ export function DefaultFilterForColumn(props: {
     setFilter: any;
   };
 }) {
-  return (
-    <Input
-      value={props.column.filterValue || ""}
-      onChange={(e) => {
-        // Set undefined to remove the filter entirely
-        props.column.setFilter(e.target.value || undefined);
-      }}
-      placeholder={`Search ${length} records..`}
-      mt={"10px"}
-    />
-  );
+  return null;
 }
 
 // Component for Custom Select Filter

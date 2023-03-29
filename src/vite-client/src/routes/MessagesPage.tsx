@@ -6,9 +6,6 @@ import {
   Flex,
   Spacer,
   Box,
-  Container,
-  Spinner,
-  Center,
 } from "@chakra-ui/react";
 import StickyBox from "react-sticky-box";
 import {
@@ -44,7 +41,6 @@ function MessagesPage() {
                 <MsgTable />
               </CardBody>
             </Card>
-            <Spacer />
             <VStack w={"30%"} h={"100%"} mr={2}>
               <Box w={"95%"} h={"100%"} ml={4}>
                 <StickyBox offsetTop={10}>

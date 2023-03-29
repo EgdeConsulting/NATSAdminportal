@@ -67,6 +67,7 @@ function PaginatedTable(props: { columns: any[]; data: any[] }) {
     {
       columns,
       autoResetFilters: false,
+      autoResetGlobalFilter: false,
       defaultColumn: { Filter: DefaultFilterForColumn },
       data,
       initialState: { pageIndex: 0, pageSize: 25 },
@@ -79,25 +80,22 @@ function PaginatedTable(props: { columns: any[]; data: any[] }) {
 
   return (
     <>
-      <TableContainer>
+      <TableContainer mt={"50px"}>
         <Table variant={"striped"} colorScheme={"gray"} {...getTableProps()}>
           <Thead>
-            {/* <Tr>
-              <Th colSpan={visibleColumns.length}>
-                <GlobalFilter
-                  preGlobalFilteredRows={preGlobalFilteredRows}
-                  globalFilter={globalFilter}
-                  setGlobalFilter={setGlobalFilter}
-                />
-              </Th>
-            </Tr> */}
             {headerGroups.map((headerGroup) => (
               <Tr {...headerGroup.getHeaderGroupProps()}>
                 {headerGroup.headers.map((column: any) => (
                   <Th {...column.getHeaderProps()}>
-                    {headerGroup.headers.length == 1
-                      ? null
-                      : column.render("Header")}
+                    {headerGroup.headers.length == 1 ? (
+                      <GlobalFilter
+                        preGlobalFilteredRows={preGlobalFilteredRows}
+                        globalFilter={globalFilter}
+                        setGlobalFilter={setGlobalFilter}
+                      />
+                    ) : (
+                      column.render("Header")
+                    )}
                     {column.canFilter ? column.render("Filter") : null}
                   </Th>
                 ))}
