@@ -29,8 +29,8 @@ FROM mcr.microsoft.com/dotnet/sdk:7.0
 
 WORKDIR /app
 
-RUN --mount=type=secret,id=NATS_SERVER_URL \
-    export NATS_SERVER_URL=$(cat /run/secrets/NATS_SERVER_URL)
+#RUN --mount=type=secret,id=NATS_SERVER_URL \
+#    export NATS_SERVER_URL=$(cat /run/secrets/NATS_SERVER_URL)
 
 #ARG SECRET_URL
 
