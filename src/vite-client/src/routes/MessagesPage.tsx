@@ -11,7 +11,7 @@ import StickyBox from "react-sticky-box";
 import {
   MsgView,
   MsgTable,
-  SubjectSidebar,
+  SubjectHierarchy,
   MsgPublishModal,
   MsgContextProvider,
   MsgViewContextProvider,
@@ -46,7 +46,7 @@ function MessagesPage() {
               <Box w={"95%"} h={"100%"} ml={4}>
                 <StickyBox offsetTop={10}>
                   <MsgView />
-                  <SubjectSidebar />
+                  <SubjectHierarchy />
                 </StickyBox>
               </Box>
             </VStack>
