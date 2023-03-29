@@ -40,6 +40,7 @@ public class ApiController : ControllerBase
         {
             return BadRequest();
         }
+    }
 
     [HttpPost("newMessage")]
     public IActionResult NewMessage([FromBody] MessageDataDto msgDto)
