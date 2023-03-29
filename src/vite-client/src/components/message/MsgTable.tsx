@@ -3,6 +3,7 @@ import {
   PaginatedTable,
   MsgViewButton,
   LoadingSpinner,
+  SelectColumnFilter,
   IMsg,
 } from "components";
 
@@ -14,32 +15,32 @@ function MsgTable() {
         {
           Header: "Sequence Number",
           accessor: "sequenceNumber",
-          appendChildren: "false",
-          rowBound: "false",
+          disableFilters: true,
         },
         {
           Header: "Timestamp",
           accessor: "timestamp",
-          appendChildren: "false",
-          rowBound: "false",
+          disableFilters: true,
         },
         {
           Header: "Stream",
           accessor: "stream",
-          appendChildren: "false",
-          rowBound: "false",
+          Filter: SelectColumnFilter,
+          filter: "includes",
         },
         {
           Header: "Subject",
           accessor: "subject",
-          appendChildren: "false",
-          rowBound: "false",
+          Filter: SelectColumnFilter,
+          filter: "includes",
         },
         {
           Header: "Data",
           accessor: "data",
-          appendChildren: "true",
-          rowBound: "true",
+          disableFilters: true,
+          Cell: (props: { row: any }) => {
+            return <MsgViewButton content={props.row.values} />;
+          },
         },
       ],
     },
@@ -56,6 +57,8 @@ function MsgTable() {
           setAllMessages(data);
           setLoading(false);
         });
+      } else if (res.status(418)) {
+        console.log("API was too busy to handle request.");
       } else {
         alert(
           "An error occurred while fetching all messages: " + res.statusText
@@ -78,9 +81,7 @@ function MsgTable() {
       {loading ? (
         <LoadingSpinner />
       ) : (
-        <PaginatedTable columns={columns} data={allMessages}>
-          <MsgViewButton content={""} />
-        </PaginatedTable>
+        <PaginatedTable columns={columns} data={allMessages} />
       )}
     </>
   );

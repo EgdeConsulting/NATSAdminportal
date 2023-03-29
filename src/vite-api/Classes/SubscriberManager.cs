@@ -35,13 +35,20 @@ namespace vite_api.Classes
         /// <returns>List containing Dto's of all messages</returns>
         public List<MessageDto> GetAllMessages()
         {
-            _logger.LogInformation("{} > {} viewed all messages",
-            DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), UserAccount.Name);
+            try
+            {
+                _logger.LogInformation("{} > {} viewed all messages",
+                DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), UserAccount.Name);
 
-            var allMessages = new ConcurrentBag<List<MessageDto>>();
-            Parallel.ForEach(_allSubscribers, sub => { allMessages.Add(sub.GetMessages()); });
+                var allMessages = new ConcurrentBag<List<MessageDto>>();
+                Parallel.ForEach(_allSubscribers, sub => { allMessages.Add(sub.GetMessages()); });
 
-            return allMessages.SelectMany(x => x).ToList().OrderBy(x => x.Stream).ThenByDescending(x => x.SequenceNumber).ToList();
+                return allMessages.SelectMany(x => x).ToList().OrderBy(x => x.Stream).ThenByDescending(x => x.SequenceNumber).ToList();
+            }
+            catch (Exception ex)
+            {
+                throw new AggregateException(ex.Message);
+            }
         }
 
         /// <summary>

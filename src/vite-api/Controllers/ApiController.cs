@@ -24,8 +24,15 @@ public class ApiController : ControllerBase
     [HttpGet("allMessages")]
     public IActionResult AllMessages()
     {
-        var res = _subscriberManager.GetAllMessages();
-        return Ok(res);
+        try
+        {
+            var res = _subscriberManager.GetAllMessages();
+            return Ok(res);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(418);
+        }
     }
 
     [HttpGet("specificMessage")]
