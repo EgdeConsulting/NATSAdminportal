@@ -1,8 +1,10 @@
 import { Checkbox, Card, CardHeader, Heading, VStack } from "@chakra-ui/react";
 import { useState, useEffect, memo } from "react";
+import { LoadingSpinner } from "components";
 
-function SubjectSidebar() {
+function SubjectHierarchy() {
   const [subjects, setSubjects] = useState<[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     getSubjects();
@@ -13,6 +15,7 @@ function SubjectSidebar() {
       .then((res) => res.json())
       .then((data) => {
         setSubjects(data);
+        setLoading(false);
       });
   }
 
@@ -39,20 +42,31 @@ function SubjectSidebar() {
   );
 
   return (
-    <Card variant={"outline"} w={"100%"} mt={"0 !important"}>
-      <CardHeader>
-        <Heading size={"md"}>Subject Hierarchy</Heading>
-      </CardHeader>
+    <>
+      {loading ? (
+        <Card variant={"outline"} w={"100%"} mt={"0 !important"}>
+          <CardHeader>
+            <Heading size={"md"}>Subject Hierarchy</Heading>
+          </CardHeader>
+          <LoadingSpinner />
+        </Card>
+      ) : (
+        <Card variant={"outline"} w={"100%"} mt={"0 !important"}>
+          <CardHeader>
+            <Heading size={"md"}>Subject Hierarchy</Heading>
+          </CardHeader>
 
-      {subjects.map((subject: any, index: number) => {
-        return (
-          <VStack key={index} ml={4} mb={3} alignItems={"left"}>
-            <HierarchyCheckbox parent={subject} padding={0} />
-          </VStack>
-        );
-      })}
-    </Card>
+          {subjects.map((subject: any, index: number) => {
+            return (
+              <VStack key={index} ml={4} mb={3} alignItems={"left"}>
+                <HierarchyCheckbox parent={subject} padding={0} />
+              </VStack>
+            );
+          })}
+        </Card>
+      )}
+    </>
   );
 }
 
-export { SubjectSidebar };
+export { SubjectHierarchy };

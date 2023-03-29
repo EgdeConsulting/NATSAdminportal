@@ -1,2 +1,2 @@
 export * from "./SubjectDropDown";
-export * from "./SubjectSidebar";
+export * from "./SubjectHierarchy";
