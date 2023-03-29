@@ -11,7 +11,12 @@ import {
   ModalOverlay,
   useDisclosure,
 } from "@chakra-ui/react";
-import { ActionConfirmation, MsgCopyForm, MsgContext } from "components";
+import {
+  ActionConfirmation,
+  MsgCopyForm,
+  MsgContext,
+  TooltipHover,
+} from "components";
 import { useContext, useRef, useState } from "react";
 
 function MsgCopyModal() {
@@ -21,9 +26,10 @@ function MsgCopyModal() {
     onOpen: onOpenAC,
     onClose: onCloseAC,
   } = useDisclosure();
-  const subjectInputRef = useRef<any>(null);
+  const subjectInputRef = useRef<HTMLSelectElement>(null);
   const [buttonDisable, toggleButtonDisable] = useState<boolean>(true);
   const currentMsgContext = useContext(MsgContext);
+  const finalRef = useRef<HTMLElement>(null);
 
   function copyMessage() {
     const msg = currentMsgContext?.currentMsg;
@@ -43,7 +49,7 @@ function MsgCopyModal() {
           sequenceNumber: msg.sequenceNumber,
           timestamp: new Date(),
           stream: msg.stream,
-          subject: subjectInputRef.current.value,
+          subject: subjectInputRef.current!.value,
           headers: [],
           payload: "",
         };
@@ -51,7 +57,7 @@ function MsgCopyModal() {
         bodyContent = {
           sequenceNumber: msg.sequenceNumber,
           stream: msg.stream,
-          subject: subjectInputRef.current.value,
+          subject: subjectInputRef.current!.value,
         };
       }
 
@@ -74,24 +80,33 @@ function MsgCopyModal() {
 
   return (
     <>
-      <IconButton
-        mt={0.4}
-        size={"md"}
-        aria-label="Copy a message"
-        onClick={() => {
-          onOpen();
-          toggleButtonDisable(true);
-        }}
-        icon={<CopyIcon />}
+      <TooltipHover
+        label={"Copy message"}
+        children={
+          <IconButton
+            mt={0.4}
+            size={"md"}
+            aria-label="Copy a message"
+            onClick={() => {
+              onOpen();
+              toggleButtonDisable(true);
+            }}
+            icon={<CopyIcon />}
+          />
+        }
       />
-      <Modal isOpen={isOpen} onClose={onClose} isCentered={true}>
+      <Modal
+        finalFocusRef={finalRef}
+        isOpen={isOpen}
+        onClose={onClose}
+        isCentered={true}
+      >
         <ModalOverlay />
         <ModalContent maxW={"600px"}>
           <ModalHeader>Copy message</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <MsgCopyForm
-              content={""}
               subjectInputRef={subjectInputRef}
               buttonDisable={buttonDisable}
               toggleButtonDisable={toggleButtonDisable}

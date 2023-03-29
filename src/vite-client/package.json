@@ -20,7 +20,8 @@
     "react-icons": "^4.7.1",
     "react-router-dom": "^6.8.1",
     "react-sticky-box": "^2.0.0",
-    "react-table": "^7.8.0"
+    "react-table": "^7.8.0",
+    "regenerator-runtime": "^0.13.11"
   },
   "devDependencies": {
     "@types/node": "^18.15.3",

@@ -31,17 +31,19 @@ namespace vite_api.Classes
         /// <returns>List of all message objects</returns>
         private IEnumerable<Msg> ReceiveJetStreamPullSubscribe()
         {
+
             using var connection = _provider.GetRequiredService<IConnection>();
             var js = connection.CreateJetStreamContext();
             var pullOptions = PullSubscribeOptions.Builder().WithStream(StreamName).Build();
 
             var currentMessages = new ConcurrentBag<IList<Msg>>();
-            Parallel.ForEach(_subjects, subject => { 
+            Parallel.ForEach(_subjects, subject =>
+            {
                 var sub = js.PullSubscribe(subject, pullOptions);
-                currentMessages.Add(sub.Fetch(BatchSize, 1000)); 
+                currentMessages.Add(sub.Fetch(BatchSize, 1000));
             });
 
-            return currentMessages.SelectMany(x => x).ToList().OrderBy(x=>x.Subject).ToList();
+            return currentMessages.SelectMany(x => x).ToList().OrderBy(x => x.Subject).ToList();
         }
 
         /// <summary>
@@ -52,30 +54,55 @@ namespace vite_api.Classes
         public MessageDataDto GetMessageData(ulong sequenceNumber)
         {
             var msg = ReceiveJetStreamPullSubscribe().First(x => x.MetaData.StreamSequence == sequenceNumber);
-            
-                List<MessageHeaderDto> msgHeaders = new();
-            
-                foreach (string headerName in msg.Header)
-                {
-                    msgHeaders.AddRange(msg.Header.GetValues(headerName).Select(headerValue => 
-                        new MessageHeaderDto()
-                        {
-                            Name = headerName, 
-                            Value = headerValue
-                        }));
-                }
-                return new MessageDataDto()
-                {
-                    Headers = msgHeaders,
-                    Payload = GetData(msg.Data),
-                    Subject = msg.Subject
-                };
-                
-            static string GetData(byte[] data)
+
+            List<MessageHeaderDto> msgHeaders = new();
+
+            foreach (string headerName in msg.Header)
             {
-                var result = data.All(x => char.IsAscii((char)x)) ? Encoding.ASCII.GetString(data) : Convert.ToBase64String(data);
-                return result.Length > MaxPayloadLength ? result.Substring(0, MaxPayloadLength) : result;
+                msgHeaders.AddRange(msg.Header.GetValues(headerName).Select(headerValue =>
+                    new MessageHeaderDto()
+                    {
+                        Name = headerName,
+                        Value = headerValue
+                    }));
             }
+            return new MessageDataDto()
+            {
+                Headers = msgHeaders,
+                Payload = new MessagePayloadDto()
+                {
+                    Data = GetData(msg.Data, true)
+                },
+                Subject = msg.Subject
+            };
+
+        }
+        /// <summary>
+        /// Helper method to get payload and conditionally limit the length of it.
+        /// </summary>
+        /// <param name="data">The bytestream data of the payload</param>
+        /// <param name="isShortPayload">Boolean to decide if the payload is to be shortened or not</param>
+        /// <returns>The payload in full length or shortened</returns>
+        private string GetData(byte[] data, bool isShortPayload)
+        {
+            var result = data.All(x => char.IsAscii((char)x)) ? Encoding.ASCII.GetString(data) : Convert.ToBase64String(data);
+            return result.Length > MaxPayloadLength && isShortPayload ? result.Substring(0, MaxPayloadLength)
+            + " ..." // 3 dots to indicate that the message is incomplete.
+            : result;
+        }
+
+        /// <summary>
+        /// Gets an object representation of the full payload of a specific message which the subscriber holds.
+        /// </summary>
+        /// <param name="sequenceNumber">The identification number of the message</param>
+        /// <returns>Dto of a payload object</returns>
+        public MessagePayloadDto GetPayload(ulong sequenceNumber)
+        {
+            var msg = ReceiveJetStreamPullSubscribe().First(x => x.MetaData.StreamSequence == sequenceNumber);
+            return new MessagePayloadDto()
+            {
+                Data = GetData(msg.Data, false)
+            };
         }
 
         /// <summary>

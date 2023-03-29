@@ -3,6 +3,6 @@
 public class MessageDataDto
 {
     public List<MessageHeaderDto> Headers { get; set; } = new();
-    public string? Payload { get; set; }
+    public MessagePayloadDto Payload { get; set; } = new MessagePayloadDto();
     public string? Subject { get; set; }
 }

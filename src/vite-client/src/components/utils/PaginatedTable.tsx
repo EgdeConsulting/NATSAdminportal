@@ -1,5 +1,9 @@
-import React from "react";
-import { useTable, usePagination } from "react-table";
+import {
+  useTable,
+  usePagination,
+  useFilters,
+  useGlobalFilter,
+} from "react-table";
 import {
   Table,
   Thead,
@@ -25,19 +29,19 @@ import {
   ChevronRightIcon,
   ChevronLeftIcon,
 } from "@chakra-ui/icons";
+import { GlobalFilter, DefaultFilterForColumn } from "components";
 
 {
   /*
   https://codesandbox.io/s/react-table-chakra-ui-pagination-example-forked-e9y9he?file=/src/App.js
   https://stackoverflow.com/questions/64608974/react-table-pagination-properties-doesnt-exist-on-type-tableinstance
+  https://www.bacancytechnology.com/blog/react-table-tutorial
+  https://github.com/TanStack/table/issues/1825
+  https://tanstack.com/table/v8/docs/api/features/filters?from=reactTableV7&original=https://react-table-v7.tanstack.com/docs/api/useFilters
   */
 }
 
-function PaginatedTable(props: {
-  columns: any[];
-  data: any[];
-  children: JSX.Element;
-}) {
+function PaginatedTable(props: { columns: any[]; data: any[] }) {
   const data = props.data;
   const columns = props.columns;
 
@@ -55,29 +59,44 @@ function PaginatedTable(props: {
     nextPage,
     previousPage,
     setPageSize,
-    state: { pageIndex, pageSize },
+    state: { pageIndex, pageSize, globalFilter },
+    visibleColumns,
+    setGlobalFilter,
+    preGlobalFilteredRows,
   } = useTable(
     {
       columns,
+      autoResetFilters: false,
+      autoResetGlobalFilter: false,
+      defaultColumn: { Filter: DefaultFilterForColumn },
       data,
       initialState: { pageIndex: 0, pageSize: 25 },
       autoResetPage: false,
     },
+    useFilters,
+    useGlobalFilter,
     usePagination
   );
 
   return (
     <>
-      <TableContainer>
+      <TableContainer mt={"50px"}>
         <Table variant={"striped"} colorScheme={"gray"} {...getTableProps()}>
           <Thead>
             {headerGroups.map((headerGroup) => (
               <Tr {...headerGroup.getHeaderGroupProps()}>
                 {headerGroup.headers.map((column: any) => (
                   <Th {...column.getHeaderProps()}>
-                    {headerGroup.headers.length == 1
-                      ? null
-                      : column.render("Header")}
+                    {headerGroup.headers.length == 1 ? (
+                      <GlobalFilter
+                        preGlobalFilteredRows={preGlobalFilteredRows}
+                        globalFilter={globalFilter}
+                        setGlobalFilter={setGlobalFilter}
+                      />
+                    ) : (
+                      column.render("Header")
+                    )}
+                    {column.canFilter ? column.render("Filter") : null}
                   </Th>
                 ))}
               </Tr>
@@ -89,25 +108,9 @@ function PaginatedTable(props: {
               return (
                 <Tr {...row.getRowProps()}>
                   {row.cells.map((cell: any) => {
-                    const cellContent =
-                      cell.render("Cell").props.column.appendChildren ==
-                      "false" ? (
-                        <Td {...cell.getCellProps()}>{cell.render("Cell")}</Td>
-                      ) : cell.render("Cell").props.column.rowBound ==
-                        "false" ? (
-                        <Td {...cell.getCellProps()}>
-                          {React.cloneElement(props.children, {
-                            content: cell.value,
-                          })}
-                        </Td>
-                      ) : (
-                        <Td {...cell.getCellProps()}>
-                          {React.cloneElement(props.children, {
-                            content: row.values,
-                          })}
-                        </Td>
-                      );
-                    return cellContent;
+                    return (
+                      <Td {...cell.getCellProps()}>{cell.render("Cell")}</Td>
+                    );
                   })}
                 </Tr>
               );

@@ -4,6 +4,16 @@ export interface IMsg {
   sequenceNumber: string;
   stream: string;
   subject: string;
+  timestamp?: string;
+}
+
+export interface IPayload {
+  data: string;
+}
+export interface IHeaderProps {
+  [key: string]: string;
+  name: string;
+  value: string;
 }
 
 export type MsgContextType = {

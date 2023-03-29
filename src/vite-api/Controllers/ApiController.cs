@@ -24,8 +24,15 @@ public class ApiController : ControllerBase
     [HttpGet("allMessages")]
     public IActionResult AllMessages()
     {
-        var res = _subscriberManager.GetAllMessages();
-        return Ok(res);
+        try
+        {
+            var res = _subscriberManager.GetAllMessages();
+            return Ok(res);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(418);
+        }
     }
 
     [HttpGet("specificMessage")]
@@ -34,6 +41,20 @@ public class ApiController : ControllerBase
         try
         {
             var res = _subscriberManager.GetSpecificMessage(streamName, sequenceNumber);
+            return Ok(res);
+        }
+        catch
+        {
+            return BadRequest();
+        }
+    }
+
+    [HttpGet("specificPayload")]
+    public IActionResult SpecificPayload([FromQuery] string streamName, [FromQuery] ulong sequenceNumber)
+    {
+        try
+        {
+            var res = _subscriberManager.GetSpecificPayload(streamName, sequenceNumber);
             return Ok(res);
         }
         catch
@@ -64,10 +85,12 @@ public class ApiController : ControllerBase
             if (msgDto.Stream != null && msgDto.Subject != null)
             {
                 var msg = _subscriberManager.GetSpecificMessage(msgDto.Stream, msgDto.SequenceNumber);
-                _publisher.CopyMessage(msg!, msgDto.Subject);
+                var payload = _subscriberManager.GetSpecificPayload(msgDto.Stream, msgDto.SequenceNumber);
+                msg!.Payload = payload!;
+                _publisher.CopyMessage(msg, msgDto.Subject);
                 return Ok();
             }
-            
+
             return BadRequest();
         }
         catch
@@ -117,7 +140,7 @@ public class ApiController : ControllerBase
             return BadRequest();
         }
     }
-    
+
     [HttpGet("subjectHierarchy")]
     public IActionResult GetSubjectHierarchy()
     {
