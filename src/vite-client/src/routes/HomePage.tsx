@@ -9,6 +9,7 @@ function HomePage() {
       <Card variant={"outline"} w={"100%"} mt={2} mr={2}>
         <CardBody>
           <PageHeader
+            centerContent={true}
             heading={"Welcome to Egdes NATS-administration portal"}
             introduction={"A quick overview presented below"}
           />

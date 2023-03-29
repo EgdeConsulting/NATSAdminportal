@@ -28,6 +28,7 @@ function MessagesPage() {
               <CardBody>
                 <HStack>
                   <PageHeader
+                    centerContent={false}
                     heading={"All messages"}
                     introduction={
                       "This page shows all messages on all streams on the NATS-server."
@@ -41,7 +42,6 @@ function MessagesPage() {
                 <MsgTable />
               </CardBody>
             </Card>
-            <Spacer />
             <VStack w={"30%"} h={"100%"} mr={2}>
               <Box w={"95%"} h={"100%"} ml={4}>
                 <StickyBox offsetTop={10}>
