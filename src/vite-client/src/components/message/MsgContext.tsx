@@ -10,6 +10,17 @@ export interface IMsg {
 export interface IPayload {
   data: string;
 }
+
+export interface ISpecificMsg {
+  headers: IHeaderProps[];
+  payload: IPayload;
+  subject: string;
+}
+const DefaultMsgViewState = {
+  isVisible: false,
+  changeVisibility: () => {},
+};
+
 export interface IHeaderProps {
   [key: string]: string;
   name: string;
