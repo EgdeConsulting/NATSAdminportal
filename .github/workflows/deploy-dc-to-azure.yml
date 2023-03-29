@@ -54,7 +54,7 @@ jobs:
         uses: docker/login-action@v1.10.0
         with:
           registry: ghcr.io
-          username: ${{ github.actor }}
+          username: egdeconsulting
           password: ${{ secrets.AZURE_PAT }}
 
       - name: Lowercase the repo name and username
