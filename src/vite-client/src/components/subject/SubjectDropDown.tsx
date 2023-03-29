@@ -27,7 +27,7 @@ function SubjectDropDown(props: {
         props.validateAllInputs();
       }}
     >
-      {subjects.map((subject: any, index: number) => {
+      {subjects.map((subject: string, index: number) => {
         return <option key={index}>{subject}</option>;
       })}
     </Select>
