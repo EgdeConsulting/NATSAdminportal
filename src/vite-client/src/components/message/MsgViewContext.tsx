@@ -1,3 +1,4 @@
+import { IHeaderProps } from "components";
 import { createContext, useState } from "react";
 
 export type MsgViewContextType = {
@@ -5,6 +6,11 @@ export type MsgViewContextType = {
   changeVisibility: (state: boolean) => void;
 };
 
+export interface ISpecificMsg {
+  headers: IHeaderProps[];
+  payload: string; //This might not be a string later on
+  subject: string;
+}
 const DefaultMsgViewState = {
   isVisible: false,
   changeVisibility: () => {},

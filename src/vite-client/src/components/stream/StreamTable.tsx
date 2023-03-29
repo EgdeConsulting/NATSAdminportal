@@ -4,6 +4,7 @@ import {
   StreamViewButton,
   LoadingSpinner,
   SelectColumnFilter,
+  IStream,
 } from "components";
 
 function StreamTable() {
@@ -45,7 +46,7 @@ function StreamTable() {
     },
   ];
 
-  const [streams, setStreams] = useState<any[]>([]);
+  const [streams, setStreams] = useState<IStream[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -53,9 +54,9 @@ function StreamTable() {
   }, [!streams]);
 
   function getStreams() {
-    fetch("/api/allStreams").then((res: any) => {
+    fetch("/api/allStreams").then((res) => {
       if (res.ok) {
-        res.json().then((data: any) => {
+        res.json().then((data: IStream[]) => {
           setStreams(data);
           setLoading(false);
         });

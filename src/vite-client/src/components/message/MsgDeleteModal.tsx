@@ -18,8 +18,9 @@ import {
   MsgContextType,
   MsgViewContext,
   DefaultMsgState,
+  TooltipHover,
 } from "components";
-import { useContext, useState } from "react";
+import { useContext, useRef, useState } from "react";
 
 function MsgDeleteModal() {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -32,6 +33,7 @@ function MsgDeleteModal() {
   const currentMsgContext = useContext(MsgContext);
   const { changeCurrentMsg } = useContext(MsgContext) as MsgContextType;
   const { changeVisibility } = useContext(MsgViewContext);
+  const finalRef = useRef<HTMLElement>(null);
 
   function deleteMessage() {
     const msg = currentMsgContext?.currentMsg;
@@ -71,15 +73,25 @@ function MsgDeleteModal() {
 
   return (
     <>
-      <IconButton
-        mt={0.4}
-        size={"md"}
-        aria-label="Delete a message"
-        onClick={onOpen}
-        icon={<DeleteIcon />}
+      <TooltipHover
+        label={"Delete message"}
+        children={
+          <IconButton
+            mt={0.4}
+            size={"md"}
+            aria-label="Delete a message"
+            onClick={onOpen}
+            icon={<DeleteIcon />}
+          />
+        }
       />
 
-      <Modal isOpen={isOpen} onClose={onClose} isCentered={true}>
+      <Modal
+        finalFocusRef={finalRef}
+        isOpen={isOpen}
+        onClose={onClose}
+        isCentered={true}
+      >
         <ModalOverlay />
         <ModalContent maxW={"600px"}>
           <ModalHeader>Delete message</ModalHeader>

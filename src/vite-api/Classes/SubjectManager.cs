@@ -11,14 +11,16 @@ namespace vite_api.Classes
         {
             _provider = provider;
         }
-        
+
         /// <summary>
         /// Gets all unique subjects on all streams on the NATS-server.
         /// </summary>
         /// <returns>A collection containing the subject names.</returns>
         public List<string> GetAllSubjects()
         {
+
             using var connection = _provider.GetRequiredService<IConnection>();
+
             var subjects = connection
                 .CreateJetStreamManagementContext()
                 .GetStreams()
