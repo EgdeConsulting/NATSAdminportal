@@ -47,6 +47,7 @@ function StreamTable() {
   ];
 
   const [streams, setStreams] = useState<IStream[]>([]);
+  const [isIntervalRunning, setIsIntervalRunning] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -67,6 +68,15 @@ function StreamTable() {
       }
     });
   }
+
+  useEffect(() => {
+    setIsIntervalRunning(true);
+    const interval = setInterval(getStreams, 5000);
+    return () => {
+      clearInterval(interval);
+      setIsIntervalRunning(false);
+    };
+  }, [!isIntervalRunning]);
 
   return (
     <>
