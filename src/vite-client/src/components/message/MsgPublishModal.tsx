@@ -50,7 +50,7 @@ function MsgPublishModal() {
       bodyContent = {
         subject: subjectInputRef.current!.value,
         headers: headerList,
-        payload: payloadInputRef.current!.value,
+        payload: { data: payloadInputRef.current!.value },
       };
     }
 
