@@ -57,7 +57,7 @@ function MsgTable() {
           setAllMessages(data);
           setLoading(false);
         });
-      } else if (res.status(418)) {
+      } else if (res.status == 429) {
         console.log("API was too busy to handle request.");
       } else {
         alert(

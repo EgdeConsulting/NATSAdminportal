@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices.JavaScript;
 using Microsoft.AspNetCore.Mvc;
 using vite_api.Classes;
 using vite_api.Dto;
@@ -31,7 +32,7 @@ public class ApiController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(418);
+            return StatusCode(429);
         }
     }
 
@@ -104,10 +105,17 @@ public class ApiController : ControllerBase
     {
         try
         {
-            var res = msgDto.Stream != null && _streamManager.DeleteMessage(msgDto.Stream, msgDto.SequenceNumber, msgDto.Erase);
+            var res = msgDto.Stream != null &&
+                      _streamManager.DeleteMessage(msgDto.Stream, msgDto.SequenceNumber, msgDto.Erase);
             return Ok(res);
         }
-        catch
+  
+        catch (ArgumentException e)
+        {
+            var response = new { error = e.Message };
+            return StatusCode(406, response);
+        }
+        catch (Exception)
         {
             return BadRequest();
         }

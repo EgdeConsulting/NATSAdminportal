@@ -27,7 +27,6 @@ namespace vite_api.Classes
         /// <summary>
         /// Bulk pulls all messages on all subjects from a stream. 
         /// </summary>
-        /// <param name="c">Nats connection</param>
         /// <returns>List of all message objects</returns>
         private IEnumerable<Msg> ReceiveJetStreamPullSubscribe()
         {
@@ -46,6 +45,21 @@ namespace vite_api.Classes
             return currentMessages.SelectMany(x => x).ToList().OrderBy(x => x.Subject).ToList();
         }
 
+        public bool SequenceNumberExistOnStream(ulong sequenceNumber)
+        {
+            try
+            {
+                var msg = ReceiveJetStreamPullSubscribe().First(x => x.MetaData.StreamSequence == sequenceNumber);
+
+            }
+            catch
+            {
+                
+            }
+            
+            return true;
+        }
+        
         /// <summary>
         /// Gets an object representation of the contents of a specific message which the subscriber holds.
         /// </summary>

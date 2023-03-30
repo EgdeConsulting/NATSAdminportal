@@ -12,6 +12,11 @@ namespace vite_api.Classes
             _provider = provider;
         }
 
+        public bool SubjectExists(string subject)
+        {
+            var subjects = GetAllSubjects();
+            return subjects.Contains(subject);
+        }
         /// <summary>
         /// Gets all unique subjects on all streams on the NATS-server.
         /// </summary>
