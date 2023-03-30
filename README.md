@@ -49,15 +49,11 @@ To start the front-end development server (vite), first `cd` into `src/vite-clie
 npm run dev
 ```
 
-**NOTE!**
-
 To start the back-end development server (.Net7), first `cd` into `src/vite-api`, then run:
 
 ```
 dotnet watch run
 ```
-
-**NOTE!** Before running the back-end for the first time
 
 ## Deployment
 
@@ -82,16 +78,15 @@ In order to develop the front-end without running the backend, first `cd` into `
 npm run api
 ```
 
-_This creates a mock API where all the data is contained in the file `data.json`._
-_Custom routes for accessing resources can be found in `routes.json`._
+This creates a mock API where all the data is contained in the file `data.json`. Custom routes for accessing
+resources can be found in `routes.json`.
 
-To start the frontend in development mode with JSON-server support, first `cd` into `src/vite-client`, then run:
+To start the front-end in development mode with JSON-server support (done via the use of a special environment variable),
+first `cd` into `src/vite-client`, then run:
 
 ```
 npm run dev-js
 ```
-
-_Starts the vite development server with a special environment variable._
 
 ### Configuration
 
