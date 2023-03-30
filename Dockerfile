@@ -31,12 +31,12 @@ WORKDIR /app
 
 #RUN --mount=type=secret,id=NATS_SERVER_URL \
 #    export NATS_SERVER_URL=$(cat /run/secrets/NATS_SERVER_URL)
-
 #ARG SECRET_URL
+#ENV NATS_SERVER_URL $SECRET_URL
 
 ENV ASPNETCORE_ENVIRONMENT Production
 ENV ASPNETCORE_URLS http://+:5000
-#ENV NATS_SERVER_URL $SECRET_URL
+
 EXPOSE 5000
 
 COPY --from=build-net /dist .
