@@ -20,7 +20,7 @@ function StreamViewButton(props: { content: any }) {
         changeVisibility(true);
       }}
     >
-      View Stream Data
+      View Stream
     </Button>
   );
 }

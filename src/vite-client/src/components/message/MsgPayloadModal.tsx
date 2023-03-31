@@ -44,7 +44,7 @@ function MsgPayloadModal() {
           getPayload();
         }}
       >
-        View full payload
+        View full Payload
       </Button>
 
       <Modal size={"2xl"} isOpen={isOpen} onClose={onClose}>
