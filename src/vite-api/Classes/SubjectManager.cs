@@ -11,19 +11,13 @@ namespace vite_api.Classes
         {
             _provider = provider;
         }
-
-        public bool SubjectExists(string subject)
-        {
-            var subjects = GetAllSubjects();
-            return subjects.Contains(subject);
-        }
+        
         /// <summary>
         /// Gets all unique subjects on all streams on the NATS-server.
         /// </summary>
         /// <returns>A collection containing the subject names.</returns>
         public List<string> GetAllSubjects()
         {
-
             using var connection = _provider.GetRequiredService<IConnection>();
 
             var subjects = connection

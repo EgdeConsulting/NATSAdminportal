@@ -27,11 +27,14 @@ namespace vite_api.Classes
         {
             using var connection = _provider.GetRequiredService<IConnection>();
             var jsm = connection.CreateJetStreamManagementContext();
-            if (jsm.GetMessage(streamName, sequenceNumber))
+            try
             {
-                throw new ArgumentException("Input not validated");
+                jsm.GetMessage(streamName, sequenceNumber);
             }
-   
+            catch (Exception e)
+            {
+                throw new ArgumentException("Given stream name or sequence number does not exist on the server");
+            }
             _logger.LogInformation("{} > {} deleted message (stream name, sequence number): {}, {}",
                 DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), UserAccount.Name, streamName, sequenceNumber);
             return jsm.DeleteMessage(streamName, sequenceNumber, erase);
