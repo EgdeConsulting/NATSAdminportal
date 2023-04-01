@@ -29,7 +29,7 @@ public class ApiController : ControllerBase
             var res = _subscriberManager.GetAllMessages();
             return Ok(res);
         }
-        catch (Exception ex)
+        catch
         {
             return StatusCode(418);
         }

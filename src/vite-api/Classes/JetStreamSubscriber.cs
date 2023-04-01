@@ -27,7 +27,6 @@ namespace vite_api.Classes
         /// <summary>
         /// Bulk pulls all messages on all subjects from a stream. 
         /// </summary>
-        /// <param name="c">Nats connection</param>
         /// <returns>List of all message objects</returns>
         private IEnumerable<Msg> ReceiveJetStreamPullSubscribe()
         {
