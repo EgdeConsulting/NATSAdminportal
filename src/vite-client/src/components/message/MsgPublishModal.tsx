@@ -31,7 +31,6 @@ function MsgPublishModal() {
 
   function postNewMessage() {
     let bodyContent;
-
     if (
       !process.env.NODE_ENV ||
       process.env.NODE_ENV === "development+json-server"
@@ -53,7 +52,6 @@ function MsgPublishModal() {
         payload: { data: payloadInputRef.current!.value },
       };
     }
-
     fetch("/api/newMessage", {
       method: "POST",
       headers: {
