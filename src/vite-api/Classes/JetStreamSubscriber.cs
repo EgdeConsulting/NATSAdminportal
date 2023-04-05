@@ -44,7 +44,8 @@ namespace vite_api.Classes
 
             return currentMessages.SelectMany(x => x).ToList().OrderBy(x => x.Subject).ToList();
         }
-
+        
+        
         /// <summary>
         /// Gets an object representation of the contents of a specific message which the subscriber holds.
         /// </summary>
@@ -86,7 +87,7 @@ namespace vite_api.Classes
         {
             var result = data.All(x => char.IsAscii((char)x)) ? Encoding.ASCII.GetString(data) : Convert.ToBase64String(data);
             return result.Length > MaxPayloadLength && isShortPayload ? result.Substring(0, MaxPayloadLength)
-            + " ..." // 3 dots to indicate that the message is incomplete.
+            + " ..." // 3 dots to indicate that the message is shortened.
             : result;
         }
 

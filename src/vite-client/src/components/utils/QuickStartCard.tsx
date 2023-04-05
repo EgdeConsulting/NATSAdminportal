@@ -1,8 +1,6 @@
 import {
   Card,
-  Image,
   Button,
-  ButtonGroup,
   CardBody,
   CardFooter,
   Divider,
@@ -10,7 +8,6 @@ import {
   Stack,
   Text,
   Link,
-  CardHeader,
   Container,
 } from "@chakra-ui/react";
 import { Link as RouteLink } from "react-router-dom";
