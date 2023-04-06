@@ -1,5 +1,11 @@
 import { extendTheme } from "@chakra-ui/react";
-import { inputStyles, buttonStyles, cardStyles, textStyles } from "styles";
+import {
+  inputStyles,
+  buttonStyles,
+  cardStyles,
+  textStyles,
+  accordionStyles,
+} from "styles";
 
 const theme = extendTheme({
   components: {
@@ -7,6 +13,7 @@ const theme = extendTheme({
     Card: cardStyles,
     Text: textStyles,
     Input: inputStyles,
+    Accordion: accordionStyles,
   },
 });
 

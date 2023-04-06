@@ -10,15 +10,19 @@ import {
   AccordionButton,
   AccordionPanel,
   AccordionIcon,
+  Divider,
 } from "@chakra-ui/react";
 import { useState, useEffect, memo } from "react";
 import { LoadingSpinner } from "components";
 
 function SubjectHierarchy() {
-  const [subjects, setSubjects] = useState<[]>([]);
-  //Wakanda datatype is this?? [] with {name, subsubjects?} ??
-  // interface within here probably
+  const [subjects, setSubjects] = useState<ISubject[]>([]);
   const [loading, setLoading] = useState(true);
+
+  interface ISubject {
+    name: string;
+    subSubjects: ISubject[];
+  }
 
   useEffect(() => {
     getSubjects();
@@ -30,16 +34,23 @@ function SubjectHierarchy() {
       .then((data) => {
         setSubjects(data);
         setLoading(false);
-        console.log(data);
       });
   }
-  // WHATSUP WITH ALL THESE STACK DIVIDERS??????????????????
+  // Change background color on hover for dark mode...
+  // Wrap background on hover to fit the text?
+  // Alternating background color for each element
   const HierarchyList = memo(
-    ({ parent, padding }: { parent: any; padding: number }): JSX.Element => {
+    ({
+      parent,
+      padding,
+    }: {
+      parent: ISubject;
+      padding: number;
+    }): JSX.Element => {
       return (
         <>
-          <List spacing={3} m={1} pl={padding}>
-            <Accordion allowMultiple>
+          <List spacing={1} pl={padding}>
+            <Accordion allowMultiple defaultIndex={[0]}>
               <AccordionItem>
                 {parent.subSubjects != undefined ? (
                   <AccordionButton>
@@ -49,10 +60,9 @@ function SubjectHierarchy() {
                 ) : (
                   <ListItem>{parent.name}</ListItem>
                 )}
-                <AccordionPanel pb={4}>
+                <AccordionPanel>
                   {parent.subSubjects != undefined &&
-                    parent.subSubjects.map((child: any) => {
-                      console.log(child.subSubjects);
+                    parent.subSubjects.map((child: ISubject) => {
                       return (
                         <HierarchyList
                           key={parent.name + child.name}
@@ -75,19 +85,20 @@ function SubjectHierarchy() {
       {loading ? (
         <Card variant={"outline"} w={"100%"} mt={"0 !important"}>
           <CardHeader>
-            <Heading size={"md"}>Subject Hierarchy</Heading>
+            <Heading size={"lg"}>Subject Hierarchy</Heading>
           </CardHeader>
           <LoadingSpinner />
         </Card>
       ) : (
         <Card variant={"outline"} w={"100%"} mt={"0 !important"}>
           <CardHeader>
-            <Heading size={"md"}>Subject Hierarchy</Heading>
+            <Heading size={"lg"}>Subject Hierarchy</Heading>
+            <Divider w={"93%"} mt={2} />
           </CardHeader>
 
-          {subjects.map((subject: any, index: number) => {
+          {subjects.map((subject: ISubject, index: number) => {
             return (
-              <VStack key={index} ml={4} mb={3} alignItems={"left"}>
+              <VStack key={index} mx={4} alignItems={"left"}>
                 <HierarchyList parent={subject} padding={0} />
               </VStack>
             );
