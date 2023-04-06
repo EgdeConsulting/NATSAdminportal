@@ -8,6 +8,7 @@ import {
   VStack,
   IconButton,
   Box,
+  Text,
 } from "@chakra-ui/react";
 import { FiPlusCircle, FiMinusCircle } from "react-icons/fi";
 import {
@@ -85,6 +86,8 @@ function MsgPublishForm(props: {
         <FormHelperText>
           Choose the subject you want to post your message to
         </FormHelperText>
+      </FormControl>
+      <FormControl isRequired>
         <FormLabel mt={3}>Headers</FormLabel>
         {props.headerList.map((headerPair: IHeaderProps, index: number) => {
           return (
@@ -93,7 +96,6 @@ function MsgPublishForm(props: {
                 <VStack align={"start"}>
                   {index === 0 && <FormHelperText>Name</FormHelperText>}
                   <Input
-                    id="name"
                     type={"text"}
                     value={headerPair.name}
                     width={"100%"}
@@ -107,7 +109,6 @@ function MsgPublishForm(props: {
                 <VStack align={"start"}>
                   {index === 0 && <FormHelperText>Value</FormHelperText>}
                   <Input
-                    id="value"
                     type={"text"}
                     value={headerPair.value}
                     width={"100%"}
@@ -147,7 +148,8 @@ function MsgPublishForm(props: {
             </Box>
           );
         })}
-
+      </FormControl>
+      <FormControl isRequired>
         <FormLabel mt={3}>Payload</FormLabel>
         <Input
           mb={5}

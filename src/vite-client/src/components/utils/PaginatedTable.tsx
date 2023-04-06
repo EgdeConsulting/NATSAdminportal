@@ -22,6 +22,8 @@ import {
   NumberInputStepper,
   NumberIncrementStepper,
   NumberDecrementStepper,
+  FormLabel,
+  FormControl,
 } from "@chakra-ui/react";
 import {
   ArrowRightIcon,
@@ -163,6 +165,7 @@ function PaginatedTable(props: { columns: any[]; data: any[] }) {
               gotoPage(page);
             }}
             defaultValue={pageIndex + 1}
+            aria-label={"Current Table Page"}
           >
             <NumberInputField />
             <NumberInputStepper>
@@ -176,6 +179,7 @@ function PaginatedTable(props: { columns: any[]; data: any[] }) {
             onChange={(e) => {
               setPageSize(Number(e.target.value));
             }}
+            aria-label={"Visible Table Rows"}
           >
             {[25, 50, 75, 100].map((pageSize) => (
               <option key={pageSize} value={pageSize}>

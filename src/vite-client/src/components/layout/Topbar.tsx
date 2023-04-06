@@ -10,6 +10,7 @@ function Topbar() {
       maxH={"100px"}
       borderBottom={"1px solid"}
       borderColor={colorMode === "dark" ? "whiteAlpha.300" : "gray.200"}
+      role={"banner"}
     >
       <HStack ml={3} w={"300px"}>
         <NatsLetterIcon />
