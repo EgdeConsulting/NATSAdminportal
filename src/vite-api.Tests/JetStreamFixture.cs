@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using NATS.Client;
 using NATS.Client.JetStream;
 using vite_api.Dto;
@@ -31,27 +32,29 @@ public class JetStreamFixture : IDisposable, ICollectionFixture<JetStreamFixture
     };
     public string StreamName => "xUnitStream";
     public string Subject => "xUnitSubject";
+    public string CopySubject => "xUnitCopySubject";
+    public string FaultySubject => "xUnitFaultySubject";
     public List<MessageDataDto> MsgDataDtos { get; }
     public ServiceProvider Provider { get; }
 
     public JetStreamFixture()
     {
         _services.AddTransient(NatsConnectionFactory);
-        MsgDataDtos = new List<MessageDataDto>();
         Provider = _services.BuildServiceProvider();
         
-        InitializeTestMessageDataDtos();
-        
+        MsgDataDtos = InitializeTestMessageDataDtos();
+
         using var connection = Provider.GetRequiredService<IConnection>();
         SetUpTestStream(connection);
         PublishTestMessages(connection);
     }
 
-    private void InitializeTestMessageDataDtos()
+    private List<MessageDataDto> InitializeTestMessageDataDtos()
     {
+        var msgDataDtos = new List<MessageDataDto>();
         for (int i = 0; i < _payloads.Length; i++)
         {
-            MsgDataDtos.Add(new MessageDataDto()
+            msgDataDtos.Add(new MessageDataDto()
             {
                 Headers = new List<MessageHeaderDto>()
                 {
@@ -65,15 +68,17 @@ public class JetStreamFixture : IDisposable, ICollectionFixture<JetStreamFixture
                 Subject = Subject
             });
         }
-    }
 
+        return msgDataDtos;
+    }
+    
     private void SetUpTestStream(IConnection connection)
     {
         var jsm = connection.CreateJetStreamManagementContext();
         
         StreamConfiguration streamConfig = StreamConfiguration.Builder()
             .WithName(StreamName)
-            .WithSubjects(Subject)
+            .WithSubjects(Subject, CopySubject)
             .WithStorageType(StorageType.Memory)
             .Build();
         jsm.AddStream(streamConfig);
@@ -86,6 +91,16 @@ public class JetStreamFixture : IDisposable, ICollectionFixture<JetStreamFixture
             var header = new MsgHeader { { x.Headers.First().Name, x.Headers.First().Value } };
             connection.Publish(new Msg(x.Subject, header, Encoding.UTF8.GetBytes(x.Payload.Data!)));
         });
+    }
+    
+    public List<Msg> GetAllJetStreamMessages(string subject)
+    {
+        using var connection = Provider.GetRequiredService<IConnection>();
+        var js = connection.CreateJetStreamContext();
+        var pullOptions = PullSubscribeOptions.Builder().WithStream(StreamName).Build();
+        var sub = js.PullSubscribe(subject, pullOptions);
+        
+        return sub.Fetch(100, 1000).ToList();
     }
     
     public void Dispose()

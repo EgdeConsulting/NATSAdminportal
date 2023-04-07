@@ -12,43 +12,66 @@ public class VerifyJetStreamSubscriberTests
     {
         _fixture = fixture;
     }
-    
-    [Fact]
-    public void AllMessagesReturned()
+
+    private JetStreamSubscriber CreateDefaultJetStreamSubscriber()
     {
-        var subscriber = new JetStreamSubscriber(_fixture.Provider, _fixture.StreamName, new List<string>() { _fixture.Subject });
-        Assert.Equal(_fixture.MsgDataDtos.Count, subscriber.GetMessages().Count);
+        return new JetStreamSubscriber(_fixture.Provider, _fixture.StreamName, new List<string>() { _fixture.Subject });
     }
     
     [Fact]
-    public void ExpectedPayload()
+    public void Get_AllMessages_ReturnsSameCount()
     {
-        ulong sequenceNumber = 1;
-        var subscriber = new JetStreamSubscriber(_fixture.Provider, _fixture.StreamName, new List<string>() { _fixture.Subject });
-        Assert.Equal(_fixture.MsgDataDtos[(int) sequenceNumber - 1].Payload.Data, subscriber.GetPayload(sequenceNumber).Data);
+        var subscriber = CreateDefaultJetStreamSubscriber();
+
+        var expectedMessageCount = _fixture.MsgDataDtos.Count;
+        var actualMessageCount = subscriber.GetMessages().Count;
+
+        Assert.Equal(expectedMessageCount, actualMessageCount);
+    }
+    
+    [Fact]
+    public void Get_SpecificPayload_ReturnsSamePayload()
+    {
+        const ulong sequenceNumber = 1;
+        var subscriber = CreateDefaultJetStreamSubscriber();
+
+        var expectedPayload = _fixture.MsgDataDtos[(int)sequenceNumber - 1].Payload.Data;
+        var actualPayload = subscriber.GetPayload(sequenceNumber).Data;
+        
+        Assert.Equal(expectedPayload, actualPayload);
     }
 
     [Fact]
-    public void PayloadDoesNotExist()
+    public void Get_SpecificPayload_ThrowsInvalidOperationException()
     {
-        ulong sequenceNumber = 100;
-        var subscriber = new JetStreamSubscriber(_fixture.Provider, _fixture.StreamName, new List<string>() { _fixture.Subject });
-        Assert.Throws<InvalidOperationException>(() => subscriber.GetPayload(sequenceNumber));
+        const ulong sequenceNumber = 100;
+        var subscriber = CreateDefaultJetStreamSubscriber();
+
+        void ActualAction() => subscriber.GetPayload(sequenceNumber);
+
+        Assert.Throws<InvalidOperationException>(ActualAction);
     }
     
     [Fact]
-    public void ExpectedMessageData()
+    public void Get_SpecificMessage_ReturnsSameMessage()
     {
-        ulong sequenceNumber = 2;
-        var subscriber = new JetStreamSubscriber(_fixture.Provider, _fixture.StreamName, new List<string>() { _fixture.Subject });
-        Assert.Equivalent(_fixture.MsgDataDtos[(int) sequenceNumber - 1], subscriber.GetMessageData(sequenceNumber)); 
+        const ulong sequenceNumber = 2;
+        var subscriber = CreateDefaultJetStreamSubscriber();
+
+        var expectedData = _fixture.MsgDataDtos[(int)sequenceNumber - 1];
+        var actualData = subscriber.GetMessageData(sequenceNumber);
+        
+        Assert.Equivalent(expectedData, actualData); 
     }
     
     [Fact]
-    public void MessageDataDoesNotExist()
+    public void Get_SpecificMessage_ThrowsInvalidOperationException()
     {
-        ulong sequenceNumber = 100;
-        var subscriber = new JetStreamSubscriber(_fixture.Provider, _fixture.StreamName, new List<string>() { _fixture.Subject });
-        Assert.Throws<InvalidOperationException>(() => subscriber.GetMessageData(sequenceNumber));
+        const ulong sequenceNumber = 100;
+        var subscriber = CreateDefaultJetStreamSubscriber();
+
+        void ActualAction() => subscriber.GetMessageData(sequenceNumber);
+        
+        Assert.Throws<InvalidOperationException>(ActualAction);
     }
 }
