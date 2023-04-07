@@ -21,6 +21,7 @@ function Sidebar() {
       style={{ minWidth: size + "px", maxWidth: size + "px" }}
       borderRight={"1px solid"}
       borderColor={colorMode === "dark" ? "whiteAlpha.300" : "gray.200"}
+      role={"navigation"}
     >
       <StickyBox offsetTop={10}>
         <Card h={"94vh"} border={"none"}>

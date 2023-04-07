@@ -74,6 +74,7 @@ function MsgView() {
                       changeVisibility(false);
                       changeCurrentMsg(DefaultMsgState.currentMsg);
                     }}
+                    title={"Close Button"}
                   >
                     <CloseIcon />
                   </Button>

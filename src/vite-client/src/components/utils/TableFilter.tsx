@@ -72,6 +72,7 @@ export function SelectColumnFilter(props: {
       }}
       h={"35px"}
       mt={2}
+      aria-label={"ColumnFilter"}
     >
       <option value={""}>All</option>
       {options.map((option: any, i: number) => (

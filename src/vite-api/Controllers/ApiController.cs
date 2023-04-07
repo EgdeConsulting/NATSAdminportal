@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices.JavaScript;
 using Microsoft.AspNetCore.Mvc;
 using vite_api.Classes;
 using vite_api.Dto;
@@ -29,9 +30,9 @@ public class ApiController : ControllerBase
             var res = _subscriberManager.GetAllMessages();
             return Ok(res);
         }
-        catch (Exception ex)
+        catch
         {
-            return StatusCode(418);
+            return StatusCode(429);
         }
     }
 
@@ -71,6 +72,11 @@ public class ApiController : ControllerBase
             _publisher.SendNewMessage(msgDto);
             return Ok();
         }
+        catch (ArgumentException e)
+        {
+            var response = new { error = e.Message };
+            return StatusCode(406, response);
+        }
         catch
         {
             return BadRequest();
@@ -82,16 +88,17 @@ public class ApiController : ControllerBase
     {
         try
         {
-            if (msgDto.Stream != null && msgDto.Subject != null)
-            {
-                var msg = _subscriberManager.GetSpecificMessage(msgDto.Stream, msgDto.SequenceNumber);
-                var payload = _subscriberManager.GetSpecificPayload(msgDto.Stream, msgDto.SequenceNumber);
-                msg!.Payload = payload!;
-                _publisher.CopyMessage(msg, msgDto.Subject);
-                return Ok();
-            }
-
-            return BadRequest();
+            if (msgDto.Stream == null || msgDto.Subject == null) return BadRequest();
+            var msg = _subscriberManager.GetSpecificMessage(msgDto.Stream, msgDto.SequenceNumber);
+            var payload = _subscriberManager.GetSpecificPayload(msgDto.Stream, msgDto.SequenceNumber);
+            msg!.Payload = payload!;
+            _publisher.CopyMessage(msg, msgDto.Subject);
+            return Ok();
+        }
+        catch (ArgumentException e)
+        {
+            var response = new { error = e.Message };
+            return StatusCode(406, response);
         }
         catch
         {
@@ -104,10 +111,17 @@ public class ApiController : ControllerBase
     {
         try
         {
-            var res = msgDto.Stream != null && _streamManager.DeleteMessage(msgDto.Stream, msgDto.SequenceNumber, msgDto.Erase);
+            var res = msgDto.Stream != null &&
+                      _streamManager.DeleteMessage(msgDto.Stream, msgDto.SequenceNumber, msgDto.Erase);
             return Ok(res);
         }
-        catch
+  
+        catch (ArgumentException e)
+        {
+            var response = new { error = e.Message };
+            return StatusCode(406, response);
+        }
+        catch (Exception)
         {
             return BadRequest();
         }
