@@ -11,6 +11,7 @@ import {
   AccordionPanel,
   AccordionIcon,
   Divider,
+  CardBody,
 } from "@chakra-ui/react";
 import { useState, useEffect, memo } from "react";
 import { LoadingSpinner } from "components";
@@ -50,7 +51,7 @@ function SubjectHierarchy() {
       return (
         <>
           <List spacing={1} pl={padding}>
-            <Accordion allowMultiple defaultIndex={[0]}>
+            <Accordion allowMultiple>
               <AccordionItem>
                 {parent.subSubjects != undefined ? (
                   <AccordionButton>
@@ -60,7 +61,7 @@ function SubjectHierarchy() {
                 ) : (
                   <ListItem>{parent.name}</ListItem>
                 )}
-                <AccordionPanel>
+                <AccordionPanel pb={2} pt={0}>
                   {parent.subSubjects != undefined &&
                     parent.subSubjects.map((child: ISubject) => {
                       return (
@@ -85,15 +86,15 @@ function SubjectHierarchy() {
       {loading ? (
         <Card variant={"outline"} w={"100%"} mt={"0 !important"}>
           <CardHeader>
-            <Heading size={"lg"}>Subject Hierarchy</Heading>
+            <Heading size={"md"}>Subject Hierarchy</Heading>
           </CardHeader>
           <LoadingSpinner />
         </Card>
       ) : (
-        <Card variant={"outline"} w={"100%"} mt={"0 !important"}>
+        <Card variant={"outline"} w={"100%"} mt={"0 !important"} pb={4}>
           <CardHeader>
-            <Heading size={"lg"}>Subject Hierarchy</Heading>
-            <Divider w={"93%"} mt={2} />
+            <Heading size={"md"}>Subject Hierarchy</Heading>
+            <Divider w={"100%"} mt={2} />
           </CardHeader>
 
           {subjects.map((subject: ISubject, index: number) => {

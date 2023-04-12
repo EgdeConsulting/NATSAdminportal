@@ -8,13 +8,16 @@ const baseStyle = definePartsStyle({
   // define the part you're going to style
   container: {
     borderTopWidth: "0px",
-    fontSize: "lg",
+    fontSize: "md",
     _last: {
       borderBottomWidth: "0px",
     },
   },
   button: {
-    fontSize: "xl",
+    fontSize: "lg",
+    // _hover: {
+    //   bg: "",
+    // },
   },
 });
 
