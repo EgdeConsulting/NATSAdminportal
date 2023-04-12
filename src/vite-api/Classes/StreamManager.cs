@@ -31,7 +31,7 @@ namespace vite_api.Classes
             {
                 jsm.GetMessage(streamName, sequenceNumber);
             }
-            catch (Exception e)
+            catch
             {
                 throw new ArgumentException("Given stream name or sequence number does not exist on the server");
             }

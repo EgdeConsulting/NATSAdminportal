@@ -66,6 +66,7 @@ function StreamView() {
                     onClick={() => {
                       changeVisibility(false);
                     }}
+                    title={"Close Button"}
                   >
                     <CloseIcon />
                   </Button>

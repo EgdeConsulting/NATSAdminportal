@@ -21,6 +21,7 @@ namespace vite_api.Classes
         /// Creates and publishes a new message onto the NATS-server. 
         /// </summary>
         /// <param name="message">Message object containing all necessary information.</param>
+        /// <exception cref="ArgumentException">The provided subject doesn't exist.</exception>
         public void SendNewMessage(MessageDataDto message)
         {
             MsgHeader msgHeader = new();
@@ -58,7 +59,7 @@ namespace vite_api.Classes
         /// </summary>
         /// <param name="message">Message to be copied.</param>
         /// <param name="newSubject">The subject under which the new message is created.</param>
-
+        /// <exception cref="ArgumentException">The provided subject doesn't exist.</exception>
         public void CopyMessage(MessageDataDto message, string newSubject)
         {
             MsgHeader msgHeader = new();
