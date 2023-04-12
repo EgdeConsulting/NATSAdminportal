@@ -1,3 +1,4 @@
+using System.Data.SqlTypes;
 using NATS.Client;
 using NATS.Client.JetStream;
 using vite_api.Dto;
@@ -24,19 +25,30 @@ namespace vite_api.Classes
         /// <returns>True if the message was deleted successfully.</returns>
         public bool DeleteMessage(string streamName, ulong sequenceNumber, bool erase)
         {
-            _logger.LogInformation("{} > {} deleted message (stream name, sequence number): {}, {}",
-            DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), UserAccount.Name, streamName, sequenceNumber);
-
             using var connection = _provider.GetRequiredService<IConnection>();
             var jsm = connection.CreateJetStreamManagementContext();
-
+            try
+            {
+                jsm.GetMessage(streamName, sequenceNumber);
+            }
+            catch
+            {
+                throw new ArgumentException("Given stream name or sequence number does not exist on the server");
+            }
+            _logger.LogInformation("{} > {} deleted message (stream name, sequence number): {}, {}",
+                DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), UserAccount.Name, streamName, sequenceNumber);
             return jsm.DeleteMessage(streamName, sequenceNumber, erase);
         }
 
+        // private static bool StreamExists(IJetStreamManagement jsm, string streamName)
+        // {
+        //     var stream = jsm.GetStreamInfo(streamName);
+        //     return stream != null;
+        // }
         /// <summary>
         /// Gets basic information about all streams on the NATS-server.
         /// </summary>
-        /// <returns>A collection of Dto's containing the basic information.</returns>
+        /// <returns>A collection of BasicStreamInfoDto's containing the basic information.</returns>
         public BasicStreamInfoDto[] GetAllStreams()
         {
             using var connection = _provider.GetRequiredService<IConnection>();

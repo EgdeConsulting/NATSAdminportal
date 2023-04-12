@@ -5,7 +5,7 @@ import { QuickStartCard } from "components/utils/QuickStartCard";
 
 function HomePage() {
   return (
-    <Flex w={"100%"}>
+    <Flex w={"100%"} role={"main"}>
       <Card variant={"outline"} w={"100%"} mt={2} mr={2}>
         <CardBody>
           <PageHeader

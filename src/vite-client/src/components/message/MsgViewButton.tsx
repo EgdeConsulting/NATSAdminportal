@@ -15,6 +15,7 @@ function MsgViewButton(props: { content: any }) {
         });
         changeVisibility(true);
       }}
+      variant={"darkerBackground"}
     >
       View Message
     </Button>
