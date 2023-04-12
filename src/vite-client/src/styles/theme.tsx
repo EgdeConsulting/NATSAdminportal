@@ -1,5 +1,11 @@
 import { extendTheme, type ThemeConfig } from "@chakra-ui/react";
-import { inputStyles, buttonStyles, cardStyles, textStyles } from "styles";
+import {
+  inputStyles,
+  buttonStyles,
+  cardStyles,
+  textStyles,
+  accordionStyles,
+} from "styles";
 
 const config: ThemeConfig = {
   initialColorMode: "dark",
@@ -21,6 +27,7 @@ const theme = extendTheme({
     Card: cardStyles,
     Text: textStyles,
     Input: inputStyles,
+    Accordion: accordionStyles,
   },
 });
 

@@ -1,10 +1,29 @@
-import { Checkbox, Card, CardHeader, Heading, VStack } from "@chakra-ui/react";
+import {
+  List,
+  ListItem,
+  Card,
+  CardHeader,
+  Heading,
+  VStack,
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionPanel,
+  AccordionIcon,
+  Divider,
+  CardBody,
+} from "@chakra-ui/react";
 import { useState, useEffect, memo } from "react";
 import { LoadingSpinner } from "components";
 
 function SubjectHierarchy() {
-  const [subjects, setSubjects] = useState<[]>([]);
+  const [subjects, setSubjects] = useState<ISubject[]>([]);
   const [loading, setLoading] = useState(true);
+
+  interface ISubject {
+    name: string;
+    subSubjects: ISubject[];
+  }
 
   useEffect(() => {
     getSubjects();
@@ -18,24 +37,45 @@ function SubjectHierarchy() {
         setLoading(false);
       });
   }
-
-  const HierarchyCheckbox = memo(
-    ({ parent, padding }: { parent: any; padding: number }): JSX.Element => {
+  // Change background color on hover for dark mode...
+  // Wrap background on hover to fit the text?
+  // Alternating background color for each element
+  const HierarchyList = memo(
+    ({
+      parent,
+      padding,
+    }: {
+      parent: ISubject;
+      padding: number;
+    }): JSX.Element => {
       return (
         <>
-          <Checkbox m={1} pl={padding} defaultChecked>
-            {parent.name}
-          </Checkbox>
-          {parent.subSubjects != undefined &&
-            parent.subSubjects.map((child: any) => {
-              return (
-                <HierarchyCheckbox
-                  key={parent.name + child.name}
-                  parent={child}
-                  padding={padding + 5}
-                />
-              );
-            })}
+          <List spacing={1} pl={padding}>
+            <Accordion allowMultiple>
+              <AccordionItem>
+                {parent.subSubjects != undefined ? (
+                  <AccordionButton>
+                    <ListItem>{parent.name}</ListItem>
+                    <AccordionIcon />
+                  </AccordionButton>
+                ) : (
+                  <ListItem>{parent.name}</ListItem>
+                )}
+                <AccordionPanel pb={2} pt={0}>
+                  {parent.subSubjects != undefined &&
+                    parent.subSubjects.map((child: ISubject) => {
+                      return (
+                        <HierarchyList
+                          key={parent.name + child.name}
+                          parent={child}
+                          padding={padding + 5}
+                        />
+                      );
+                    })}
+                </AccordionPanel>
+              </AccordionItem>
+            </Accordion>
+          </List>
         </>
       );
     }
@@ -51,15 +91,16 @@ function SubjectHierarchy() {
           <LoadingSpinner />
         </Card>
       ) : (
-        <Card variant={"outline"} w={"100%"} mt={"0 !important"}>
+        <Card variant={"outline"} w={"100%"} mt={"0 !important"} pb={4}>
           <CardHeader>
             <Heading size={"md"}>Subject Hierarchy</Heading>
+            <Divider w={"100%"} mt={2} />
           </CardHeader>
 
-          {subjects.map((subject: any, index: number) => {
+          {subjects.map((subject: ISubject, index: number) => {
             return (
-              <VStack key={index} ml={4} mb={3} alignItems={"left"}>
-                <HierarchyCheckbox parent={subject} padding={0} />
+              <VStack key={index} mx={4} alignItems={"left"}>
+                <HierarchyList parent={subject} padding={0} />
               </VStack>
             );
           })}
