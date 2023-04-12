@@ -31,9 +31,10 @@ public class JetStreamFixture : IDisposable, ICollectionFixture<JetStreamFixture
         "The third payload."
     };
     public string StreamName => "xUnitStream";
-    public string Subject => "xUnitSubject";
-    public string CopySubject => "xUnitCopySubject";
-    public string FaultySubject => "xUnitFaultySubject";
+    public string PrimarySubject => "xUnitPrimarySubject";
+    public string SecondarySubject => "xUnitSecondarySubject";
+    public string InvalidSubject => "xUnitInvalidSubject";
+    public string[] ValidSubjects { get; }
     public List<MessageDataDto> MsgDataDtos { get; }
     public ServiceProvider Provider { get; }
 
@@ -42,6 +43,7 @@ public class JetStreamFixture : IDisposable, ICollectionFixture<JetStreamFixture
         _services.AddTransient(NatsConnectionFactory);
         Provider = _services.BuildServiceProvider();
         
+        ValidSubjects = new[] { PrimarySubject, SecondarySubject };
         MsgDataDtos = InitializeTestMessageDataDtos();
 
         using var connection = Provider.GetRequiredService<IConnection>();
@@ -65,7 +67,7 @@ public class JetStreamFixture : IDisposable, ICollectionFixture<JetStreamFixture
                     }
                 },
                 Payload = new MessagePayloadDto() { Data = _payloads[i] },
-                Subject = Subject
+                Subject = PrimarySubject
             });
         }
 
@@ -78,7 +80,7 @@ public class JetStreamFixture : IDisposable, ICollectionFixture<JetStreamFixture
         
         StreamConfiguration streamConfig = StreamConfiguration.Builder()
             .WithName(StreamName)
-            .WithSubjects(Subject, CopySubject)
+            .WithSubjects(ValidSubjects)
             .WithStorageType(StorageType.Memory)
             .Build();
         jsm.AddStream(streamConfig);

@@ -30,7 +30,7 @@ public class VerifyPublisherTests
         
         var expectedMessage = _fixture.MsgDataDtos[index]; 
         publisher.SendNewMessage(expectedMessage);
-        var actualMessage = _fixture.GetAllJetStreamMessages(_fixture.Subject)[index + 1];
+        var actualMessage = _fixture.GetAllJetStreamMessages(_fixture.PrimarySubject)[index + 1];
 
         Assert.Equal(expectedMessage.Payload.Data, Encoding.UTF8.GetString(actualMessage.Data));
         Assert.Equal(expectedMessage.Subject, actualMessage.Subject);
@@ -43,7 +43,7 @@ public class VerifyPublisherTests
         var publisher = CreateDefaultPublisher();
         
         var expectedMessage = _fixture.MsgDataDtos[index];
-        expectedMessage.Subject = _fixture.FaultySubject;
+        expectedMessage.Subject = _fixture.InvalidSubject;
         void ActualAction() => publisher.SendNewMessage(expectedMessage);
 
         Assert.Throws<ArgumentException>(ActualAction);
@@ -56,11 +56,11 @@ public class VerifyPublisherTests
         var publisher = CreateDefaultPublisher();
         
         var expectedMessage = _fixture.MsgDataDtos[index]; 
-        publisher.CopyMessage(expectedMessage, _fixture.CopySubject);
-        var actualMessage = _fixture.GetAllJetStreamMessages(_fixture.CopySubject)[index];
+        publisher.CopyMessage(expectedMessage, _fixture.SecondarySubject);
+        var actualMessage = _fixture.GetAllJetStreamMessages(_fixture.SecondarySubject)[index];
 
         Assert.Equal(expectedMessage.Payload.Data, Encoding.UTF8.GetString(actualMessage.Data));
-        Assert.Equal(_fixture.CopySubject, actualMessage.Subject);
+        Assert.Equal(_fixture.SecondarySubject, actualMessage.Subject);
     }
     
     [Fact]
@@ -70,7 +70,7 @@ public class VerifyPublisherTests
         var publisher = CreateDefaultPublisher();
         
         var expectedMessage = _fixture.MsgDataDtos[index];
-        void ActualAction() => publisher.CopyMessage(expectedMessage, _fixture.FaultySubject);
+        void ActualAction() => publisher.CopyMessage(expectedMessage, _fixture.InvalidSubject);
 
         Assert.Throws<ArgumentException>(ActualAction);
     }

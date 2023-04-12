@@ -15,7 +15,7 @@ public class VerifyJetStreamSubscriberTests
 
     private JetStreamSubscriber CreateDefaultJetStreamSubscriber()
     {
-        return new JetStreamSubscriber(_fixture.Provider, _fixture.StreamName, new List<string>() { _fixture.Subject });
+        return new JetStreamSubscriber(_fixture.Provider, _fixture.StreamName, new List<string>() { _fixture.PrimarySubject });
     }
     
     [Fact]
