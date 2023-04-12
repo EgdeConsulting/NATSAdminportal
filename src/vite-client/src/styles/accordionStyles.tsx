@@ -1,6 +1,5 @@
 import { accordionAnatomy } from "@chakra-ui/anatomy";
 import { createMultiStyleConfigHelpers } from "@chakra-ui/react";
-
 const { definePartsStyle, defineMultiStyleConfig } =
   createMultiStyleConfigHelpers(accordionAnatomy.keys);
 
@@ -15,9 +14,11 @@ const baseStyle = definePartsStyle({
   },
   button: {
     fontSize: "lg",
-    // _hover: {
-    //   bg: "",
-    // },
+    _hover: {
+      _dark: {
+        bg: "whiteAlpha.200",
+      },
+    },
   },
 });
 
