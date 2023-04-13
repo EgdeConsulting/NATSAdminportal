@@ -53,7 +53,14 @@ function StreamView() {
   return (
     <Stack w={"100%"} spacing={4}>
       {viewContext.isVisible && (
-        <Card variant={"outline"} h={"100%"} w={"100%"} mb={2}>
+        <Card
+          overflowY={"auto"}
+          h={"92vh"}
+          variant={"outline"}
+          p={"absolute"}
+          w={"100%"}
+          mb={2}
+        >
           <VStack ml={5} divider={<StackDivider ml={5} w={"93%"} />}>
             <CardHeader w={"100%"} ml={-10}>
               <Flex>
