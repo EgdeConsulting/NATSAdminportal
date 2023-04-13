@@ -8,7 +8,6 @@ import {
   VStack,
   IconButton,
   Box,
-  Text,
 } from "@chakra-ui/react";
 import { FiPlusCircle, FiMinusCircle } from "react-icons/fi";
 import {
@@ -97,6 +96,7 @@ function MsgPublishForm(props: {
                   {index === 0 && <FormHelperText>Name</FormHelperText>}
                   <Input
                     type={"text"}
+                    id="name"
                     value={headerPair.name}
                     width={"100%"}
                     onChange={(e) => {
@@ -110,6 +110,7 @@ function MsgPublishForm(props: {
                   {index === 0 && <FormHelperText>Value</FormHelperText>}
                   <Input
                     type={"text"}
+                    id="value"
                     value={headerPair.value}
                     width={"100%"}
                     onChange={(e) => {
