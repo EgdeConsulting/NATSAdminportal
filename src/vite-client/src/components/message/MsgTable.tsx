@@ -8,6 +8,11 @@ import {
 } from "components";
 
 function MsgTable() {
+  /**
+   * This constant defines the configuration of the paginated table.
+   * The “accessor” property is equal to a property contained in a data object.
+   * More information at: https://tanstack.com/table/v8/docs/guide/column-defs
+   */
   const columns = [
     {
       Header: "MsgTable",
@@ -57,9 +62,12 @@ function MsgTable() {
           setAllMessages(data);
           setLoading(false);
         });
-
       } else if (res.status == 429) {
-
+        /**
+         * Occasionally an API-request fails due to the backend taking too long
+         * handshaking with the NATS-server. This is not a problem as the next
+         * API-request finished just fine, and new data is requested at a frequent rate.
+         */
         console.log("API was too busy to handle request.");
       } else {
         alert(
@@ -69,6 +77,12 @@ function MsgTable() {
     });
   }
 
+  /**
+   * Starting an interval which frequently send new API-requests to get
+   * the newest data. Only one interval is being started via the use of
+   * the “isIntervalRunning” state. The interval is also being discarded
+   * as soon as the component dismounts.
+   */
   useEffect(() => {
     setIsIntervalRunning(true);
     const interval = setInterval(getAllMessages, 3000);
