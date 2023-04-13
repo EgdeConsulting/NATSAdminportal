@@ -15,6 +15,7 @@ const baseStyle = definePartsStyle({
   button: {
     fontSize: "lg",
     _hover: {
+      bg: "gray.200",
       _dark: {
         bg: "whiteAlpha.200",
       },

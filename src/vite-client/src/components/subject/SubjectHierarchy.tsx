@@ -13,6 +13,7 @@ import {
   Divider,
   Button,
   HStack,
+  ButtonGroup,
 } from "@chakra-ui/react";
 import { useState, useEffect, memo } from "react";
 import { LoadingSpinner } from "components";
@@ -51,7 +52,7 @@ function SubjectHierarchy() {
       return (
         <>
           <List spacing={1} pl={padding}>
-            <Accordion allowMultiple index={expanded ? 0 : 1}>
+            <Accordion allowMultiple defaultIndex={expanded ? [0] : [1]}>
               <AccordionItem>
                 {parent.subSubjects != undefined ? (
                   <AccordionButton>
@@ -95,13 +96,12 @@ function SubjectHierarchy() {
           <CardHeader>
             <HStack spacing={"auto"}>
               <Heading size={"md"}>Subject Hierarchy</Heading>
-              <Button
-                onClick={() =>
-                  expanded ? toggleExpanded(false) : toggleExpanded(true)
-                }
-              >
-                {expanded ? "Collapse all" : "Expand all"}
-              </Button>
+              <ButtonGroup>
+                <Button onClick={() => toggleExpanded(true)}>Expand all</Button>
+                <Button onClick={() => toggleExpanded(false)}>
+                  Collapse all
+                </Button>
+              </ButtonGroup>
             </HStack>
 
             <Divider w={"100%"} mt={2} />
