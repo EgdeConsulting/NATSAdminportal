@@ -11,7 +11,8 @@ import {
   AccordionPanel,
   AccordionIcon,
   Divider,
-  CardBody,
+  Button,
+  HStack,
 } from "@chakra-ui/react";
 import { useState, useEffect, memo } from "react";
 import { LoadingSpinner } from "components";
@@ -19,7 +20,7 @@ import { LoadingSpinner } from "components";
 function SubjectHierarchy() {
   const [subjects, setSubjects] = useState<ISubject[]>([]);
   const [loading, setLoading] = useState(true);
-
+  const [expanded, toggleExpanded] = useState<boolean>(false);
   interface ISubject {
     name: string;
     subSubjects: ISubject[];
@@ -37,8 +38,10 @@ function SubjectHierarchy() {
         setLoading(false);
       });
   }
-  // Change background color on hover for dark mode...
-  // Wrap background on hover to fit the text?
+
+  function toggleSubjectExpansion() {
+    expanded ? toggleExpanded(false) : toggleExpanded(true);
+  }
   // Alternating background color for each element
   const HierarchyList = memo(
     ({
@@ -51,7 +54,7 @@ function SubjectHierarchy() {
       return (
         <>
           <List spacing={1} pl={padding}>
-            <Accordion allowMultiple>
+            <Accordion allowMultiple index={expanded ? 0 : 1}>
               <AccordionItem>
                 {parent.subSubjects != undefined ? (
                   <AccordionButton>
@@ -93,7 +96,13 @@ function SubjectHierarchy() {
       ) : (
         <Card variant={"outline"} w={"100%"} mt={"0 !important"} pb={4}>
           <CardHeader>
-            <Heading size={"md"}>Subject Hierarchy</Heading>
+            <HStack spacing={"auto"}>
+              <Heading size={"md"}>Subject Hierarchy</Heading>
+              <Button onClick={toggleSubjectExpansion}>
+                {expanded ? "Collapse all" : "Expand all"}
+              </Button>
+            </HStack>
+
             <Divider w={"100%"} mt={2} />
           </CardHeader>
 
