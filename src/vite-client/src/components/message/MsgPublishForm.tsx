@@ -86,8 +86,10 @@ function MsgPublishForm(props: {
           Choose the subject you want to post your message to
         </FormHelperText>
       </FormControl>
-      <FormControl isRequired>
-        <FormLabel mt={3}>Headers</FormLabel>
+      <FormControl>
+        <FormLabel mb={0} mt={3}>
+          Headers
+        </FormLabel>
         {props.headerList.map((headerPair: IHeaderProps, index: number) => {
           return (
             <Box key={index} w={"100%"}>
@@ -120,40 +122,38 @@ function MsgPublishForm(props: {
                     placeholder={"Value..."}
                   />
                 </VStack>
-                {props.headerList.length > 1 && (
-                  <IconButton
-                    aria-label="Remove header"
-                    bg={"inherit"}
-                    onClick={() => {
-                      handleHeaderRemove(index);
-                      validateAllInputs();
-                    }}
-                    icon={<FiMinusCircle />}
-                  ></IconButton>
-                )}
-              </HStack>
-              {props.headerList.length - 1 === index && (
-                <Button
-                  leftIcon={<FiPlusCircle />}
-                  aria-label="Add more headers"
-                  mt={1}
+
+                <IconButton
+                  aria-label="Remove header"
                   bg={"inherit"}
                   onClick={() => {
-                    handleHeaderAdd();
+                    handleHeaderRemove(index);
                     validateAllInputs();
                   }}
-                >
-                  Add header
-                </Button>
-              )}
+                  icon={<FiMinusCircle />}
+                ></IconButton>
+              </HStack>
             </Box>
           );
         })}
+        <Button
+          leftIcon={<FiPlusCircle />}
+          aria-label="Add more headers"
+          mt={1}
+          bg={"inherit"}
+          onClick={() => {
+            handleHeaderAdd();
+            validateAllInputs();
+          }}
+        >
+          Add header
+        </Button>
       </FormControl>
       <FormControl isRequired>
         <FormLabel mt={3}>Payload</FormLabel>
         <Input
-          mb={5}
+          mb={3}
+          mt={0}
           type={"text"}
           width={"100%"}
           onChange={() => {
