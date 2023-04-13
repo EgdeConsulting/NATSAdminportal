@@ -21,7 +21,8 @@ import { LoadingSpinner } from "components";
 function SubjectHierarchy() {
   const [subjects, setSubjects] = useState<ISubject[]>([]);
   const [loading, setLoading] = useState(true);
-  const [expanded, toggleExpanded] = useState<boolean>(false);
+  // 0: expanded, 1: collapsed.   default index needs a newly initiated array to work properly
+  const [accIndex, setAccIndex] = useState<number[]>([1]);
   interface ISubject {
     name: string;
     subSubjects: ISubject[];
@@ -52,7 +53,7 @@ function SubjectHierarchy() {
       return (
         <>
           <List spacing={1} pl={padding}>
-            <Accordion allowMultiple defaultIndex={expanded ? [0] : [1]}>
+            <Accordion allowMultiple defaultIndex={accIndex}>
               <AccordionItem>
                 {parent.subSubjects != undefined ? (
                   <AccordionButton>
@@ -97,10 +98,8 @@ function SubjectHierarchy() {
             <HStack spacing={"auto"}>
               <Heading size={"md"}>Subject Hierarchy</Heading>
               <ButtonGroup>
-                <Button onClick={() => toggleExpanded(true)}>Expand all</Button>
-                <Button onClick={() => toggleExpanded(false)}>
-                  Collapse all
-                </Button>
+                <Button onClick={() => setAccIndex([0])}>Expand all</Button>
+                <Button onClick={() => setAccIndex([1])}>Collapse all</Button>
               </ButtonGroup>
             </HStack>
 
