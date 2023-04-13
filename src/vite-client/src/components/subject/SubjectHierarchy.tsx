@@ -39,9 +39,6 @@ function SubjectHierarchy() {
       });
   }
 
-  function toggleSubjectExpansion() {
-    expanded ? toggleExpanded(false) : toggleExpanded(true);
-  }
   // Alternating background color for each element
   const HierarchyList = memo(
     ({
@@ -98,7 +95,11 @@ function SubjectHierarchy() {
           <CardHeader>
             <HStack spacing={"auto"}>
               <Heading size={"md"}>Subject Hierarchy</Heading>
-              <Button onClick={toggleSubjectExpansion}>
+              <Button
+                onClick={() =>
+                  expanded ? toggleExpanded(false) : toggleExpanded(true)
+                }
+              >
                 {expanded ? "Collapse all" : "Expand all"}
               </Button>
             </HStack>
