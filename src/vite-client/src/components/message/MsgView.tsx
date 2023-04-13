@@ -44,6 +44,7 @@ function MsgView() {
       fetch("/api/specificMessage?" + queryString)
         .then((res) => res.json())
         .then((rawData) => {
+          // JSON-server returns a JSON-array, whilest the API returns a single JSON-object.
           let data = rawData instanceof Array ? rawData[0] : rawData;
           setMessageData(data);
           setLoading(false);
