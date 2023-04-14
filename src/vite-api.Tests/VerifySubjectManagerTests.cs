@@ -1,15 +1,19 @@
 ﻿using vite_api.Classes;
+using System.Text.Json;
+using Xunit.Abstractions;
 
 namespace vite_api.Tests;
 
 [UsesVerify, Collection("JetStream collection")]
 public class VerifySubjectManagerTests
 {
+    
     private readonly JetStreamFixture _fixture;
-
-    public VerifySubjectManagerTests(JetStreamFixture fixture)
+    private readonly ITestOutputHelper _testOutputHelper;
+    public VerifySubjectManagerTests(JetStreamFixture fixture, ITestOutputHelper testOutputHelper)
     {
         _fixture = fixture;
+        _testOutputHelper = testOutputHelper;
     }
     
     private SubjectManager CreateDefaultSubjectManager()
@@ -18,7 +22,7 @@ public class VerifySubjectManagerTests
     }
     
     [Fact]
-    public void Get_AllSubjects_ReturnsSameSubjects()
+    public void GetAllSubjects_ReturnsSameSubjects()
     {
         var manager = CreateDefaultSubjectManager();
 
@@ -32,13 +36,15 @@ public class VerifySubjectManagerTests
     }
     
     [Fact]
-    public void Get_SubjectHierarchy_ReturnsSameObject()
+    public Task GetSubjectHierarchy_ShouldSerializeAsExpected()
     {
         var manager = CreateDefaultSubjectManager();
 
-        var expectedSubjects = _fixture.ValidSubjects;
-        var actualSubjects = manager.GetSubjectHierarchy();
-        
-        //Assert.All(expectedSubjects, item => Assert.Contains(item, actualSubjects));
+        var expectedHierarchy = _fixture.ValidSubjects;
+        var actualHierarchy = manager.GetSubjectHierarchy();
+
+        var json = JsonSerializer.Serialize(actualHierarchy);
+
+        return VerifyJson(json);
     }
 }
