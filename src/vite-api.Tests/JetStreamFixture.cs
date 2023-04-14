@@ -43,7 +43,7 @@ public class JetStreamFixture : IDisposable, ICollectionFixture<JetStreamFixture
         _services.AddTransient(NatsConnectionFactory);
         Provider = _services.BuildServiceProvider();
         
-        ValidSubjects = new[] { PrimarySubject, SecondarySubject };
+        ValidSubjects = new[] { PrimarySubject, SecondarySubject, PrimarySubject + ".A.1", PrimarySubject + ".A.2", SecondarySubject + ".B.1", SecondarySubject + ".C.1", SecondarySubject + ".C.2" };
         MsgDataDtos = InitializeTestMessageDataDtos();
 
         using var connection = Provider.GetRequiredService<IConnection>();
