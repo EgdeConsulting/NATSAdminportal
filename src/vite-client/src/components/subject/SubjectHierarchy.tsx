@@ -21,7 +21,13 @@ import { LoadingSpinner, MsgViewContext } from "components";
 function SubjectHierarchy() {
   const [subjects, setSubjects] = useState<ISubject[]>([]);
   const [loading, setLoading] = useState(true);
-  // 0: expanded, 1: collapsed.   default index needs a newly initiated array to work properly
+
+  /**
+   * The "defaultIndex" property needs a newly initiated number
+   * array with one entry to work properly.
+   * Value 0: Expanded
+   * Value 1: Collapsed
+   */
   const [accIndex, setAccIndex] = useState<number[]>([1]);
   const viewContext = useContext(MsgViewContext);
   interface ISubject {
@@ -43,6 +49,7 @@ function SubjectHierarchy() {
   }
 
   // Consider adding alternating background color for each element
+
   const HierarchyList = memo(
     ({
       parent,
@@ -57,25 +64,27 @@ function SubjectHierarchy() {
             <Accordion allowMultiple defaultIndex={accIndex}>
               <AccordionItem>
                 {parent.subSubjects != undefined ? (
-                  <AccordionButton>
-                    <ListItem>{parent.name}</ListItem>
-                    <AccordionIcon />
-                  </AccordionButton>
+                  <>
+                    <AccordionButton>
+                      <ListItem>{parent.name}</ListItem>
+                      <AccordionIcon />
+                    </AccordionButton>
+                    <AccordionPanel pb={2} pt={0}>
+                      {parent.subSubjects != undefined &&
+                        parent.subSubjects.map((child: ISubject) => {
+                          return (
+                            <HierarchyList
+                              key={parent.name + child.name}
+                              parent={child}
+                              padding={padding + 5}
+                            />
+                          );
+                        })}
+                    </AccordionPanel>
+                  </>
                 ) : (
                   <ListItem>{parent.name}</ListItem>
                 )}
-                <AccordionPanel pb={2} pt={0}>
-                  {parent.subSubjects != undefined &&
-                    parent.subSubjects.map((child: ISubject) => {
-                      return (
-                        <HierarchyList
-                          key={parent.name + child.name}
-                          parent={child}
-                          padding={padding + 5}
-                        />
-                      );
-                    })}
-                </AccordionPanel>
               </AccordionItem>
             </Accordion>
           </List>
