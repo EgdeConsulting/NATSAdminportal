@@ -22,18 +22,41 @@ public class VerifyStreamManagerTests
         return new StreamManager(loggerMock.Object, _fixture.Provider);
     }
 
-    public void Delete_Message_ReturnsSameCount()
+    [Fact]
+    public void DeleteMessage_ReturnsSameCount()
     {
         var streamName = _fixture.StreamName;
-        var sequenceNumber = _fixture.MsgDataDtos.Count;
+        var sequenceNumber = _fixture.GetAllJetStreamMessages().Count;
         var streamManager = CreateDefaultStreamManager();
 
         var expectedCount = sequenceNumber - 1;
         streamManager.DeleteMessage(streamName, (ulong)sequenceNumber, true);
+        var actualCount = _fixture.GetAllJetStreamMessages().Count;
+
+        Assert.Equal(expectedCount, actualCount);
     }
 
-    public void Deleted_Message_Cannot_Be_Found()
+    [Fact]
+    public void DeleteMessage_ThrowsArgumentException()
     {
-        //Check that the deleted message cannot be found(by checking for seq.num)
+        var streamName = _fixture.StreamName;
+        var sequenceNumber = 69;
+        var streamManager = CreateDefaultStreamManager();
+
+        void ActualAction() => streamManager.DeleteMessage(streamName, (ulong)sequenceNumber, true);
+
+        Assert.Throws<ArgumentException>(ActualAction);
+    }
+
+    [Fact]
+    public void GetAllStreams_ReturnsCorrectCount()
+    {
+
+    }
+
+    [Fact]
+    public void GetSpecificStream_ReturnsSpecifiedStream()
+    {
+
     }
 }
