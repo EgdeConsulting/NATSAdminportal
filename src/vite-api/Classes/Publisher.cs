@@ -22,7 +22,7 @@ namespace vite_api.Classes
         /// </summary>
         /// <param name="message">Message object containing all necessary information.</param>
         /// <exception cref="ArgumentException">The provided subject doesn't exist.</exception>
-        public void SendNewMessage(MessageDataDto message)
+        public void SendMessage(MessageDataDto message)
         {
             MsgHeader msgHeader = new();
             foreach (var headerPair in message.Headers)
