@@ -17,7 +17,7 @@ const darkerBackground = defineStyle({
   },
 });
 
-export const buttonStyles = defineStyleConfig({
+export const ButtonStyles = defineStyleConfig({
   baseStyle,
   variants: {
     darkerBackground: darkerBackground,

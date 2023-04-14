@@ -13,4 +13,4 @@ const baseStyle = definePartsStyle({
   },
 });
 
-export const inputStyles = defineMultiStyleConfig({ baseStyle });
+export const InputStyles = defineMultiStyleConfig({ baseStyle });

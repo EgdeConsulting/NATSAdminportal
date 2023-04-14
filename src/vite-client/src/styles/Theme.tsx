@@ -1,10 +1,10 @@
 import { extendTheme, type ThemeConfig } from "@chakra-ui/react";
 import {
-  inputStyles,
-  buttonStyles,
-  cardStyles,
-  textStyles,
-  accordionStyles,
+  InputStyles,
+  ButtonStyles,
+  CardStyles,
+  TextStyles,
+  AccordionStyles,
 } from "styles";
 
 const config: ThemeConfig = {
@@ -12,7 +12,7 @@ const config: ThemeConfig = {
   useSystemColorMode: true,
 };
 
-const theme = extendTheme({
+const Theme = extendTheme({
   config,
   colors: {
     gray: {
@@ -23,12 +23,12 @@ const theme = extendTheme({
     },
   },
   components: {
-    Button: buttonStyles,
-    Card: cardStyles,
-    Text: textStyles,
-    Input: inputStyles,
-    Accordion: accordionStyles,
+    Button: ButtonStyles,
+    Card: CardStyles,
+    Text: TextStyles,
+    Input: InputStyles,
+    Accordion: AccordionStyles,
   },
 });
 
-export { theme };
+export { Theme };
