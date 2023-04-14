@@ -1,7 +1,6 @@
-import { Flex, Card, CardBody, HStack, StackDivider } from "@chakra-ui/react";
+import { Flex, Card, CardBody, HStack } from "@chakra-ui/react";
 import { MsgIcon, StreamIcon } from "assets";
-import { PageHeader } from "components";
-import { QuickStartCard } from "components/utils/QuickStartCard";
+import { PageHeader, QuickStartCard } from "components";
 
 function HomePage() {
   return (
