@@ -95,3 +95,16 @@ see: https://github.com/typicode/json-server
 
 Also note that the JSON and the frontend server run on different ports (`3000` and `5173` respectively),
 but vite is proxying the JSON server. This is configured in `vite.config.ts`.
+
+## Testing
+
+The unit-testing for this project can be found in the `vite-api.Tests` project. Unit-testing uses xUnit as the framework.
+For more information about xUnit see: https://xunit.net/#documentation
+
+For running the tests in VSCode, `cd` into `src/vite-api.Tests` and then run
+
+```
+dotnet test
+```
+
+Important to note that for any test to run the prefix `[Fact]` must come before the unit-test in question.
