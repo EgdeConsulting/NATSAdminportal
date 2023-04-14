@@ -30,7 +30,6 @@ namespace vite_api.Classes
         /// <returns>List of all message objects</returns>
         private IEnumerable<Msg> ReceiveJetStreamPullSubscribe()
         {
-
             using var connection = _provider.GetRequiredService<IConnection>();
             var js = connection.CreateJetStreamContext();
             var pullOptions = PullSubscribeOptions.Builder().WithStream(StreamName).Build();
@@ -41,10 +40,9 @@ namespace vite_api.Classes
                 var sub = js.PullSubscribe(subject, pullOptions);
                 currentMessages.Add(sub.Fetch(BatchSize, 1000));
             });
-
+            
             return currentMessages.SelectMany(x => x).ToList().OrderBy(x => x.Subject).ToList();
         }
-        
         
         /// <summary>
         /// Gets an object representation of the contents of a specific message which the subscriber holds.
