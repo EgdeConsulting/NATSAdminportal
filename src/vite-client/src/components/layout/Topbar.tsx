@@ -4,7 +4,7 @@ import { EgdeLogo, NatsLetterIcon } from "assets";
 import { AddIcon } from "@chakra-ui/icons";
 
 function Topbar() {
-  const { colorMode, toggleColorMode } = useColorMode();
+  const { colorMode } = useColorMode();
   return (
     <Flex
       maxH={"100px"}

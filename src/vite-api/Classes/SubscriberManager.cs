@@ -56,12 +56,14 @@ namespace vite_api.Classes
         /// </summary>
         /// <param name="streamName">The name or identifier of the stream</param>
         /// <param name="sequenceNumber">The identification number of the message</param>
+        /// <param name="enableLogging">Suppresses logging of action when set to false. True by default.</param>
         /// <returns>A Dto containing the message payload and headers</returns>
         /// <exception cref="ArgumentException">If there isn't any message that matches the provided parameters</exception>
-        public MessageDataDto? GetSpecificMessage(string streamName, ulong sequenceNumber)
+        public MessageDataDto? GetSpecificMessage(string streamName, ulong sequenceNumber, bool enableLogging=true)
         {
-            _logger.LogInformation("{} > {} viewed message (stream, sequence number): {}, {}",
-            DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), UserAccount.Name, streamName, sequenceNumber);
+            if (enableLogging)
+                _logger.LogInformation("{} > {} viewed message (stream, sequence number): {}, {}",
+                DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), UserAccount.Name, streamName, sequenceNumber);
 
             var sub = _allSubscribers.FirstOrDefault(sub => sub.StreamName == streamName);
             if (sub != null)
@@ -69,18 +71,20 @@ namespace vite_api.Classes
 
             throw new ArgumentException("There exists no message that matches provided stream name and sequence number!");
         }
-
+        
         /// <summary>
         /// Gets an object representation of the payload of a specific message on a specific stream.
         /// </summary>
         /// <param name="streamName">The name or identifier of the stream</param>
         /// <param name="sequenceNumber">The identification number of the message</param>
+        /// <param name="enableLogging">Suppresses logging of action when set to false. True by default.</param>
         /// <returns>A Dto containing the message payload</returns>
         /// <exception cref="ArgumentException">If there isn't any message that matches the provided parameters</exception>
-        public MessagePayloadDto? GetSpecificPayload(string streamName, ulong sequenceNumber)
+        public MessagePayloadDto? GetSpecificPayload(string streamName, ulong sequenceNumber, bool enableLogging=true)
         {
-            _logger.LogInformation("{} > {} viewed payload (stream, sequence number): {}, {}",
-            DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), UserAccount.Name, streamName, sequenceNumber);
+            if (enableLogging)
+                _logger.LogInformation("{} > {} viewed payload (stream, sequence number): {}, {}",
+                    DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), UserAccount.Name, streamName, sequenceNumber);
 
             var sub = _allSubscribers.FirstOrDefault(sub => sub.StreamName == streamName);
             if (sub != null)

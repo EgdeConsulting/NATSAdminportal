@@ -23,4 +23,4 @@ const baseStyle = definePartsStyle({
   },
 });
 
-export const accordionStyles = defineMultiStyleConfig({ baseStyle });
+export const AccordionStyles = defineMultiStyleConfig({ baseStyle });
