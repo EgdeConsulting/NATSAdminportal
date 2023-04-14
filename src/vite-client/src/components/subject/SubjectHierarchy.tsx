@@ -15,8 +15,8 @@ import {
   HStack,
   ButtonGroup,
 } from "@chakra-ui/react";
-import { useState, useEffect, memo } from "react";
-import { LoadingSpinner } from "components";
+import { useState, useEffect, memo, useContext } from "react";
+import { LoadingSpinner, MsgViewContext } from "components";
 
 function SubjectHierarchy() {
   const [subjects, setSubjects] = useState<ISubject[]>([]);
@@ -29,6 +29,7 @@ function SubjectHierarchy() {
    * Value 1: Collapsed
    */
   const [accIndex, setAccIndex] = useState<number[]>([1]);
+  const viewContext = useContext(MsgViewContext);
   interface ISubject {
     name: string;
     subSubjects: ISubject[];
@@ -47,7 +48,8 @@ function SubjectHierarchy() {
       });
   }
 
-  // Alternating background color for each element.
+  // Consider adding alternating background color for each element
+
   const HierarchyList = memo(
     ({
       parent,
@@ -90,18 +92,25 @@ function SubjectHierarchy() {
       );
     }
   );
-
   return (
     <>
       {loading ? (
-        <Card variant={"outline"} w={"100%"} mt={"0 !important"}>
+        <Card variant={"outline"} w={"100%"} p={"absolute"} mt={"0 !important"}>
           <CardHeader>
             <Heading size={"md"}>Subject Hierarchy</Heading>
           </CardHeader>
           <LoadingSpinner />
         </Card>
       ) : (
-        <Card variant={"outline"} w={"100%"} mt={"0 !important"} pb={4}>
+        <Card
+          overflowY={"auto"}
+          variant={"outline"}
+          w={"100%"}
+          mt={"0 !important"}
+          p={"absolute"}
+          h={viewContext.isVisible ? "31vh" : "92vh"}
+          pb={4}
+        >
           <CardHeader>
             <HStack spacing={"auto"}>
               <Heading size={"md"}>Subject Hierarchy</Heading>
