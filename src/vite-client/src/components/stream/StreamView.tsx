@@ -61,7 +61,7 @@ function StreamView() {
           w={"100%"}
           mb={2}
         >
-          <VStack ml={5} divider={<StackDivider ml={5} w={"93%"} />}>
+          <VStack ml={5} divider={<StackDivider ml={5} w={"96%"} />}>
             <CardHeader w={"100%"} ml={-10}>
               <Flex>
                 <Heading size={"md"}>Stream Details</Heading>
@@ -91,7 +91,7 @@ function StreamView() {
                   mb={5}
                   align={"flex-start"}
                   spacing={6}
-                  divider={<StackDivider w={"93%"} />}
+                  divider={<StackDivider w={"96%"} />}
                 >
                   <Box>
                     <Heading size={"sm"} mb={2}>
