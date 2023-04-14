@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
 using vite_api.Classes;
@@ -53,11 +52,13 @@ public class VerifyPublisherTests
     public void Copy_Message_ReturnsSameMessageOnNewSubject()
     {
         var index = 0;
+        var sequenceNumber = (ulong) index + 1;
         var publisher = CreateDefaultPublisher();
         
         var expectedMessage = _fixture.MsgDataDtos[index]; 
-        publisher.CopyMessage(expectedMessage, _fixture.SecondarySubject);
-        var actualMessage = _fixture.GetAllJetStreamMessages(_fixture.SecondarySubject)[index];
+        publisher.CopyMessage(expectedMessage, sequenceNumber, _fixture.CopySubject);
+        var actualMessage = _fixture.GetAllJetStreamMessages(_fixture.CopySubject)[index];
+
 
         Assert.Equal(expectedMessage.Payload.Data, Encoding.UTF8.GetString(actualMessage.Data));
         Assert.Equal(_fixture.SecondarySubject, actualMessage.Subject);
@@ -66,11 +67,12 @@ public class VerifyPublisherTests
     [Fact]
     public void Copy_Message_ThrowsArgumentException()
     {
-        var index = 0;
+        var index = 1;
+        var sequenceNumber = (ulong) index + 1;
         var publisher = CreateDefaultPublisher();
         
         var expectedMessage = _fixture.MsgDataDtos[index];
-        void ActualAction() => publisher.CopyMessage(expectedMessage, _fixture.InvalidSubject);
+        void ActualAction() => publisher.CopyMessage(expectedMessage, sequenceNumber, _fixture.FaultySubject);
 
         Assert.Throws<ArgumentException>(ActualAction);
     }

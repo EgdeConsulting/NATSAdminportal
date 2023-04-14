@@ -44,6 +44,7 @@ function MsgView() {
       fetch("/api/specificMessage?" + queryString)
         .then((res) => res.json())
         .then((rawData) => {
+          // JSON-server returns a JSON-array, whilest the API returns a single JSON-object.
           let data = rawData instanceof Array ? rawData[0] : rawData;
           setMessageData(data);
           setLoading(false);
@@ -58,8 +59,15 @@ function MsgView() {
   return (
     <Stack w={"100%"} spacing={4}>
       {viewContext.isVisible && (
-        <Card variant={"outline"} h={"100%"} w={"100%"} mb={2}>
-          <VStack ml={5} divider={<StackDivider ml={5} w={"93%"} />}>
+        <Card
+          overflowY={"auto"}
+          h={"60vh"}
+          variant={"outline"}
+          p={"absolute"}
+          w={"100%"}
+          mb={2}
+        >
+          <VStack ml={5} divider={<StackDivider pr={3} w={"96%"} />}>
             <CardHeader w={"100%"} ml={-10}>
               <Flex>
                 <Heading size={"md"}>Message Details</Heading>
@@ -91,7 +99,7 @@ function MsgView() {
                 mb={5}
                 align={"flex-start"}
                 spacing={6}
-                divider={<StackDivider w={"93%"} />}
+                divider={<StackDivider w={"96%"} />}
               >
                 <Box>
                   <Heading size={"sm"} mb={2}>

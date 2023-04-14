@@ -23,9 +23,7 @@ function MsgPublishModal() {
     onClose: onCloseAC,
   } = useDisclosure();
 
-  const [headerList, setHeaderList] = useState<IHeaderProps[]>([
-    { name: "", value: "" },
-  ]);
+  const [headerList, setHeaderList] = useState<IHeaderProps[]>([]);
   const subjectInputRef = useRef<HTMLSelectElement>(null);
   const payloadInputRef = useRef<HTMLInputElement>(null);
 
@@ -62,7 +60,7 @@ function MsgPublishModal() {
     }).then((res) => {
       if (res.ok) {
         subjectInputRef.current!.value = "";
-        setHeaderList([{ name: "", value: "" }]);
+        setHeaderList([]);
         payloadInputRef.current!.value = "";
       } else {
         alert(
@@ -78,7 +76,7 @@ function MsgPublishModal() {
         margin={2}
         size={"md"}
         onClick={() => {
-          setHeaderList([{ name: "", value: "" }]);
+          setHeaderList([]);
           onOpen();
         }}
         aria-label="Publish a message"
@@ -106,7 +104,11 @@ function MsgPublishModal() {
             <Tooltip
               isDisabled={!buttonDisable}
               hasArrow
-              label="Select subject, provide at least 1 header and provide payload. ASCII characters only"
+              label={
+                headerList.length === 0
+                  ? "Select subject and provide payload. ASCII characters only"
+                  : "Select subject, provide payload and complete header name/value pair. ASCII characters only"
+              }
               aria-label="Reqs for publish"
             >
               <Button

@@ -4,6 +4,6 @@ const baseStyle = defineStyle({
   fontSize: "lg",
 });
 
-export const textStyles = defineStyleConfig({
+export const TextStyles = defineStyleConfig({
   baseStyle,
 });
