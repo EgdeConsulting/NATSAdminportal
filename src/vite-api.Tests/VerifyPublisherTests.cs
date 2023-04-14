@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
 using vite_api.Classes;
@@ -30,7 +29,7 @@ public class VerifyPublisherTests
         
         var expectedMessage = _fixture.MsgDataDtos[index]; 
         publisher.SendNewMessage(expectedMessage);
-        var actualMessage = _fixture.GetAllJetStreamMessages(_fixture.Subject)[index + 1];
+        var actualMessage = _fixture.GetAllJetStreamMessages(_fixture.PrimarySubject)[index + 1];
 
         Assert.Equal(expectedMessage.Payload.Data, Encoding.UTF8.GetString(actualMessage.Data));
         Assert.Equal(expectedMessage.Subject, actualMessage.Subject);
@@ -43,7 +42,7 @@ public class VerifyPublisherTests
         var publisher = CreateDefaultPublisher();
         
         var expectedMessage = _fixture.MsgDataDtos[index];
-        expectedMessage.Subject = _fixture.FaultySubject;
+        expectedMessage.Subject = _fixture.InvalidSubject;
         void ActualAction() => publisher.SendNewMessage(expectedMessage);
 
         Assert.Throws<ArgumentException>(ActualAction);
@@ -53,24 +52,27 @@ public class VerifyPublisherTests
     public void Copy_Message_ReturnsSameMessageOnNewSubject()
     {
         var index = 0;
+        var sequenceNumber = (ulong) index + 1;
         var publisher = CreateDefaultPublisher();
         
         var expectedMessage = _fixture.MsgDataDtos[index]; 
-        publisher.CopyMessage(expectedMessage, _fixture.CopySubject);
+        publisher.CopyMessage(expectedMessage, sequenceNumber, _fixture.CopySubject);
         var actualMessage = _fixture.GetAllJetStreamMessages(_fixture.CopySubject)[index];
 
+
         Assert.Equal(expectedMessage.Payload.Data, Encoding.UTF8.GetString(actualMessage.Data));
-        Assert.Equal(_fixture.CopySubject, actualMessage.Subject);
+        Assert.Equal(_fixture.SecondarySubject, actualMessage.Subject);
     }
     
     [Fact]
     public void Copy_Message_ThrowsArgumentException()
     {
-        var index = 0;
+        var index = 1;
+        var sequenceNumber = (ulong) index + 1;
         var publisher = CreateDefaultPublisher();
         
         var expectedMessage = _fixture.MsgDataDtos[index];
-        void ActualAction() => publisher.CopyMessage(expectedMessage, _fixture.FaultySubject);
+        void ActualAction() => publisher.CopyMessage(expectedMessage, sequenceNumber, _fixture.FaultySubject);
 
         Assert.Throws<ArgumentException>(ActualAction);
     }

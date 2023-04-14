@@ -8,6 +8,11 @@ import {
 } from "components";
 
 function StreamTable() {
+  /**
+   * This constant defines the configuration of the paginated table.
+   * The “accessor” property is equal to a property contained in a data object.
+   * More information at: https://tanstack.com/table/v8/docs/guide/column-defs
+   */
   const columns = [
     {
       Header: "StreamTable",
@@ -50,10 +55,6 @@ function StreamTable() {
   const [isIntervalRunning, setIsIntervalRunning] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    getStreams();
-  }, [!streams]);
-
   function getStreams() {
     fetch("/api/allStreams").then((res) => {
       if (res.ok) {
@@ -69,6 +70,12 @@ function StreamTable() {
     });
   }
 
+  /**
+   * Starting an interval which frequently send new API-requests to get
+   * the newest data. Only one interval is being started via the use of
+   * the “isIntervalRunning” state. The interval is also being discarded
+   * as soon as the component dismounts.
+   */
   useEffect(() => {
     setIsIntervalRunning(true);
     const interval = setInterval(getStreams, 5000);

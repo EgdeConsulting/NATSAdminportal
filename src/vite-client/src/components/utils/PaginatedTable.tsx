@@ -5,6 +5,7 @@ import {
   useGlobalFilter,
 } from "react-table";
 import {
+  Box,
   Table,
   Thead,
   Tbody,
@@ -22,8 +23,6 @@ import {
   NumberInputStepper,
   NumberIncrementStepper,
   NumberDecrementStepper,
-  FormLabel,
-  FormControl,
 } from "@chakra-ui/react";
 import {
   ArrowRightIcon,
@@ -33,16 +32,14 @@ import {
 } from "@chakra-ui/icons";
 import { GlobalFilter, DefaultFilterForColumn } from "components";
 
-{
-  /*
-  https://codesandbox.io/s/react-table-chakra-ui-pagination-example-forked-e9y9he?file=/src/App.js
-  https://stackoverflow.com/questions/64608974/react-table-pagination-properties-doesnt-exist-on-type-tableinstance
-  https://www.bacancytechnology.com/blog/react-table-tutorial
-  https://github.com/TanStack/table/issues/1825
-  https://tanstack.com/table/v8/docs/api/features/filters?from=reactTableV7&original=https://react-table-v7.tanstack.com/docs/api/useFilters
-  */
-}
-
+/**
+ * The following code is based on these sources:
+ * https://codesandbox.io/s/react-table-chakra-ui-pagination-example-forked-e9y9he?file=/src/App.js
+ * https://stackoverflow.com/questions/64608974/react-table-pagination-properties-doesnt-exist-on-type-tableinstance
+ * https://www.bacancytechnology.com/blog/react-table-tutorial
+ * https://github.com/TanStack/table/issues/1825
+ * https://tanstack.com/table/v8/docs/api/features/filters?from=reactTableV7&original=https://react-table-v7.tanstack.com/docs/api/useFilters
+ */
 function PaginatedTable(props: { columns: any[]; data: any[] }) {
   const data = props.data;
   const columns = props.columns;
@@ -62,7 +59,6 @@ function PaginatedTable(props: { columns: any[]; data: any[] }) {
     previousPage,
     setPageSize,
     state: { pageIndex, pageSize, globalFilter },
-    visibleColumns,
     setGlobalFilter,
     preGlobalFilteredRows,
   } = useTable(
@@ -73,6 +69,7 @@ function PaginatedTable(props: { columns: any[]; data: any[] }) {
       defaultColumn: { Filter: DefaultFilterForColumn },
       data,
       initialState: { pageIndex: 0, pageSize: 25 },
+      // Table will always reset to page 1 when new data is loaded, unless autoResetPage is false.
       autoResetPage: false,
     },
     useFilters,
@@ -90,15 +87,21 @@ function PaginatedTable(props: { columns: any[]; data: any[] }) {
                 {headerGroup.headers.map((column: any) => (
                   <Th {...column.getHeaderProps()}>
                     {headerGroup.headers.length == 1 ? (
-                      <GlobalFilter
-                        preGlobalFilteredRows={preGlobalFilteredRows}
-                        globalFilter={globalFilter}
-                        setGlobalFilter={setGlobalFilter}
-                      />
+                      <Box onFocus={() => gotoPage(0)}>
+                        <GlobalFilter
+                          preGlobalFilteredRows={preGlobalFilteredRows}
+                          globalFilter={globalFilter}
+                          setGlobalFilter={setGlobalFilter}
+                        />
+                      </Box>
                     ) : (
                       column.render("Header")
                     )}
-                    {column.canFilter ? column.render("Filter") : null}
+                    {column.canFilter ? (
+                      <Box onFocus={() => gotoPage(0)}>
+                        {column.render("Filter")}
+                      </Box>
+                    ) : null}
                   </Th>
                 ))}
               </Tr>

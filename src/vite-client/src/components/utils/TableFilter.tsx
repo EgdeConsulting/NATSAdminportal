@@ -1,9 +1,11 @@
-// https://github.com/architanayak/react-table-demo/blob/main/src/Filter.js
-
 import { useMemo, useState } from "react";
 import { useAsyncDebounce } from "react-table";
 import { Input, Select, FormControl, FormLabel } from "@chakra-ui/react";
 
+/**
+ * The following code is based on this source:
+ * https://github.com/architanayak/react-table-demo/blob/main/src/Filter.js
+ */
 export function GlobalFilter(props: {
   preGlobalFilteredRows: any;
   globalFilter: any;
