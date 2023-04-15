@@ -46,7 +46,7 @@ public class MockServerFixture : IDisposable, ICollectionFixture<MockServerFixtu
         // is being setup and started. The NATS-server runs only during testing in a
         // local process. 
         _process.StartInfo.FileName = @"config/nats-server.exe";
-        //_process.StartInfo.Arguments = @"-c config/server.conf";
+        _process.StartInfo.Arguments = @"-c config/server.conf";
         _process.Start();
         // Give the server enough time to start. 
         Thread.Sleep(3000);
@@ -133,6 +133,6 @@ public class MockServerFixture : IDisposable, ICollectionFixture<MockServerFixtu
     
     static IConnection NatsConnectionFactory(IServiceProvider provider)
     {
-        return new ConnectionFactory().CreateConnection("localhost:4222");
+        return new ConnectionFactory().CreateConnection("localhost:9000");
     }
 }
