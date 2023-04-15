@@ -133,6 +133,6 @@ public class MockServerFixture : IDisposable, ICollectionFixture<MockServerFixtu
     
     static IConnection NatsConnectionFactory(IServiceProvider provider)
     {
-        return new ConnectionFactory().CreateConnection("127.0.0.1:9000");
+        return new ConnectionFactory().CreateConnection("localhost:9000");
     }
 }
