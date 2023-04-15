@@ -49,7 +49,7 @@ public class MockServerFixture : IDisposable, ICollectionFixture<MockServerFixtu
         _process.StartInfo.Arguments = @"-c config/server.conf";
         _process.Start();
         // Give the server enough time to start. 
-        Thread.Sleep(10000);
+        Thread.Sleep(30000);
         
         _services.AddTransient(NatsConnectionFactory);
         Provider = _services.BuildServiceProvider();
