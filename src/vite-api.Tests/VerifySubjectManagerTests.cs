@@ -2,12 +2,12 @@
 
 namespace vite_api.Tests;
 
-[UsesVerify, Collection("JetStream collection")]
+[UsesVerify, Collection("MockServer collection")]
 public class VerifySubjectManagerTests
 {
-    private readonly JetStreamFixture _fixture;
+    private readonly MockServerFixture _fixture;
 
-    public VerifySubjectManagerTests(JetStreamFixture fixture)
+    public VerifySubjectManagerTests(MockServerFixture fixture)
     {
         _fixture = fixture;
     }

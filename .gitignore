@@ -1,21 +1,18 @@
-# Logs
-logs
-.log
-npm-debug.log
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
+# # Logs
+# logs
+# .log
+# npm-debug.log
+# yarn-debug.log*
+# yarn-error.log*
+# pnpm-debug.log*
+# lerna-debug.log*
 
-src/vite-client/node_modules
-src/vite-client/dist
-src/vite-client/dist-ssr
-.local
+# src/vite-client/node_modules
+# src/vite-client/dist
+# src/vite-client/dist-ssr
+# .local
 
 # Editor directories and files
-.vscode/
-!.vscode/extensions.json
-.idea
 .DS_Store
 *.suo
 .ntvs
@@ -26,6 +23,14 @@ src/vite-client/dist-ssr
 # Debug directory
 src/vite-api/bin
 src/vite-api/obj
+src/vite-api.Tests/*
+!src/vite-api.Tests/bin/
+src/vite-api.Tests/bin/*
+!src/vite-api.Tests/bin/Debug/
+src/vite-api.Tests/bin/Debug/*
+!src/vite-api.Tests/bin/Debug/net7.0/
+src/vite-api.Tests/bin/Debug/net7.0/*
+!src/vite-api.Tests/bin/Debug/net7.0/config/
 
 # JSON-server 
 src/json-server/node_modules
@@ -33,12 +38,12 @@ src/json-server/node_modules
 # Build Folder
 src/prod
 
-# Created by https://www.toptal.com/developers/gitignore/api/visualstudio,visualstudiocode,rider,dotnetcore
-# Edit at https://www.toptal.com/developers/gitignore?templates=visualstudio,visualstudiocode,rider,dotnetcore
+# # Created by https://www.toptal.com/developers/gitignore/api/visualstudio,visualstudiocode,rider,dotnetcore
+# # Edit at https://www.toptal.com/developers/gitignore?templates=visualstudio,visualstudiocode,rider,dotnetcore
 
 ### DotnetCore ###
 # .NET Core build folders
-bin/
+# bin/
 obj/
 
 # Common node modules locations
@@ -50,6 +55,7 @@ obj/
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
 
 # User-specific stuff
+.idea
 .idea/**/workspace.xml
 .idea/**/tasks.xml
 .idea/**/usage.statistics.xml
@@ -125,7 +131,7 @@ fabric.properties
 .idea/caches/build_file_checksums.ser
 
 ### VisualStudioCode ###
-.vscode/*
+.vscode/
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
@@ -162,21 +168,21 @@ fabric.properties
 # Mono auto generated files
 mono_crash.*
 
-# Build results
-[Dd]ebug/
-[Dd]ebugPublic/
-[Rr]elease/
-[Rr]eleases/
-x64/
-x86/
-[Ww][Ii][Nn]32/
-[Aa][Rr][Mm]/
-[Aa][Rr][Mm]64/
-bld/
-[Bb]in/
-[Oo]bj/
-[Ll]og/
-[Ll]ogs/
+# # Build results
+# [Dd]ebug/
+# [Dd]ebugPublic/
+# [Rr]elease/
+# [Rr]eleases/
+# x64/
+# x86/
+# [Ww][Ii][Nn]32/
+# [Aa][Rr][Mm]/
+# [Aa][Rr][Mm]64/
+# bld/
+# [Bb]in/
+# [Oo]bj/
+# [Ll]og/
+# [Ll]ogs/
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
