@@ -3,12 +3,12 @@ using vite_api.Classes;
 
 namespace vite_api.Tests;
 
-[UsesVerify, Collection("JetStream collection")]
+[UsesVerify, Collection("MockServer collection")]
 public class VerifyJetStreamSubscriberTests
 {
-    private readonly JetStreamFixture _fixture;
+    private readonly MockServerFixture _fixture;
 
-    public VerifyJetStreamSubscriberTests(JetStreamFixture fixture)
+    public VerifyJetStreamSubscriberTests(MockServerFixture fixture)
     {
         _fixture = fixture;
     }

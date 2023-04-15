@@ -8,7 +8,6 @@ RUN dotnet restore
 
 COPY /src/vite-api .
 RUN dotnet build -c Release
-# RUN dotnet test 
 RUN dotnet publish -c Release -o /dist
 
 

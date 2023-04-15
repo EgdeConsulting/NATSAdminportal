@@ -4,13 +4,13 @@ using Xunit.Abstractions;
 
 namespace vite_api.Tests;
 
-[UsesVerify, Collection("JetStream collection")]
+[UsesVerify, Collection("MockServer collection")]
 public class VerifySubjectManagerTests
 {
-    
-    private readonly JetStreamFixture _fixture;
+    private readonly MockServerFixture _fixture;
+
     private readonly ITestOutputHelper _testOutputHelper;
-    public VerifySubjectManagerTests(JetStreamFixture fixture, ITestOutputHelper testOutputHelper)
+    public VerifySubjectManagerTests(MockServerFixture fixture, ITestOutputHelper testOutputHelper)
     {
         _fixture = fixture;
         _testOutputHelper = testOutputHelper;
@@ -26,13 +26,14 @@ public class VerifySubjectManagerTests
     {
         var manager = CreateDefaultSubjectManager();
 
-        var expectedSubjects = _fixture.ValidSubjects;
+        var expectedSubjects = _fixture.ValidSubjects.ToList();
         var actualSubjects = manager.GetAllSubjects();
         
         // Can't check if expected and actual subjects are equal, because actual subjects
         // contains a lot of irrelevant subjects. This is due to the use of a public NATS-server
         // in the JetStream fixture. 
-        Assert.All(expectedSubjects, item => Assert.Contains(item, actualSubjects));
+        //Assert.All(expectedSubjects, item => Assert.Contains(item, actualSubjects));
+        Assert.Equal(expectedSubjects, actualSubjects);
     }
     
     [Fact]
