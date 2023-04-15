@@ -5,12 +5,12 @@ using vite_api.Classes;
 
 namespace vite_api.Tests;
 
-[UsesVerify, Collection("JetStream collection")]
+[UsesVerify, Collection("MockServer collection")]
 public class VerifyPublisherTests
 {
-    private readonly JetStreamFixture _fixture;
+    private readonly MockServerFixture _fixture;
 
-    public VerifyPublisherTests(JetStreamFixture fixture)
+    public VerifyPublisherTests(MockServerFixture fixture)
     {
         _fixture = fixture;
     }
@@ -56,8 +56,8 @@ public class VerifyPublisherTests
         var publisher = CreateDefaultPublisher();
         
         var expectedMessage = _fixture.MsgDataDtos[index]; 
-        publisher.CopyMessage(expectedMessage, sequenceNumber, _fixture.CopySubject);
-        var actualMessage = _fixture.GetAllJetStreamMessages(_fixture.CopySubject)[index];
+        publisher.CopyMessage(expectedMessage, sequenceNumber, _fixture.SecondarySubject);
+        var actualMessage = _fixture.GetAllJetStreamMessages(_fixture.SecondarySubject)[index];
 
 
         Assert.Equal(expectedMessage.Payload.Data, Encoding.UTF8.GetString(actualMessage.Data));
@@ -72,7 +72,7 @@ public class VerifyPublisherTests
         var publisher = CreateDefaultPublisher();
         
         var expectedMessage = _fixture.MsgDataDtos[index];
-        void ActualAction() => publisher.CopyMessage(expectedMessage, sequenceNumber, _fixture.FaultySubject);
+        void ActualAction() => publisher.CopyMessage(expectedMessage, sequenceNumber, _fixture.InvalidSubject);
 
         Assert.Throws<ArgumentException>(ActualAction);
     }
