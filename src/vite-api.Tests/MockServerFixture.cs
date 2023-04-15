@@ -45,8 +45,8 @@ public class MockServerFixture : IDisposable, ICollectionFixture<MockServerFixtu
         // Since on official test framework for NATS exists, a rudimentary mock-server
         // is being setup and started. The NATS-server runs only during testing in a
         // local process. 
-        _process.StartInfo.FileName = @"./config/nats-server.exe";
-        _process.StartInfo.Arguments = @"-c ./config/server.conf";
+        _process.StartInfo.FileName = @"config/nats-server.exe";
+        _process.StartInfo.Arguments = @"-c config/server.conf";
         _process.Start();
         // Give the server enough time to start. 
         Thread.Sleep(3000);
