@@ -19,7 +19,7 @@ public class VerifyJetStreamSubscriberTests
     }
     
     [Fact]
-    public void Get_AllMessages_ReturnsSameCount()
+    public void GetMessages_ReturnsSameCount()
     {
         var subscriber = CreateDefaultJetStreamSubscriber();
 
@@ -30,7 +30,7 @@ public class VerifyJetStreamSubscriberTests
     }
     
     [Fact]
-    public void Get_SpecificPayload_ReturnsSamePayload()
+    public void GetPayload_ReturnsSamePayload()
     {
         const ulong sequenceNumber = 1;
         var subscriber = CreateDefaultJetStreamSubscriber();
@@ -42,7 +42,7 @@ public class VerifyJetStreamSubscriberTests
     }
 
     [Fact]
-    public void Get_SpecificPayload_ThrowsInvalidOperationException()
+    public void GetPayload_ThrowsInvalidOperationException()
     {
         const ulong sequenceNumber = 100;
         var subscriber = CreateDefaultJetStreamSubscriber();
@@ -53,7 +53,7 @@ public class VerifyJetStreamSubscriberTests
     }
     
     [Fact]
-    public void Get_SpecificMessage_ReturnsSameMessage()
+    public void GetMessageData_ReturnsSameData()
     {
         const ulong sequenceNumber = 2;
         var subscriber = CreateDefaultJetStreamSubscriber();
@@ -65,7 +65,7 @@ public class VerifyJetStreamSubscriberTests
     }
     
     [Fact]
-    public void Get_SpecificMessage_ThrowsInvalidOperationException()
+    public void GetMessageData_ThrowsInvalidOperationException()
     {
         const ulong sequenceNumber = 100;
         var subscriber = CreateDefaultJetStreamSubscriber();
