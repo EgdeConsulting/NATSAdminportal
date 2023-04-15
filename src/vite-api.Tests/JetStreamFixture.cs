@@ -1,6 +1,6 @@
-﻿using System.Text;
+﻿using System.Diagnostics;
+using System.Text;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using NATS.Client;
 using NATS.Client.JetStream;
 using vite_api.Dto;
@@ -11,7 +11,8 @@ namespace vite_api.Tests;
 public class JetStreamFixture : IDisposable, ICollectionFixture<JetStreamFixture>
 {
     private readonly ServiceCollection _services = new();
-    private const string Url = "nats://demo.nats.io";
+    private readonly Process _process = new();
+
     private readonly List<string[]> _headers = new()
     {
         new[] { "Header1", "Value1" }, 
@@ -30,20 +31,40 @@ public class JetStreamFixture : IDisposable, ICollectionFixture<JetStreamFixture
         "A payload that is not over 200 characters.",
         "The third payload."
     };
-    public string StreamName => "xUnitStream";
-    public string PrimarySubject => "xUnitPrimarySubject";
-    public string SecondarySubject => "xUnitSecondarySubject";
-    public string InvalidSubject => "xUnitInvalidSubject";
+    public string StreamName => "Stream";
+    public string PrimarySubject => "PrimarySubject";
+    public string SecondarySubject => "SecondarySubject";
+    public string InvalidSubject => "InvalidSubject";
     public string[] ValidSubjects { get; }
     public List<MessageDataDto> MsgDataDtos { get; }
     public ServiceProvider Provider { get; }
 
     public JetStreamFixture()
     {
+        // https://github.com/nats-io/nats.net/issues/426
+        // Since on official test framework for NATS exists, a rudimentary mock-server
+        // is being setup and started. The NATS-server runs only during testing in a
+        // local process. 
+        _process.StartInfo.FileName = @".\config\nats-server.exe";
+        _process.StartInfo.Arguments = @"-c .\config\server.conf";
+        _process.Start();
+        // Give the server enough time to start. 
+        Thread.Sleep(3000);
+        
         _services.AddTransient(NatsConnectionFactory);
         Provider = _services.BuildServiceProvider();
         
-        ValidSubjects = new[] { PrimarySubject, SecondarySubject, PrimarySubject + ".A.1", PrimarySubject + ".A.2", SecondarySubject + ".B.1", SecondarySubject + ".C.1", SecondarySubject + ".C.2" };
+        ValidSubjects = new[]
+        {
+            PrimarySubject,
+            PrimarySubject + ".A.1", 
+            PrimarySubject + ".A.2", 
+            SecondarySubject, 
+            SecondarySubject + ".B.1", 
+            SecondarySubject + ".C.1", 
+            SecondarySubject + ".C.2"
+        };
+        
         MsgDataDtos = InitializeTestMessageDataDtos();
 
         using var connection = Provider.GetRequiredService<IConnection>();
@@ -107,13 +128,11 @@ public class JetStreamFixture : IDisposable, ICollectionFixture<JetStreamFixture
     
     public void Dispose()
     {
-        using var connection = Provider.GetRequiredService<IConnection>();
-        var jsm = connection.CreateJetStreamManagementContext();
-        jsm.DeleteStream(StreamName);
+        _process.Kill();
     }
     
     static IConnection NatsConnectionFactory(IServiceProvider provider)
     {
-        return new ConnectionFactory().CreateConnection(Url);
+        return new ConnectionFactory().CreateConnection("127.0.0.1:9000");
     }
 }

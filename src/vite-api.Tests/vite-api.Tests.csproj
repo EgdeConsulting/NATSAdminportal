@@ -28,4 +28,9 @@
       <ProjectReference Include="..\vite-api\vite-api.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Content Include="bin\Debug\net7.0\config\nats-server.exe" />
+      <Content Include="bin\Debug\net7.0\config\server.conf" />
+    </ItemGroup>
+
 </Project>
