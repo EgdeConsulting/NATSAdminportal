@@ -72,7 +72,7 @@ namespace vite_api.Classes
             {
                 return sub!.GetMessageData(sequenceNumber);
             }
-            catch (NullReferenceException e)
+            catch (NullReferenceException)
             {
                 throw new NullReferenceException(
                     "There exists no message that matches provided stream name!");
@@ -104,7 +104,7 @@ namespace vite_api.Classes
             {
                 return sub!.GetPayload(sequenceNumber);
             }
-            catch (NullReferenceException e)
+            catch (NullReferenceException)
             {
                 throw new NullReferenceException(
                     "There exists no message that matches provided stream name!");

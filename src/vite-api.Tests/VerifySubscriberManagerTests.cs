@@ -4,12 +4,12 @@ using vite_api.Classes;
 
 namespace vite_api.Tests;
 
-[UsesVerify, Collection("JetStream collection")]
+[UsesVerify, Collection("MockServer collection")]
 public class VerifySubscriberManagerTests
 {
-    private readonly JetStreamFixture _fixture;
+    private readonly MockServerFixture _fixture;
 
-    public VerifySubscriberManagerTests(JetStreamFixture fixture)
+    public VerifySubscriberManagerTests(MockServerFixture fixture)
     {
         _fixture = fixture;
     }
@@ -19,26 +19,40 @@ public class VerifySubscriberManagerTests
         var loggerMock = new Mock<ILogger<SubscriberManager>>();
         return new SubscriberManager(loggerMock.Object, _fixture.Provider);
     }
+
     [Fact]
     public void GetSpecificPayload_ReturnsSameObject()
     {
-        var index = _fixture.MsgDataDtos.Count;
+        var index = 0;
         var manager = CreateDefaultSubscriberManager();
         
-        var expectedPayload = _fixture.MsgDataDtos[index - 1].Payload;
-        var actualPayload = manager.GetSpecificPayload(_fixture.StreamName, (ulong) index);
+        var expectedPayload = _fixture.MsgDataDtos[index].Payload;
+        var actualPayload = manager.GetSpecificPayload(_fixture.StreamName, (ulong) index + 1);
         
         Assert.Equivalent(expectedPayload, actualPayload);
     }
     
     [Fact]
-    public void GetSpecificMessage_ReturnsSameObject()
+    public void GetSpecificMessage_ShortPayload_ReturnsSameObject()
     {
-        var index = _fixture.MsgDataDtos.Count;
+        var index = 1;
         var manager = CreateDefaultSubscriberManager();
         
-        var expectedMessage = _fixture.MsgDataDtos[index - 1];
-        var actualMessage = manager.GetSpecificMessage(_fixture.StreamName, (ulong) index);
+        var expectedMessage = _fixture.MsgDataDtos[index];
+        var actualMessage = manager.GetSpecificMessage(_fixture.StreamName, (ulong) index + 1);
+        
+        Assert.Equivalent(expectedMessage, actualMessage);
+    }
+
+    [Fact]
+    public void GetSpecificMessage_LongPayload_ReturnsSameObject()
+    {
+        var index = 0;
+        var manager = CreateDefaultSubscriberManager();
+        
+        var expectedMessage = _fixture.MsgDataDtos[index];
+        var actualMessage = manager.GetSpecificMessage(_fixture.StreamName, (ulong) index + 1);
+        actualMessage!.Payload.Data = manager.GetSpecificPayload(_fixture.StreamName, (ulong) index + 1)!.Data;
         
         Assert.Equivalent(expectedMessage, actualMessage);
     }
@@ -49,21 +63,19 @@ public class VerifySubscriberManagerTests
         var index = _fixture.MsgDataDtos.Count;
         var manager = CreateDefaultSubscriberManager();
 
-        const string streamName = "faultyStream";
-        const ulong sequenceNum = 112;
-        //Tests faulty stream name
-        void ActualAction() => manager.GetSpecificMessage(streamName, sequenceNum);
+        void ActualAction() => manager.GetSpecificMessage("invalidStream", 100);
+
         Assert.Throws<NullReferenceException>(ActualAction);
     }
+
     [Fact]
     public void GetSpecificMessage_ThrowsInvalidOperationException()
     {
         var index = _fixture.MsgDataDtos.Count;
         var manager = CreateDefaultSubscriberManager();
-        
-        const ulong sequenceNum = 112;
-        //Tests faulty sequence number
-        void ActualAction() => manager.GetSpecificMessage(_fixture.StreamName, sequenceNum);
+
+        void ActualAction() => manager.GetSpecificMessage(_fixture.StreamName, 100);
+
         Assert.Throws<InvalidOperationException>(ActualAction);
     }
 }
