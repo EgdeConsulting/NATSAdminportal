@@ -5,12 +5,12 @@ using vite_api.Classes;
 
 namespace vite_api.Tests;
 
-[UsesVerify, Collection("JetStream collection")]
+[UsesVerify, Collection("MockServer collection")]
 public class VerifyPublisherTests
 {
-    private readonly JetStreamFixture _fixture;
+    private readonly MockServerFixture _fixture;
 
-    public VerifyPublisherTests(JetStreamFixture fixture)
+    public VerifyPublisherTests(MockServerFixture fixture)
     {
         _fixture = fixture;
     }
@@ -22,13 +22,13 @@ public class VerifyPublisherTests
     }
 
     [Fact]
-    public void Send_Message_ReturnsSameMessage()
+    public void SendMessage_ReturnsSameMessage()
     {
         var index = _fixture.MsgDataDtos.Count - 1;
         var publisher = CreateDefaultPublisher();
 
         var expectedMessage = _fixture.MsgDataDtos[index];
-        publisher.SendNewMessage(expectedMessage);
+        publisher.SendMessage(expectedMessage);
         var actualMessage = _fixture.GetAllJetStreamMessages(_fixture.PrimarySubject)[index + 1];
 
         Assert.Equal(expectedMessage.Payload.Data, Encoding.UTF8.GetString(actualMessage.Data));
@@ -36,20 +36,20 @@ public class VerifyPublisherTests
     }
 
     [Fact]
-    public void Send_Message_ThrowsArgumentException()
+    public void SendMessage_ThrowsArgumentException()
     {
         var index = _fixture.MsgDataDtos.Count - 1;
         var publisher = CreateDefaultPublisher();
 
         var expectedMessage = _fixture.MsgDataDtos[index];
         expectedMessage.Subject = _fixture.InvalidSubject;
-        void ActualAction() => publisher.SendNewMessage(expectedMessage);
+        void ActualAction() => publisher.SendMessage(expectedMessage);
 
         Assert.Throws<ArgumentException>(ActualAction);
     }
 
     [Fact]
-    public void Copy_Message_ReturnsSameMessageOnNewSubject()
+    public void CopyMessage_ReturnsSameMessageOnNewSubject()
     {
         var index = 0;
         var sequenceNumber = (ulong)index + 1;
@@ -65,7 +65,7 @@ public class VerifyPublisherTests
     }
 
     [Fact]
-    public void Copy_Message_ThrowsArgumentException()
+    public void CopyMessage_ThrowsArgumentException()
     {
         var index = 1;
         var sequenceNumber = (ulong)index + 1;

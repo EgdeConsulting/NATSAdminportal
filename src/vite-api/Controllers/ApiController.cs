@@ -68,7 +68,7 @@ public class ApiController : ControllerBase
     {
         try
         {
-            _publisher.SendNewMessage(msgDto);
+            _publisher.SendMessage(msgDto);
             return Ok();
         }
         catch (ArgumentException e)

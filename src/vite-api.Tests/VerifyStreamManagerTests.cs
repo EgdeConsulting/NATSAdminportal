@@ -5,13 +5,13 @@ using vite_api.Classes;
 
 namespace vite_api.Tests;
 
-[UsesVerify, Collection("JetStream collection")]
+[UsesVerify, Collection("MockServer collection")]
 
 public class VerifyStreamManagerTests
 {
-    private readonly JetStreamFixture _fixture;
+    private readonly MockServerFixture _fixture;
 
-    public VerifyStreamManagerTests(JetStreamFixture fixture)
+    public VerifyStreamManagerTests(MockServerFixture fixture)
     {
         _fixture = fixture;
     }
