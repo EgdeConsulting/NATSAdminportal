@@ -57,13 +57,13 @@ public class MockServerFixture : IDisposable, ICollectionFixture<MockServerFixtu
         ValidSubjects = new[]
         {
             PrimarySubject, 
+            SecondarySubject,
             PrimarySubject + ".A",  
             PrimarySubject + ".A.1", 
-            PrimarySubject + ".A.2", 
-            SecondarySubject,
-            SecondarySubject + ".B", 
+            PrimarySubject + ".A.2",
+            SecondarySubject + ".B",
+            SecondarySubject + ".B.1",
             SecondarySubject + ".C", 
-            SecondarySubject + ".B.1", 
             SecondarySubject + ".C.1", 
             SecondarySubject + ".C.2"
         };
