@@ -25,22 +25,22 @@ public class VerifySubscriberManagerTests
     {
         var index = 0;
         var manager = CreateDefaultSubscriberManager();
-        
+
         var expectedPayload = _fixture.MsgDataDtos[index].Payload;
-        var actualPayload = manager.GetSpecificPayload(_fixture.StreamName, (ulong) index + 1);
-        
+        var actualPayload = manager.GetSpecificPayload(_fixture.StreamName, (ulong)index + 1);
+
         Assert.Equivalent(expectedPayload, actualPayload);
     }
-    
+
     [Fact]
     public void GetSpecificMessage_ShortPayload_ReturnsSameObject()
     {
         var index = 1;
         var manager = CreateDefaultSubscriberManager();
-        
+
         var expectedMessage = _fixture.MsgDataDtos[index];
-        var actualMessage = manager.GetSpecificMessage(_fixture.StreamName, (ulong) index + 1);
-        
+        var actualMessage = manager.GetSpecificMessage(_fixture.StreamName, (ulong)index + 1);
+
         Assert.Equivalent(expectedMessage, actualMessage);
     }
 
@@ -49,11 +49,11 @@ public class VerifySubscriberManagerTests
     {
         var index = 0;
         var manager = CreateDefaultSubscriberManager();
-        
+
         var expectedMessage = _fixture.MsgDataDtos[index];
-        var actualMessage = manager.GetSpecificMessage(_fixture.StreamName, (ulong) index + 1);
-        actualMessage!.Payload.Data = manager.GetSpecificPayload(_fixture.StreamName, (ulong) index + 1)!.Data;
-        
+        var actualMessage = manager.GetSpecificMessage(_fixture.StreamName, (ulong)index + 1);
+        actualMessage!.Payload.Data = manager.GetSpecificPayload(_fixture.StreamName, (ulong)index + 1)!.Data;
+
         Assert.Equivalent(expectedMessage, actualMessage);
     }
 
@@ -63,7 +63,7 @@ public class VerifySubscriberManagerTests
         var index = _fixture.MsgDataDtos.Count;
         var manager = CreateDefaultSubscriberManager();
 
-        void ActualAction() => manager.GetSpecificMessage("invalidStream", 100);
+        void ActualAction() => manager.GetSpecificMessage("InvalidStream", 100);
 
         Assert.Throws<NullReferenceException>(ActualAction);
     }
