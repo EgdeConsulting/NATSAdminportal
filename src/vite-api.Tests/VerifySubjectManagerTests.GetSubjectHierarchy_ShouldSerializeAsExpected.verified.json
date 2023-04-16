@@ -1,0 +1,42 @@
+﻿[
+  {
+    "name": "PrimarySubject",
+    "subSubjects": [
+      {
+        "name": "A",
+        "subSubjects": [
+          {
+            "name": "1"
+          },
+          {
+            "name": "2"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "SecondarySubject",
+    "subSubjects": [
+      {
+        "name": "B",
+        "subSubjects": [
+          {
+            "name": "1"
+          }
+        ]
+      },
+      {
+        "name": "C",
+        "subSubjects": [
+          {
+            "name": "1"
+          },
+          {
+            "name": "2"
+          }
+        ]
+      }
+    ]
+  }
+]

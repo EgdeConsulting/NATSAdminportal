@@ -1,13 +1,14 @@
 ﻿using vite_api.Classes;
+using System.Text.Json;
 
 namespace vite_api.Tests;
 
-[UsesVerify, Collection("JetStream collection")]
+[UsesVerify, Collection("MockServer collection")]
 public class VerifySubjectManagerTests
 {
-    private readonly JetStreamFixture _fixture;
-
-    public VerifySubjectManagerTests(JetStreamFixture fixture)
+    private readonly MockServerFixture _fixture;
+    
+    public VerifySubjectManagerTests(MockServerFixture fixture)
     {
         _fixture = fixture;
     }
@@ -18,27 +19,37 @@ public class VerifySubjectManagerTests
     }
     
     [Fact]
-    public void Get_AllSubjects_ReturnsSameSubjects()
+    public void GetAllSubjects_InSortedOrder_ReturnsSameSubjects()
     {
         var manager = CreateDefaultSubjectManager();
-
-        var expectedSubjects = _fixture.ValidSubjects;
-        var actualSubjects = manager.GetAllSubjects();
+        var validSubjects = _fixture.ValidSubjects.ToList();
+        validSubjects.Sort();
         
-        // Can't check if expected and actual subjects are equal, because actual subjects
-        // contains a lot of irrelevant subjects. This is due to the use of a public NATS-server
-        // in the JetStream fixture. 
-        Assert.All(expectedSubjects, item => Assert.Contains(item, actualSubjects));
+        var expectedSubjects = validSubjects;
+        var actualSubjects = manager.GetAllSubjects();
+
+        Assert.Equal(expectedSubjects, actualSubjects);
     }
     
     [Fact]
-    public void Get_SubjectHierarchy_ReturnsSameObject()
+    public void GetAllSubjects_InUnsortedOrder_ReturnsNotEqual()
     {
         var manager = CreateDefaultSubjectManager();
 
-        var expectedSubjects = _fixture.ValidSubjects;
-        var actualSubjects = manager.GetSubjectHierarchy();
+        var expectedSubjects = _fixture.ValidSubjects.ToList();
+        var actualSubjects = manager.GetAllSubjects();
         
-        //Assert.All(expectedSubjects, item => Assert.Contains(item, actualSubjects));
+        Assert.NotEqual(expectedSubjects, actualSubjects);
+    }
+    
+    [Fact]
+    public Task GetSubjectHierarchy_ShouldSerializeAsExpected()
+    {
+        var manager = CreateDefaultSubjectManager();
+
+        var actualHierarchy = manager.GetSubjectHierarchy();
+        var json = JsonSerializer.Serialize(actualHierarchy);
+        
+        return VerifyJson(json);
     }
 }

@@ -5,12 +5,12 @@ using vite_api.Classes;
 
 namespace vite_api.Tests;
 
-[UsesVerify, Collection("JetStream collection")]
+[UsesVerify, Collection("MockServer collection")]
 public class VerifyPublisherTests
 {
-    private readonly JetStreamFixture _fixture;
+    private readonly MockServerFixture _fixture;
 
-    public VerifyPublisherTests(JetStreamFixture fixture)
+    public VerifyPublisherTests(MockServerFixture fixture)
     {
         _fixture = fixture;
     }
@@ -22,7 +22,7 @@ public class VerifyPublisherTests
     }
     
     [Fact]
-    public void Send_Message_ReturnsSameMessage()
+    public void SendMessage_ReturnsSameMessage()
     {
         var index = _fixture.MsgDataDtos.Count - 1;
         var publisher = CreateDefaultPublisher();
@@ -36,7 +36,7 @@ public class VerifyPublisherTests
     }
     
     [Fact]
-    public void Send_Message_ThrowsArgumentException()
+    public void SendMessage_ThrowsArgumentException()
     {
         var index = _fixture.MsgDataDtos.Count - 1;
         var publisher = CreateDefaultPublisher();
@@ -49,7 +49,7 @@ public class VerifyPublisherTests
     }
     
     [Fact]
-    public void Copy_Message_ReturnsSameMessageOnNewSubject()
+    public void CopyMessage_ReturnsSameMessageOnNewSubject()
     {
         var index = 0;
         var sequenceNumber = (ulong) index + 1;
@@ -65,7 +65,7 @@ public class VerifyPublisherTests
     }
     
     [Fact]
-    public void Copy_Message_ThrowsArgumentException()
+    public void CopyMessage_ThrowsArgumentException()
     {
         var index = 1;
         var sequenceNumber = (ulong) index + 1;
