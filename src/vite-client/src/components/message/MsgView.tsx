@@ -20,15 +20,15 @@ import {
   MsgCopyModal,
   MsgContextType,
   DefaultMsgState,
-  ISpecificMsg,
-  IHeaderProps,
+  SpecificMsgProps,
+  HeaderProps,
   LoadingSpinner,
   MsgPayloadModal,
 } from "components";
 import { CloseIcon } from "@chakra-ui/icons";
 
 function MsgView() {
-  const [messageData, setMessageData] = useState<ISpecificMsg>();
+  const [messageData, setMessageData] = useState<SpecificMsgProps>();
   const currentMsgContext = useContext(MsgContext);
   const { changeVisibility } = useContext(MsgViewContext);
   const { changeCurrentMsg } = useContext(MsgContext) as MsgContextType;
@@ -44,7 +44,6 @@ function MsgView() {
       fetch("/api/specificMessage?" + queryString)
         .then((res) => res.json())
         .then((rawData) => {
-          // JSON-server returns a JSON-array, whilest the API returns a single JSON-object.
           let data = rawData instanceof Array ? rawData[0] : rawData;
           setMessageData(data);
           setLoading(false);
@@ -133,7 +132,7 @@ function MsgView() {
                   messageData.headers != undefined &&
                   Object.entries(messageData.headers).length != 0 ? (
                     messageData.headers.map(
-                      (headerPair: IHeaderProps, index: number) => (
+                      (headerPair: HeaderProps, index: number) => (
                         <Text key={index} fontSize={"md"}>
                           {headerPair.name + " : " + headerPair.value}
                         </Text>

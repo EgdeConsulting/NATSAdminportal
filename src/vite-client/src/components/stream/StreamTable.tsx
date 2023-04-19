@@ -4,7 +4,7 @@ import {
   StreamViewButton,
   LoadingSpinner,
   SelectColumnFilter,
-  IStream,
+  StreamProps,
 } from "components";
 
 function StreamTable() {
@@ -51,14 +51,14 @@ function StreamTable() {
     },
   ];
 
-  const [streams, setStreams] = useState<IStream[]>([]);
+  const [streams, setStreams] = useState<StreamProps[]>([]);
   const [isIntervalRunning, setIsIntervalRunning] = useState(false);
   const [loading, setLoading] = useState(true);
 
   function getStreams() {
     fetch("/api/allStreams").then((res) => {
       if (res.ok) {
-        res.json().then((data: IStream[]) => {
+        res.json().then((data: StreamProps[]) => {
           setStreams(data);
           setLoading(false);
         });

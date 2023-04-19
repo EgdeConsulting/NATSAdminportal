@@ -17,15 +17,15 @@ import {
   SetStateAction,
   useEffect,
 } from "react";
-import { IHeaderProps, SubjectDropDown } from "components";
+import { HeaderProps, SubjectDropDown } from "components";
 
 function MsgPublishForm(props: {
   subjectInputRef: RefObject<HTMLSelectElement>;
   payloadInputRef: RefObject<HTMLInputElement>;
   buttonDisable: boolean;
   toggleButtonDisable: Dispatch<SetStateAction<boolean>>;
-  headerList: IHeaderProps[];
-  setHeaderList: Dispatch<SetStateAction<IHeaderProps[]>>;
+  headerList: HeaderProps[];
+  setHeaderList: Dispatch<SetStateAction<HeaderProps[]>>;
 }) {
   useEffect(() => {
     validateAllInputs();
@@ -36,7 +36,7 @@ function MsgPublishForm(props: {
   }
 
   function validateHeaders() {
-    return props.headerList.every((headerPair: IHeaderProps) => {
+    return props.headerList.every((headerPair: HeaderProps) => {
       return isAscii(headerPair.name) && isAscii(headerPair.value)
         ? true
         : false;
@@ -90,7 +90,7 @@ function MsgPublishForm(props: {
         <FormLabel mb={0} mt={3}>
           Headers
         </FormLabel>
-        {props.headerList.map((headerPair: IHeaderProps, index: number) => {
+        {props.headerList.map((headerPair: HeaderProps, index: number) => {
           return (
             <Box key={index} w={"100%"}>
               <HStack align={"end"}>

@@ -12,13 +12,13 @@ import {
   Divider,
   Center,
 } from "@chakra-ui/react";
-import { IPayload, LoadingSpinner, MsgContext } from "components";
+import { PayloadProps, LoadingSpinner, MsgContext } from "components";
 import { useContext, useState } from "react";
 
 function MsgPayloadModal() {
   const currentMsgContext = useContext(MsgContext);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [payload, setPayload] = useState<IPayload>({ data: "" });
+  const [payload, setPayload] = useState<PayloadProps>({ data: "" });
   const [loading, setLoading] = useState(false);
 
   function getPayload() {
@@ -29,7 +29,7 @@ function MsgPayloadModal() {
         "streamName=" + msg.stream + "&sequenceNumber=" + msg.sequenceNumber;
       fetch("/api/specificPayload?" + queryString)
         .then((res) => res.json())
-        .then((data: IPayload) => {
+        .then((data: PayloadProps) => {
           setPayload(data);
           setLoading(false);
         });
