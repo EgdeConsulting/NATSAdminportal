@@ -1,19 +1,19 @@
 import { createContext, useState } from "react";
 
-export interface IMsg {
+export interface MsgProps {
   sequenceNumber: string;
   stream: string;
   subject: string;
   timestamp?: string;
 }
 
-export interface IPayload {
+export interface PayloadProps {
   data: string;
 }
 
-export interface ISpecificMsg {
-  headers: IHeaderProps[];
-  payload: IPayload;
+export interface SpecificMsgProps {
+  headers: HeaderProps[];
+  payload: PayloadProps;
   subject: string;
 }
 const DefaultMsgViewState = {
@@ -21,15 +21,15 @@ const DefaultMsgViewState = {
   changeVisibility: () => {},
 };
 
-export interface IHeaderProps {
+export interface HeaderProps {
   [key: string]: string;
   name: string;
   value: string;
 }
 
 export type MsgContextType = {
-  currentMsg: IMsg;
-  changeCurrentMsg: (msg: IMsg) => void;
+  currentMsg: MsgProps;
+  changeCurrentMsg: (msg: MsgProps) => void;
 };
 
 const DefaultMsgState = {
@@ -40,10 +40,10 @@ const DefaultMsgState = {
 const MsgContext = createContext<MsgContextType>(DefaultMsgState);
 
 function MsgContextProvider(props: { children: JSX.Element | JSX.Element[] }) {
-  const [currentMsg, setCurrentMsg] = useState<IMsg>(
+  const [currentMsg, setCurrentMsg] = useState<MsgProps>(
     DefaultMsgState.currentMsg
   );
-  function changeCurrentMsg(newMsg: IMsg) {
+  function changeCurrentMsg(newMsg: MsgProps) {
     setCurrentMsg(newMsg);
   }
 

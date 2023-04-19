@@ -1,4 +1,3 @@
-import { IHeaderProps } from "components";
 import { createContext, useState } from "react";
 
 export type MsgViewContextType = {

@@ -1,28 +1,28 @@
 import { createContext, useState } from "react";
 
-export interface IStream {
+export interface StreamProps {
   name: string;
   subjects?: number;
   consumers?: number;
   messages?: number;
 }
 
-interface IPolicies {
+interface PoliciesProps {
   discard: string;
   retention: string;
 }
-export interface IStreamExtended {
+export interface StreamExtendedProps {
   name: string;
   description: string;
   subjects: string[];
   consumers: string[];
   deleted: number;
-  policies: IPolicies;
+  policies: PoliciesProps;
 }
 
 export type StreamContextType = {
-  currentStream: IStream;
-  changeCurrentStream: (stream: IStream) => void;
+  currentStream: StreamProps;
+  changeCurrentStream: (stream: StreamProps) => void;
 };
 
 const DefaultStreamState = {
@@ -35,10 +35,10 @@ const StreamContext = createContext<StreamContextType>(DefaultStreamState);
 function StreamContextProvider(props: {
   children: JSX.Element | JSX.Element[];
 }) {
-  const [currentStream, setCurrentStream] = useState<IStream>(
+  const [currentStream, setCurrentStream] = useState<StreamProps>(
     DefaultStreamState.currentStream
   );
-  function changeCurrentStream(newStream: IStream) {
+  function changeCurrentStream(newStream: StreamProps) {
     setCurrentStream(newStream);
   }
 
