@@ -148,7 +148,9 @@ function MsgView() {
                     Payload
                   </Heading>
                   <Text mb={3} fontSize={"md"}>
-                    {messageData!.payload.data}
+                    {messageData?.payload
+                      ? messageData.payload.data
+                      : "No Payload..."}
                   </Text>
                   <MsgPayloadModal />
                 </Box>
