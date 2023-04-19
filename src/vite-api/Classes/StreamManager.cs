@@ -71,25 +71,31 @@ namespace vite_api.Classes
         /// <returns>Dto containing extended information about the stream.</returns>
         public ExtendedStreamInfoDto GetSpecificStream(string streamName)
         {
-            using var connection = _provider.GetRequiredService<IConnection>();
-            var jsm = connection.CreateJetStreamManagementContext();
-            var streamInfo = jsm.GetStreamInfo(streamName);
-
-            return new ExtendedStreamInfoDto
+            try
             {
-                Name = streamInfo.Config.Name,
-                Subjects = streamInfo.Config.Subjects,
-                Consumers = jsm.GetConsumerNames(streamName).ToList(),
-                Description = streamInfo.Config.Description,
-                Messages = streamInfo.State.Messages,
-                Deleted = streamInfo.State.DeletedCount,
-                Policies = new PoliciesDto
-                {
-                    DiscardPolicy = streamInfo.Config.DiscardPolicy.GetString(),
-                    RetentionPolicy = streamInfo.Config.RetentionPolicy.GetString()
-                }
-            };
-        }
+                using var connection = _provider.GetRequiredService<IConnection>();
+                var jsm = connection.CreateJetStreamManagementContext();
+                var streamInfo = jsm.GetStreamInfo(streamName);
 
+                return new ExtendedStreamInfoDto
+                {
+                    Name = streamInfo.Config.Name,
+                    Subjects = streamInfo.Config.Subjects,
+                    Consumers = jsm.GetConsumerNames(streamName).ToList(),
+                    Description = streamInfo.Config.Description,
+                    Messages = streamInfo.State.Messages,
+                    Deleted = streamInfo.State.DeletedCount,
+                    Policies = new PoliciesDto
+                    {
+                        DiscardPolicy = streamInfo.Config.DiscardPolicy.GetString(),
+                        RetentionPolicy = streamInfo.Config.RetentionPolicy.GetString()
+                    }
+                };
+            }
+            catch
+            {
+                throw new ArgumentException("Given stream name or sequence number does not exist on the server");
+            }
+        }
     }
 }
