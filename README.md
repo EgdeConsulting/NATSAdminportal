@@ -107,4 +107,4 @@ In order to run the unit tests, `cd` into `src/vite-api.Tests` and run:
 dotnet test
 ```
 
-**Note that only tests with the prefix `[Fact]` will be included during testingn.**
+**Note that only tests with the prefix `[Fact]` will be included during testing.**
