@@ -3,6 +3,10 @@ import {
   usePagination,
   useFilters,
   useGlobalFilter,
+  Row,
+  Cell,
+  ColumnInstance,
+  Column,
 } from "react-table";
 import {
   Box,
@@ -30,7 +34,12 @@ import {
   ChevronRightIcon,
   ChevronLeftIcon,
 } from "@chakra-ui/icons";
-import { GlobalFilter, DefaultFilterForColumn } from "components";
+import {
+  GlobalFilter,
+  DefaultFilterForColumn,
+  StreamProps,
+  MsgProps,
+} from "components";
 
 /**
  * The following code is based on these sources:
@@ -40,7 +49,10 @@ import { GlobalFilter, DefaultFilterForColumn } from "components";
  * https://github.com/TanStack/table/issues/1825
  * https://tanstack.com/table/v8/docs/api/features/filters?from=reactTableV7&original=https://react-table-v7.tanstack.com/docs/api/useFilters
  */
-function PaginatedTable(props: { columns: any[]; data: any[] }) {
+function PaginatedTable(props: {
+  columns: Column[];
+  data: MsgProps[] | StreamProps[];
+}) {
   const data = props.data;
   const columns = props.columns;
 
@@ -84,7 +96,7 @@ function PaginatedTable(props: { columns: any[]; data: any[] }) {
           <Thead>
             {headerGroups.map((headerGroup) => (
               <Tr {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map((column: any) => (
+                {headerGroup.headers.map((column: ColumnInstance) => (
                   <Th {...column.getHeaderProps()}>
                     {headerGroup.headers.length == 1 ? (
                       <Box onFocus={() => gotoPage(0)}>
@@ -108,11 +120,11 @@ function PaginatedTable(props: { columns: any[]; data: any[] }) {
             ))}
           </Thead>
           <Tbody {...getTableBodyProps()}>
-            {page.map((row: any) => {
+            {page.map((row: Row) => {
               prepareRow(row);
               return (
                 <Tr {...row.getRowProps()}>
-                  {row.cells.map((cell: any) => {
+                  {row.cells.map((cell: Cell) => {
                     return (
                       <Td {...cell.getCellProps()}>{cell.render("Cell")}</Td>
                     );

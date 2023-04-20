@@ -6,6 +6,7 @@ import {
   SelectColumnFilter,
   StreamProps,
 } from "components";
+import { Row } from "react-table";
 
 function StreamTable() {
   /**
@@ -31,8 +32,7 @@ function StreamTable() {
         {
           Header: "No. Consumers",
           accessor: "consumerCount",
-          Filter: SelectColumnFilter,
-          filter: "equals",
+          disableFilters: true,
         },
         {
           Header: "No. Messages",
@@ -43,7 +43,7 @@ function StreamTable() {
           Header: "Data",
           accessor: "data",
           disableFilters: true,
-          Cell: (props: { row: any }) => {
+          Cell: (props: { row: Row }) => {
             return <StreamViewButton content={props.row.values} />;
           },
         },
