@@ -50,12 +50,12 @@ jobs:
       jetstream:
         image: nats:latest
 
-      # # creates a stream on the "jetstream:4222" server started above
-      # - name: orders_stream
-      #   uses: nats-io/jetstream-gh-action/create/stream@main
-      #   with:
-      #     config: ORDERS.json
-      #     server: jetstream:4222
+      # creates a stream on the "jetstream:4222" server started above
+      - name: orders_stream
+        uses: nats-io/jetstream-gh-action/create/stream@main
+        with:
+          config: ORDERS.json
+          server: jetstream:4222
   test:
     runs-on: ubuntu-latest
     needs: server
