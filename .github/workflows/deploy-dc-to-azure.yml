@@ -52,7 +52,7 @@ jobs:
         uses: nats-io/jetstream-gh-action/create/stream@main
         with:
           config: ${{ env.CONFIG_FILE }}
-          server: localhost:4222
+          server: nats.example.net:4222
   test:
     runs-on: ubuntu-latest
     needs: server
