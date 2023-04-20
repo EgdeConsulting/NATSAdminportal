@@ -22,7 +22,7 @@ namespace vite_api.Classes
         /// </summary>
         /// <param name="message">Message object containing all necessary information.</param>
         /// <exception cref="ArgumentException">The provided subject doesn't exist.</exception>
-        public void SendNewMessage(MessageDataDto message)
+        public void SendMessage(MessageDataDto message)
         {
             MsgHeader msgHeader = new();
             foreach (var headerPair in message.Headers)
@@ -58,9 +58,10 @@ namespace vite_api.Classes
         /// and thereafter deletes the existing message.
         /// </summary>
         /// <param name="message">Message to be copied.</param>
+        /// <param name="sequenceNumber">Sequence number of the copied message (used for logging).</param>
         /// <param name="newSubject">The subject under which the new message is created.</param>
         /// <exception cref="ArgumentException">The provided subject doesn't exist.</exception>
-        public void CopyMessage(MessageDataDto message, string newSubject)
+        public void CopyMessage(MessageDataDto message, ulong sequenceNumber, string newSubject)
         {
             MsgHeader msgHeader = new();
             foreach (var headerPair in message.Headers)
@@ -77,8 +78,8 @@ namespace vite_api.Classes
                 {
                     connection.Publish(msg);
                 }
-                _logger.LogInformation("{} > {} copied message (old subject, new subject, sequence number): {}, {}, {}",
-                    DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), UserAccount.Name, message.Subject, newSubject, 1);
+                _logger.LogInformation("{} > {} copied message (old subject, old sequence number, new subject): {}, {}, {}",
+                    DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), UserAccount.Name, message.Subject, sequenceNumber, newSubject);
 
             }
             else

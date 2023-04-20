@@ -55,22 +55,13 @@ To start the back-end development server (.Net7), first `cd` into `src/vite-api`
 dotnet watch run
 ```
 
-## Deployment
-
-The repository is configured with an automated CI/CD workflow which uses containerization (docker) to
-package the application, and thereafter deploys the container images to an Azure App Service  
-(https://nats-adminportal-dc.azurewebsites.net/). The workflow triggers on pushes to- and pull-request
-into `main` branch.
-
-**Note!** The `NATS_SERVER_URL` environment variable is provided to the docker container via the use of Azure App Settings.
-
-## JSON Server
+### JSON Server
 
 To allow for independent front-end development a fake REST-API has been added to the project via the npm
 package `JSON Server`. This "No-Code" API allows for front-end prototyping and mocking without the need
 of having a working back-end.
 
-### Startup
+#### Startup
 
 In order to develop the front-end without running the backend, first `cd` into `src/json-server`, then run:
 
@@ -88,10 +79,32 @@ first `cd` into `src/vite-client`, then run:
 npm run dev-js
 ```
 
-### Configuration
+#### Configuration
 
 The configuration for the JSON server can be found in `server.js`. For more information regarding JSON server
 see: https://github.com/typicode/json-server
 
 Also note that the JSON and the frontend server run on different ports (`3000` and `5173` respectively),
 but vite is proxying the JSON server. This is configured in `vite.config.ts`.
+
+## Deployment
+
+The repository is configured with an automated CI/CD workflow which uses containerization (docker) to
+package the application, and thereafter deploys the container images to an Azure App Service  
+(https://nats-adminportal-dc.azurewebsites.net/). The workflow triggers on pushes to- and pull-request
+into `main` branch.
+
+**Note!** The `NATS_SERVER_URL` environment variable is provided to the docker container via the use of Azure App Settings.
+
+## Testing
+
+The unit-testing for this project can be found in the `vite-api.Tests` project. Unit-testing uses xUnit as the framework.
+For more information about xUnit see: https://xunit.net/#documentation
+
+In order to run the unit tests, `cd` into `src/vite-api.Tests` and run:
+
+```
+dotnet test
+```
+
+**Note that only tests with the prefix `[Fact]` will be included during testing.**

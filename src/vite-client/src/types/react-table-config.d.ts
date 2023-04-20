@@ -48,6 +48,10 @@ import {
   UseSortByState,
 } from "react-table";
 
+/**
+ * This files was included because of the following problem and solution:
+ * https://stackoverflow.com/questions/62758670/something-went-wrong-with-react-table-using-typescript
+ */
 declare module "react-table" {
   // take this file as-is, or comment out the sections that don't apply to your plugin configuration
 

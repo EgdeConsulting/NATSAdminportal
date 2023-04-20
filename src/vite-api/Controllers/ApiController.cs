@@ -1,4 +1,3 @@
-using System.Runtime.InteropServices.JavaScript;
 using Microsoft.AspNetCore.Mvc;
 using vite_api.Classes;
 using vite_api.Dto;
@@ -69,7 +68,7 @@ public class ApiController : ControllerBase
     {
         try
         {
-            _publisher.SendNewMessage(msgDto);
+            _publisher.SendMessage(msgDto);
             return Ok();
         }
         catch (ArgumentException e)
@@ -89,10 +88,10 @@ public class ApiController : ControllerBase
         try
         {
             if (msgDto.Stream == null || msgDto.Subject == null) return BadRequest();
-            var msg = _subscriberManager.GetSpecificMessage(msgDto.Stream, msgDto.SequenceNumber);
-            var payload = _subscriberManager.GetSpecificPayload(msgDto.Stream, msgDto.SequenceNumber);
+            var msg = _subscriberManager.GetSpecificMessage(msgDto.Stream, msgDto.SequenceNumber, false);
+            var payload = _subscriberManager.GetSpecificPayload(msgDto.Stream, msgDto.SequenceNumber, false);
             msg!.Payload = payload!;
-            _publisher.CopyMessage(msg, msgDto.Subject);
+            _publisher.CopyMessage(msg, msgDto.SequenceNumber, msgDto.Subject);
             return Ok();
         }
         catch (ArgumentException e)

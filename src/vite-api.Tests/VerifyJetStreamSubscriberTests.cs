@@ -3,23 +3,23 @@ using vite_api.Classes;
 
 namespace vite_api.Tests;
 
-[UsesVerify, Collection("JetStream collection")]
+[UsesVerify, Collection("MockServer collection")]
 public class VerifyJetStreamSubscriberTests
 {
-    private readonly JetStreamFixture _fixture;
+    private readonly MockServerFixture _fixture;
 
-    public VerifyJetStreamSubscriberTests(JetStreamFixture fixture)
+    public VerifyJetStreamSubscriberTests(MockServerFixture fixture)
     {
         _fixture = fixture;
     }
 
     private JetStreamSubscriber CreateDefaultJetStreamSubscriber()
     {
-        return new JetStreamSubscriber(_fixture.Provider, _fixture.StreamName, new List<string>() { _fixture.Subject });
+        return new JetStreamSubscriber(_fixture.Provider, _fixture.StreamName, new List<string>() { _fixture.PrimarySubject });
     }
     
     [Fact]
-    public void Get_AllMessages_ReturnsSameCount()
+    public void GetMessages_ReturnsSameCount()
     {
         var subscriber = CreateDefaultJetStreamSubscriber();
 
@@ -30,7 +30,7 @@ public class VerifyJetStreamSubscriberTests
     }
     
     [Fact]
-    public void Get_SpecificPayload_ReturnsSamePayload()
+    public void GetPayload_ReturnsSamePayload()
     {
         const ulong sequenceNumber = 1;
         var subscriber = CreateDefaultJetStreamSubscriber();
@@ -42,7 +42,7 @@ public class VerifyJetStreamSubscriberTests
     }
 
     [Fact]
-    public void Get_SpecificPayload_ThrowsInvalidOperationException()
+    public void GetPayload_ThrowsInvalidOperationException()
     {
         const ulong sequenceNumber = 100;
         var subscriber = CreateDefaultJetStreamSubscriber();
@@ -53,7 +53,7 @@ public class VerifyJetStreamSubscriberTests
     }
     
     [Fact]
-    public void Get_SpecificMessage_ReturnsSameMessage()
+    public void GetMessageData_ReturnsSameData()
     {
         const ulong sequenceNumber = 2;
         var subscriber = CreateDefaultJetStreamSubscriber();
@@ -65,7 +65,7 @@ public class VerifyJetStreamSubscriberTests
     }
     
     [Fact]
-    public void Get_SpecificMessage_ThrowsInvalidOperationException()
+    public void GetMessageData_ThrowsInvalidOperationException()
     {
         const ulong sequenceNumber = 100;
         var subscriber = CreateDefaultJetStreamSubscriber();
