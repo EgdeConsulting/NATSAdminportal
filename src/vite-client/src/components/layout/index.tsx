@@ -1,3 +1,2 @@
-export * from "./Sidebar";
-export * from "./Topbar";
-export * from "./AccountMenu";
+export * from "./topbar";
+export * from "./sidebar";
