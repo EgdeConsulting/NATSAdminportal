@@ -63,7 +63,6 @@ jobs:
 
       - name: run unit tests
         working-directory: ${{ env.DOTNET_PATH }}
-        ports: 9000:9000
         run: |
           dotnet test
 
