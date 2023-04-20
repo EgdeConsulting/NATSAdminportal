@@ -45,7 +45,6 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
-    needs: server
     steps:
       - uses: actions/checkout@v3
 
