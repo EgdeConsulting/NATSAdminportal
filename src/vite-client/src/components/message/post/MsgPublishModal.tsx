@@ -41,7 +41,7 @@ function MsgPublishModal() {
         stream: "stream1",
         subject: subjectInputRef.current!.value,
         headers: headerList,
-        payload: payloadInputRef.current!.value,
+        payload: { data: payloadInputRef.current!.value },
       };
     } else {
       bodyContent = {
