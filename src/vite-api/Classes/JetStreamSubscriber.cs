@@ -111,10 +111,10 @@ namespace vite_api.Classes
         {
             return ReceiveJetStreamPullSubscribe().Select(x => new MessageDto
             {
-                SequenceNumber = x.MetaData.StreamSequence,
-                Timestamp = x.MetaData.Timestamp,
+                SequenceNumber = x.MetaData?.StreamSequence ?? UInt64.MinValue,
+                Timestamp = x?.MetaData?.Timestamp ?? DateTime.Now,
                 Stream = StreamName,
-                Subject = x.Subject,
+                Subject = x.Subject ?? "sub",
             }).ToList();
         }
     }

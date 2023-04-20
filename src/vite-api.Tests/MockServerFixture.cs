@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Collections.Concurrent;
 using System.Text;
 using Microsoft.Extensions.DependencyInjection;
+using Moq;
 using NATS.Client;
 using NATS.Client.JetStream;
 using vite_api.Dto;
@@ -155,6 +156,19 @@ public class MockServerFixture : IDisposable, ICollectionFixture<MockServerFixtu
 
     static IConnection NatsConnectionFactory(IServiceProvider provider)
     {
+        // Arrange
+        // var mockConnectionFactory = new Mock<IConnectionFactory>();
+        // var mockConnection = new Mock<IConnection>();
+        //
+        // mockConnectionFactory.Setup(factory => factory.CreateConnection()).Returns(mockConnection.Object);
+        //
+        // // Act
+        // var natsClient = new NatsClient(mockConnectionFactory.Object);
+        // var connection = natsClient.CreateConnection();
+        //
+        // // Assert
+        // Assert.NotNull(connection);
+        // mockConnectionFactory.Verify(factory => factory.CreateConnection(), Times.Once);
         return new ConnectionFactory().CreateConnection("localhost:9000");
     }
 }
