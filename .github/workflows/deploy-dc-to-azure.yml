@@ -45,6 +45,10 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
+     services:
+      # starts a JetStream service locally known as "jetstream" on the network
+      jetstream:
+        image: nats:latest
     steps:
       - uses: actions/checkout@v3
 

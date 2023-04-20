@@ -155,6 +155,6 @@ public class MockServerFixture : IDisposable, ICollectionFixture<MockServerFixtu
 
     static IConnection NatsConnectionFactory(IServiceProvider provider)
     {
-        return new ConnectionFactory().CreateConnection("localhost:8080");
+        return new ConnectionFactory().CreateConnection("jetstream:4222");
     }
 }
