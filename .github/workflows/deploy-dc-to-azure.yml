@@ -28,7 +28,7 @@ name: Build and deploy a container to an Azure Web App
 
 env:
   AZURE_WEBAPP_NAME: nats-adminportal-dc # set this to the name of your Azure Web App
-  CONFIG_FILE: "src/vite-api.Tests/bin/Debug/net7.0/config/server.conf"
+  CONFIG_FILE: "ORDERS.json"
   DOTNET_PATH: "src/vite-api.Tests"
   DOTNET_VERSION: "7.0.x"
 
