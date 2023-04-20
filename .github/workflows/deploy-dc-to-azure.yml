@@ -28,6 +28,7 @@ name: Build and deploy a container to an Azure Web App
 
 env:
   AZURE_WEBAPP_NAME: nats-adminportal-dc # set this to the name of your Azure Web App
+  CONFIG_FILE: "src/vite-api.Tests/bin/Debug/net7.0/config/server.conf"
   DOTNET_PATH: "src/vite-api.Tests"
   DOTNET_VERSION: "7.0.x"
 
@@ -45,16 +46,12 @@ permissions:
 jobs:
   server:
     runs-on: ubuntu-latest
-    services:
-      # starts a JetStream service locally known as "jetstream" on the network
-      jetstream:
-        image: nats:latest
-
-      # creates a stream on the "jetstream:4222" server started above
-      - name: orders_stream
+    steps:
+      - uses: actions/checkout@main
+      - name: test_stream
         uses: nats-io/jetstream-gh-action/create/stream@main
         with:
-          config: ORDERS.json
+          config: ${{ env.CONFIG_FILE }}
           server: jetstream:4222
   test:
     runs-on: ubuntu-latest
