@@ -95,7 +95,13 @@ function SubjectHierarchy() {
   return (
     <>
       {loading ? (
-        <Card variant={"outline"} w={"100%"} p={"absolute"} mt={"0 !important"}>
+        <Card
+          variant={"outline"}
+          w={"100%"}
+          h={"92vh"}
+          p={"absolute"}
+          mt={"0 !important"}
+        >
           <CardHeader>
             <Heading size={"md"}>Subject Hierarchy</Heading>
           </CardHeader>
