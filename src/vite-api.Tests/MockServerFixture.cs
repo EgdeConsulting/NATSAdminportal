@@ -33,6 +33,7 @@ public class MockServerFixture : IDisposable, ICollectionFixture<MockServerFixtu
         "The third payload."
     };
     public string StreamName => "Stream";
+    public string InvalidStreamName => "InvalidStream";
     public string PrimarySubject => "PrimarySubject";
     public string SecondarySubject => "SecondarySubject";
     public string InvalidSubject => "InvalidSubject";

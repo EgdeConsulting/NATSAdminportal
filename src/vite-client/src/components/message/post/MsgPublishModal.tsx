@@ -11,7 +11,7 @@ import {
   Tooltip,
 } from "@chakra-ui/react";
 import { ChatIcon } from "@chakra-ui/icons";
-import { MsgPublishForm, ActionConfirmation, IHeaderProps } from "components";
+import { MsgPublishForm, ActionConfirmation, HeaderProps } from "components";
 import { useRef, useState } from "react";
 
 function MsgPublishModal() {
@@ -23,7 +23,7 @@ function MsgPublishModal() {
     onClose: onCloseAC,
   } = useDisclosure();
 
-  const [headerList, setHeaderList] = useState<IHeaderProps[]>([]);
+  const [headerList, setHeaderList] = useState<HeaderProps[]>([]);
   const subjectInputRef = useRef<HTMLSelectElement>(null);
   const payloadInputRef = useRef<HTMLInputElement>(null);
 

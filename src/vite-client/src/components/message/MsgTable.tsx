@@ -4,7 +4,7 @@ import {
   MsgViewButton,
   LoadingSpinner,
   SelectColumnFilter,
-  IMsg,
+  MsgProps,
 } from "components";
 
 function MsgTable() {
@@ -51,14 +51,14 @@ function MsgTable() {
     },
   ];
 
-  const [allMessages, setAllMessages] = useState<IMsg[]>([]);
+  const [allMessages, setAllMessages] = useState<MsgProps[]>([]);
   const [isIntervalRunning, setIsIntervalRunning] = useState(false);
   const [loading, setLoading] = useState(true);
 
   function getAllMessages() {
     fetch("/api/allMessages").then((res) => {
       if (res.ok) {
-        res.json().then((data: IMsg[]) => {
+        res.json().then((data: MsgProps[]) => {
           setAllMessages(data);
           setLoading(false);
         });

@@ -49,14 +49,47 @@ public class VerifyStreamManagerTests
     }
 
     [Fact]
-    public void GetAllStreams_ReturnsCorrectCount()
+    public void GetAllStreams_ReturnsSameName()
     {
+        var streamManager = CreateDefaultStreamManager();
 
+        var expectedValue = _fixture.StreamName;
+        var actualValue = streamManager.GetAllStreams()[0].Name;
+
+        Assert.Equal(expectedValue, actualValue);
     }
 
     [Fact]
-    public void GetSpecificStream_ReturnsSpecifiedStream()
+    public void GetAllStreams_ReturnsSameCount()
     {
+        var streamManager = CreateDefaultStreamManager();
 
+        var expectedValue = 1;
+        var actualValue = streamManager.GetAllStreams().Length;
+
+        Assert.Equal(expectedValue, actualValue);
+    }
+
+    [Fact]
+    public void GetSpecificStream_ReturnsSameObject()
+    {
+        var streamName = _fixture.StreamName;
+        var streamManager = CreateDefaultStreamManager();
+
+        var expectedValue = _fixture.ValidSubjects;
+        var actualValue = streamManager.GetSpecificStream(streamName).Subjects;
+
+        Assert.Equal(expectedValue, actualValue);
+    }
+
+    [Fact]
+    public void GetSpecificStream_ThrowsArgumentException()
+    {
+        var streamName = _fixture.InvalidStreamName;
+        var streamManager = CreateDefaultStreamManager();
+
+        void ActualAction() => streamManager.GetSpecificStream(streamName);
+
+        Assert.Throws<ArgumentException>(ActualAction);
     }
 }

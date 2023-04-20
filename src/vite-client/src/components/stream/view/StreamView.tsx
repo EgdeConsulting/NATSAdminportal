@@ -18,7 +18,7 @@ import {
   StreamContext,
   StreamViewContext,
   LoadingSpinner,
-  IStreamExtended,
+  StreamExtendedProps,
 } from "components";
 
 import { CloseIcon } from "@chakra-ui/icons";
@@ -27,7 +27,7 @@ function StreamView() {
   const currentStreamContext = useContext(StreamContext);
   const { changeVisibility } = useContext(StreamViewContext);
   const viewContext = useContext(StreamViewContext);
-  const [streamData, setStreamData] = useState<IStreamExtended>();
+  const [streamData, setStreamData] = useState<StreamExtendedProps>();
   const [loading, setLoading] = useState(false);
 
   function getStreamData() {
@@ -37,7 +37,7 @@ function StreamView() {
       const queryString = "streamName=" + stream.name;
       fetch("/api/specificStream?" + queryString)
         .then((res) => res.json())
-        .then((rawData: IStreamExtended) => {
+        .then((rawData: StreamExtendedProps) => {
           // JSON-server returns a JSON-array, whilest the API returns a single JSON-object.
           let data = rawData instanceof Array ? rawData[0] : rawData;
           setStreamData(data);

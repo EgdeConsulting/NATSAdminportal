@@ -43,28 +43,28 @@ permissions:
   packages: write
 
 jobs:
-  # test:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v3
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
 
-  #     - name: Set up .NET Core
-  #       uses: actions/setup-dotnet@v2
-  #       with:
-  #         dotnet-version: ${{ env.DOTNET_VERSION }}
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
 
-  #     - name: Set up dependency caching for faster builds
-  #       uses: actions/cache@v3
-  #       with:
-  #         path: ~/.nuget/packages
-  #         key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
-  #         restore-keys: |
-  #           ${{ runner.os }}-nuget-
+      - name: Set up dependency caching for faster builds
+        uses: actions/cache@v3
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
 
-  #     - name: run unit tests
-  #       working-directory: ${{ env.DOTNET_PATH }}
-  #       run: |
-  #         dotnet test
+      - name: run unit tests
+        working-directory: ${{ env.DOTNET_PATH }}
+        run: |
+          dotnet test
 
   build:
     runs-on: ubuntu-latest

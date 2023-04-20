@@ -19,7 +19,7 @@ import { useState, useEffect, memo, useContext } from "react";
 import { LoadingSpinner, MsgViewContext } from "components";
 
 function SubjectHierarchy() {
-  const [subjects, setSubjects] = useState<ISubject[]>([]);
+  const [subjects, setSubjects] = useState<SubjectProps[]>([]);
   const [loading, setLoading] = useState(true);
 
   /**
@@ -30,9 +30,9 @@ function SubjectHierarchy() {
    */
   const [accIndex, setAccIndex] = useState<number[]>([1]);
   const viewContext = useContext(MsgViewContext);
-  interface ISubject {
+  interface SubjectProps {
     name: string;
-    subSubjects: ISubject[];
+    subSubjects: SubjectProps[];
   }
 
   useEffect(() => {
@@ -55,7 +55,7 @@ function SubjectHierarchy() {
       parent,
       padding,
     }: {
-      parent: ISubject;
+      parent: SubjectProps;
       padding: number;
     }): JSX.Element => {
       return (
@@ -71,7 +71,7 @@ function SubjectHierarchy() {
                     </AccordionButton>
                     <AccordionPanel pb={2} pt={0}>
                       {parent.subSubjects != undefined &&
-                        parent.subSubjects.map((child: ISubject) => {
+                        parent.subSubjects.map((child: SubjectProps) => {
                           return (
                             <HierarchyList
                               key={parent.name + child.name}
@@ -123,7 +123,7 @@ function SubjectHierarchy() {
             <Divider w={"100%"} mt={2} />
           </CardHeader>
 
-          {subjects.map((subject: ISubject, index: number) => {
+          {subjects.map((subject: SubjectProps, index: number) => {
             return (
               <VStack key={index} mx={4} alignItems={"left"}>
                 <HierarchyList parent={subject} padding={0} />
