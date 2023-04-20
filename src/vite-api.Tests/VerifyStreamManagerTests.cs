@@ -65,7 +65,7 @@ public class VerifyStreamManagerTests
         var streamManager = CreateDefaultStreamManager();
 
         var expectedValue = 1;
-        var actualValue = streamManager.GetAllStreams().Length;
+        var actualValue = streamManager.GetAllStreams().Count;
 
         Assert.Equal(expectedValue, actualValue);
     }
