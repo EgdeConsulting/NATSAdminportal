@@ -2,7 +2,7 @@ import { Button } from "@chakra-ui/react";
 import { useContext } from "react";
 import { MsgContext, MsgContextType, MsgViewContext } from "components";
 
-function MsgViewButton(props: { content: any }) {
+function MsgViewButton(props: { content: Record<string, any> }) {
   const { changeCurrentMsg } = useContext(MsgContext) as MsgContextType;
   const { changeVisibility } = useContext(MsgViewContext);
   return (

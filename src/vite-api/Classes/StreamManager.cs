@@ -40,16 +40,11 @@ namespace vite_api.Classes
             return jsm.DeleteMessage(streamName, sequenceNumber, erase);
         }
 
-        // private static bool StreamExists(IJetStreamManagement jsm, string streamName)
-        // {
-        //     var stream = jsm.GetStreamInfo(streamName);
-        //     return stream != null;
-        // }
         /// <summary>
         /// Gets basic information about all streams on the NATS-server.
         /// </summary>
         /// <returns>A collection of BasicStreamInfoDto's containing the basic information.</returns>
-        public BasicStreamInfoDto[] GetAllStreams()
+        public List<BasicStreamInfoDto> GetAllStreams()
         {
             using var connection = _provider.GetRequiredService<IConnection>();
             var jsm = connection.CreateJetStreamManagementContext();
@@ -61,7 +56,7 @@ namespace vite_api.Classes
                    SubjectCount = x.State.SubjectCount,
                    ConsumerCount = x.State.ConsumerCount,
                    MessageCount = x.State.Messages
-               }).ToArray();
+               }).ToList();
         }
 
         /// <summary>

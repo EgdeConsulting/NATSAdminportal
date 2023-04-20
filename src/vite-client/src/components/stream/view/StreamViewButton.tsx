@@ -6,7 +6,7 @@ import {
   StreamViewContext,
 } from "components";
 
-function StreamViewButton(props: { content: any }) {
+function StreamViewButton(props: { content: Record<string, any> }) {
   const { changeCurrentStream: changeCurrentStream } = useContext(
     StreamContext
   ) as StreamContextType;
