@@ -1,12 +1,12 @@
 # build .NET
 FROM mcr.microsoft.com/dotnet/sdk:7.0 as build-net
 
-WORKDIR /
+WORKDIR /src
 
-COPY /src/vite-api/vite-api.csproj ./src/vite-api/
+COPY /src/vite-api/vite-api.csproj .
 RUN dotnet restore
 
-COPY . .
+COPY /src/vite-api .
 RUN dotnet build -c Release
 RUN dotnet publish -c Release -o /dist
 
