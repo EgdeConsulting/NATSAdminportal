@@ -18,7 +18,6 @@
 .ntvs
 *.njsproj
 *.sln
-!NATSAdminportal.sln
 *.sw?
 
 # Debug directory

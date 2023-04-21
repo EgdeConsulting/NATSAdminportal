@@ -3,22 +3,12 @@ FROM mcr.microsoft.com/dotnet/sdk:7.0 as build-net
 
 WORKDIR /
 
-COPY NATSAdminportal.sln .
 COPY /src/vite-api/vite-api.csproj ./src/vite-api/
-COPY /src/vite-api.Tests/vite-api.Tests.csproj ./src/vite-api.Tests/
 RUN dotnet restore
 
 COPY . .
 RUN dotnet build -c Release
 RUN dotnet publish -c Release -o /dist
-
-# # run the unit tests
-# FROM build-net AS test-net
-
-# WORKDIR /src/vite-api.Tests/
-
-# EXPOSE 9000
-# RUN dotnet test --logger:trx
 
 # build vite
 FROM node:latest as build-node
