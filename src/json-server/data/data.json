@@ -1,8 +1,8 @@
 {
   "allSubjects": [
     "subject.A",
-    "subject.A.*",
-    "subject.B.*",
+    "subject.A.1",
+    "subject.B.1",
     "subject.C.1",
     "subject.C.2",
     "subject.C.3",
@@ -16,7 +16,7 @@
           "name": "A",
           "subSubjects": [
             {
-              "name": "*"
+              "name": "1"
             }
           ]
         },
@@ -24,7 +24,7 @@
           "name": "B",
           "subSubjects": [
             {
-              "name": "*"
+              "name": "1"
             }
           ]
         },
@@ -65,7 +65,7 @@
       "consumerCount": 2,
       "messageCount": 46,
       "subjects": [
-        "subject.A.*"
+        "subject.A.1"
       ],
       "consumers": [
         "consumer1",
@@ -85,7 +85,7 @@
       "consumerCount": 1,
       "messageCount": 16,
       "subjects": [
-        "subject.B.*"
+        "subject.B.1"
       ],
       "consumers": [
         "consumer2"
@@ -176,7 +176,7 @@
       "sequenceNumber": 1,
       "timestamp": "2023-03-02T14:11:45.7036823Z",
       "stream": "stream1",
-      "subject": "subject.A.*",
+      "subject": "subject.A.1",
       "headers": [
         {
           "name": "headerName1",
@@ -200,7 +200,7 @@
       "sequenceNumber": 2,
       "timestamp": "2023-02-24T13:05:30.9394227Z",
       "stream": "stream2",
-      "subject": "subject.B.*",
+      "subject": "subject.B.1",
       "headers": [],
       "payload": {
         "data": "payload2.1"
@@ -299,17 +299,6 @@
       ],
       "payload": {
         "data": "payloadtest3"
-      }
-    },
-    {
-      "id": 3166,
-      "sequenceNumber": 3166,
-      "timestamp": "2023-04-20T12:15:07.532Z",
-      "stream": "stream1",
-      "subject": "subject.A",
-      "headers": [],
-      "payload": {
-        "data": "awdawdawd"
       }
     }
   ]
