@@ -28,6 +28,7 @@ name: Build and deploy a container to an Azure Web App
 
 env:
   AZURE_WEBAPP_NAME: nats-adminportal-dc # set this to the name of your Azure Web App
+  SERVER_PATH: "src/vite-api.Tests/bin/Debug/net7.0/config"
   DOTNET_PATH: "src/vite-api.Tests"
   DOTNET_VERSION: "7.0.x"
 
@@ -47,6 +48,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
+      - name: Start local NATS server
+        working-directory: ${{ env.DOTNET_PATH }}
+        shell: pwsh
+        run: |
+          Start-Process -NoNewWindow -FilePath ".\nats-server.exe" -ArgumentList "-c .\server.conf"
 
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v2
