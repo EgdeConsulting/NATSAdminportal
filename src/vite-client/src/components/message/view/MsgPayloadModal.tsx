@@ -30,6 +30,7 @@ function MsgPayloadModal() {
       fetch("/api/specificPayload?" + queryString)
         .then((res) => res.json())
         .then((rawData: PayloadProps) => {
+          // JSON-server returns a JSON-array with more data than necessary, whilst the API returns a single JSON-object.
           let data = rawData instanceof Array ? rawData[0].payload : rawData;
           setPayload(data);
           setLoading(false);

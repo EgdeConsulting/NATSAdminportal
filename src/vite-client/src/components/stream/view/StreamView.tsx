@@ -38,7 +38,7 @@ function StreamView() {
       fetch("/api/specificStream?" + queryString)
         .then((res) => res.json())
         .then((rawData: StreamExtendedProps) => {
-          // JSON-server returns a JSON-array, whilest the API returns a single JSON-object.
+          // JSON-server returns a JSON-array, whilst the API returns a single JSON-object.
           let data = rawData instanceof Array ? rawData[0] : rawData;
           setStreamData(data);
           setLoading(false);
