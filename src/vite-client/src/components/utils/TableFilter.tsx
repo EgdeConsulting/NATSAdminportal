@@ -1,15 +1,21 @@
-import { useMemo, useState } from "react";
-import { useAsyncDebounce } from "react-table";
-import { Input, Select, FormControl, FormLabel } from "@chakra-ui/react";
+import { Dispatch, SetStateAction, useMemo, useState } from "react";
+import { Column, Row, useAsyncDebounce } from "react-table";
+import {
+  Input,
+  Select,
+  FormControl,
+  FormLabel,
+  TableOptions,
+} from "@chakra-ui/react";
 
 /**
  * The following code is based on this source:
  * https://github.com/architanayak/react-table-demo/blob/main/src/Filter.js
  */
 export function GlobalFilter(props: {
-  preGlobalFilteredRows: any;
-  globalFilter: any;
-  setGlobalFilter: any;
+  preGlobalFilteredRows: Row<{}>[];
+  globalFilter: string;
+  setGlobalFilter: Dispatch<SetStateAction<TableOptions>>;
 }) {
   const [value, setValue] = useState(props.globalFilter);
 
@@ -39,9 +45,9 @@ export function GlobalFilter(props: {
 // Component for Default Column Filter
 export function DefaultFilterForColumn(props: {
   column: {
-    filterValue: any;
-    preFilteredRows: { length: any };
-    setFilter: any;
+    filterValue: string;
+    preFilteredRows: { length: number };
+    setFilter: Dispatch<SetStateAction<Column>>;
   };
 }) {
   return null;
@@ -50,16 +56,16 @@ export function DefaultFilterForColumn(props: {
 // Component for Custom Select Filter
 export function SelectColumnFilter(props: {
   column: {
-    filterValue: any;
-    setFilter: any;
-    preFilteredRows: any;
+    filterValue: string;
+    setFilter: Dispatch<SetStateAction<string | undefined>>;
+    preFilteredRows: Row[];
     id: number;
   };
 }) {
   // Use preFilteredRows to calculate the options
   const options = useMemo(() => {
     const options = new Set();
-    props.column.preFilteredRows.forEach((row: any) => {
+    props.column.preFilteredRows.forEach((row: Row) => {
       options.add(row.values[props.column.id]);
     });
     return [...options.values()];

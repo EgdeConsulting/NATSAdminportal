@@ -6,6 +6,7 @@ import {
   SelectColumnFilter,
   MsgProps,
 } from "components";
+import { Row } from "react-table";
 
 function MsgTable() {
   /**
@@ -43,7 +44,7 @@ function MsgTable() {
           Header: "Data",
           accessor: "data",
           disableFilters: true,
-          Cell: (props: { row: any }) => {
+          Cell: (props: { row: Row }) => {
             return <MsgViewButton content={props.row.values} />;
           },
         },
