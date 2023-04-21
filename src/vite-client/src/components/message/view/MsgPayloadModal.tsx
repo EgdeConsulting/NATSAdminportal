@@ -29,7 +29,8 @@ function MsgPayloadModal() {
         "streamName=" + msg.stream + "&sequenceNumber=" + msg.sequenceNumber;
       fetch("/api/specificPayload?" + queryString)
         .then((res) => res.json())
-        .then((data: PayloadProps) => {
+        .then((rawData: PayloadProps) => {
+          let data = rawData instanceof Array ? rawData[0].payload : rawData;
           setPayload(data);
           setLoading(false);
         });
