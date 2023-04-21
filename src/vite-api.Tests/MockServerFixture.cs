@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using System.Collections.Concurrent;
 using System.Text;
 using Microsoft.Extensions.DependencyInjection;
 using NATS.Client;
@@ -37,7 +36,20 @@ public class MockServerFixture : IDisposable, ICollectionFixture<MockServerFixtu
     public string PrimarySubject => "PrimarySubject";
     public string SecondarySubject => "SecondarySubject";
     public string InvalidSubject => "InvalidSubject";
-    public string[] ValidSubjects { get; }
+    public string[] ValidSubjects => new[]
+        {
+            PrimarySubject,
+            SecondarySubject,
+            PrimarySubject + ".A",
+            PrimarySubject + ".A.1",
+            PrimarySubject + ".A.2",
+            SecondarySubject + ".B",
+            SecondarySubject + ".B.1",
+            SecondarySubject + ".C",
+            SecondarySubject + ".C.1",
+            SecondarySubject + ".C.2"
+        };
+
     public List<MessageDataDto> MsgDataDtos { get; }
     public ServiceProvider Provider { get; }
 
@@ -55,20 +67,6 @@ public class MockServerFixture : IDisposable, ICollectionFixture<MockServerFixtu
 
         _services.AddTransient(NatsConnectionFactory);
         Provider = _services.BuildServiceProvider();
-
-        ValidSubjects = new[]
-        {
-            PrimarySubject,
-            SecondarySubject,
-            PrimarySubject + ".A",
-            PrimarySubject + ".A.1",
-            PrimarySubject + ".A.2",
-            SecondarySubject + ".B",
-            SecondarySubject + ".B.1",
-            SecondarySubject + ".C",
-            SecondarySubject + ".C.1",
-            SecondarySubject + ".C.2"
-        };
 
         MsgDataDtos = InitializeTestMessageDataDtos();
 

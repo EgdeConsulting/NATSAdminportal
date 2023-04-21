@@ -10,7 +10,6 @@ COPY /src/vite-api .
 RUN dotnet build -c Release
 RUN dotnet publish -c Release -o /dist
 
-
 # build vite
 FROM node:latest as build-node
 
