@@ -1,8 +1,8 @@
 {
   "allSubjects": [
     "subject.A",
-    "subject.A.*",
-    "subject.B.*",
+    "subject.A.1",
+    "subject.B.1",
     "subject.C.1",
     "subject.C.2",
     "subject.C.3",
@@ -16,7 +16,7 @@
           "name": "A",
           "subSubjects": [
             {
-              "name": "*"
+              "name": "1"
             }
           ]
         },
@@ -24,7 +24,7 @@
           "name": "B",
           "subSubjects": [
             {
-              "name": "*"
+              "name": "1"
             }
           ]
         },
@@ -65,7 +65,7 @@
       "consumerCount": 2,
       "messageCount": 46,
       "subjects": [
-        "subject.A.*"
+        "subject.A.1"
       ],
       "consumers": [
         "consumer1",
@@ -85,7 +85,7 @@
       "consumerCount": 1,
       "messageCount": 16,
       "subjects": [
-        "subject.B.*"
+        "subject.B.1"
       ],
       "consumers": [
         "consumer2"
@@ -176,7 +176,7 @@
       "sequenceNumber": 1,
       "timestamp": "2023-03-02T14:11:45.7036823Z",
       "stream": "stream1",
-      "subject": "subject.A.*",
+      "subject": "subject.A.1",
       "headers": [
         {
           "name": "headerName1",
@@ -191,16 +191,20 @@
           "value": "headerValue3"
         }
       ],
-      "payload": "payload1.2"
+      "payload": {
+        "data": "payload1.2"
+      }
     },
     {
       "id": 2,
       "sequenceNumber": 2,
       "timestamp": "2023-02-24T13:05:30.9394227Z",
       "stream": "stream2",
-      "subject": "subject.B.*",
+      "subject": "subject.B.1",
       "headers": [],
-      "payload": "payload2.1"
+      "payload": {
+        "data": "payload2.1"
+      }
     },
     {
       "id": 3,
@@ -222,7 +226,9 @@
           "value": "headerValue3"
         }
       ],
-      "payload": "payload3.1"
+      "payload": {
+        "data": "payload3.1"
+      }
     },
     {
       "id": 4,
@@ -240,7 +246,9 @@
           "value": "headerValue3"
         }
       ],
-      "payload": "payload3.3"
+      "payload": {
+        "data": "payload3.3"
+      }
     },
     {
       "id": 5,
@@ -249,7 +257,9 @@
       "stream": "stream4",
       "subject": "subject2.A.1",
       "headers": [],
-      "payload": "payload4.1"
+      "payload": {
+        "data": "payload4.1"
+      }
     },
     {
       "id": 6,
@@ -267,7 +277,9 @@
           "value": "headerValue3"
         }
       ],
-      "payload": "payload5.1"
+      "payload": {
+        "data": "payload5.1"
+      }
     },
     {
       "id": 7,
@@ -285,7 +297,9 @@
           "value": "headerValue2"
         }
       ],
-      "payload": "payloadtest3"
+      "payload": {
+        "data": "payloadtest3"
+      }
     }
   ]
 }

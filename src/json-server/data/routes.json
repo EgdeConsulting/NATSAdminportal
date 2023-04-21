@@ -8,5 +8,6 @@
   "/allStreams": "/streams",
   "/specificStream\\?streamName=:name": "/streams?name=:name",
   "/allSubjects": "/allSubjects",
-  "/subjectHierarchy": "/subjectHierarchy"
+  "/subjectHierarchy": "/subjectHierarchy",
+  "/specificPayload\\?streamName=:stream&sequenceNumber=:sequenceNumber": "/messages?stream=:stream&sequenceNumber=:sequenceNumber"
 }
