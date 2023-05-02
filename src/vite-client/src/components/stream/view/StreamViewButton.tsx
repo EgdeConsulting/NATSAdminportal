@@ -19,6 +19,7 @@ function StreamViewButton(props: { content: Record<string, any> }) {
         });
         changeVisibility(true);
       }}
+      variant={"darkerBackground"}
     >
       View Stream
     </Button>
