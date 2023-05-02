@@ -1,6 +1,10 @@
 using System.Diagnostics;
 using System.Collections.Concurrent;
+using System.ComponentModel;
+using System.Reflection;
+using System.Reflection.Metadata;
 using System.Text;
+using EmptyFiles;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using NATS.Client;
@@ -10,11 +14,9 @@ using vite_api.Dto;
 namespace vite_api.Tests;
 
 [CollectionDefinition("MockServer collection")]
-public class MockServerFixture : IDisposable, ICollectionFixture<MockServerFixture>
+public class MockServerFixture : ICollectionFixture<MockServerFixture>
 {
-    private readonly ServiceCollection _services = new();
-    private readonly Process _process = new();
-
+    
     private readonly List<string[]> _headers = new()
     {
         new[] { "Header1", "Value1" },
@@ -40,23 +42,14 @@ public class MockServerFixture : IDisposable, ICollectionFixture<MockServerFixtu
     public string InvalidSubject => "InvalidSubject";
     public string[] ValidSubjects { get; }
     public List<MessageDataDto> MsgDataDtos { get; }
-    public ServiceProvider Provider { get; }
-
+    public List<Msg> Messages { get; }
+    public Mock<IServiceProvider> Provider { get; }
+    public Mock<IConnection> IConnection { get; }
+    public Mock<IJetStream> JetStream { get; }
+    public Mock<IJetStreamPullSubscription> PullSubscription { get; }
+    
     public MockServerFixture()
     {
-        // https://github.com/nats-io/nats.net/issues/426
-        // Since no official test framework for NATS exists, a rudimentary mock-server
-        // is being setup and started. The NATS-server runs only during testing in a
-        // local process. 
-        _process.StartInfo.FileName = @"config/nats-server.exe";
-        _process.StartInfo.Arguments = @"-c config/server.conf";
-        _process.Start();
-        // Give the server enough time to start. 
-        Thread.Sleep(3000);
-
-        _services.AddTransient(NatsConnectionFactory);
-        Provider = _services.BuildServiceProvider();
-
         ValidSubjects = new[]
         {
             PrimarySubject,
@@ -70,15 +63,25 @@ public class MockServerFixture : IDisposable, ICollectionFixture<MockServerFixtu
             SecondarySubject + ".C.1",
             SecondarySubject + ".C.2"
         };
+        
+        MsgDataDtos = MockMessageDataDtos();
+        Messages = MockMessages();
+        
+        PullSubscription = new Mock<IJetStreamPullSubscription>();
+        PullSubscription.Setup(x => x.Fetch(It.IsAny<int>(), It.IsAny<int>()))
+            .Returns<int, int>((batchSize, maxWaitMillis) => Messages);
+        
+        JetStream = new Mock<IJetStream>();
+        JetStream.Setup(x => x.PullSubscribe(It.IsAny<string>(), It.IsAny<PullSubscribeOptions>())).Returns(PullSubscription.Object);
+        
+        IConnection = new Mock<IConnection>();
+        IConnection.Setup(x => x.CreateJetStreamContext(It.IsAny<JetStreamOptions>())).Returns(JetStream.Object);
 
-        MsgDataDtos = InitializeTestMessageDataDtos();
-
-        using var connection = Provider.GetRequiredService<IConnection>();
-        SetUpTestStream(connection);
-        PublishTestMessages(connection);
+        Provider = new Mock<IServiceProvider>();
+        Provider.Setup(x => x.GetService(typeof(IConnection))).Returns(IConnection.Object);
     }
 
-    private List<MessageDataDto> InitializeTestMessageDataDtos()
+    private List<MessageDataDto> MockMessageDataDtos()
     {
         var msgDataDtos = new List<MessageDataDto>();
         for (int i = 0; i < _payloads.Length; i++)
@@ -101,74 +104,178 @@ public class MockServerFixture : IDisposable, ICollectionFixture<MockServerFixtu
         return msgDataDtos;
     }
 
-    private void SetUpTestStream(IConnection connection)
+    // public class MockMsg : Msg
+    // {
+    //     //https://github.com/nats-io/nats.net/blob/1da3602602b2e590f22c0be4a83c9b36ce053238/src/NATS.Client/JetStream/JetStreamMsg.cs#L34
+    //     public override MetaData MetaData { get; }
+    //     
+    //     public MockMsg(ulong sequenceNumber)
+    //     {
+    //         MetaData = new MetaData("a.a.a.1." + sequenceNumber + ".1.1.1");
+    //     }
+    // }
+    
+    public virtual List<Msg> MockMessages()
     {
-        var jsm = connection.CreateJetStreamManagementContext();
-
-        StreamConfiguration streamConfig = StreamConfiguration.Builder()
-            .WithName(StreamName)
-            .WithSubjects(ValidSubjects)
-            .WithStorageType(StorageType.Memory)
-            .Build();
-        jsm.AddStream(streamConfig);
-    }
-
-    private void PublishTestMessages(IConnection connection)
-    {
-        MsgDataDtos?.ForEach(x =>
+        var messages = new List<Msg>();
+        
+        for (int i = 0; i < MsgDataDtos?.Count; i++)
         {
-            var header = new MsgHeader { { x.Headers.First().Name, x.Headers.First().Value } };
-            connection.Publish(new Msg(x.Subject, header, Encoding.UTF8.GetBytes(x.Payload.Data!)));
-        });
-    }
+            // var attribute = new
+            // {
+            //     StreamSequence = (ulong) i
+            // };
 
-    public List<Msg> GetAllJetStreamMessages(string subject)
-    {
-        using var connection = Provider.GetRequiredService<IConnection>();
-        var js = connection.CreateJetStreamContext();
-        var pullOptions = PullSubscribeOptions.Builder().WithStream(StreamName).Build();
-        var sub = js.PullSubscribe(subject, pullOptions);
+            var header = new MsgHeader { { MsgDataDtos[i].Headers.First().Name, MsgDataDtos[i].Headers.First().Value } };
+            var msg = new Mock<Msg>();
+            msg.SetupAllProperties();
+            msg.Object.Data = Encoding.UTF8.GetBytes(MsgDataDtos[i].Payload.Data!);
+            msg.Object.Subject = MsgDataDtos[i].Subject;
+            msg.Object.Header = header;
+            
+            // var msg = new Mock<Msg>
+            // {
+            //     Object =
+            //     {
+            //         Subject = MsgDataDtos[i].Subject,
+            //         Header = header,
+            //         Data = Encoding.UTF8.GetBytes(MsgDataDtos[i].Payload.Data!)
+            //     }
+            // };
+            //var test = new ParameterInfo();
+            //TypeDescriptor.AddAttributes(msg.Object.MetaData,  Attribute.GetCustomAttributes());
+            //var test = System.Runtime.Serialization.FormatterServices.GetUninitializedObject(typeof(MetaData));
+            //test.GetType().GetProperty("StreamSequence").SetValue(test, (ulong)i, null);
+            //var metaData = MockMetaData((ulong) i);
+            //msg.Setup(x => x. StreamSequence).Returns((ulong) i);
 
-        return sub.Fetch(100, 1000).ToList();
-    }
-
-    public List<Msg> GetAllJetStreamMessages()
-    {
-        using var connection = Provider.GetRequiredService<IConnection>();
-
-        var allMessages = new List<Msg>();
-        var js = connection.CreateJetStreamContext();
-        var pullOptions = PullSubscribeOptions.Builder().WithStream(StreamName).Build();
-        foreach (var subject in ValidSubjects)
-        {
-            var sub = js.PullSubscribe(subject, pullOptions);
-            allMessages.AddRange(sub.Fetch(100, 1000).ToList());
+            messages.Add(msg.Object);
         }
+        
+        // MsgDataDtos?.ForEach(x =>
+        // {
+        //     var header = new MsgHeader { { x.Headers.First().Name, x.Headers.First().Value } };
+        //     var msg = new Mock<Msg>();
+        //     msg.Setup(x => x).Returns(new Msg(x.Subject, header, Encoding.UTF8.GetBytes(x.Payload.Data!)));
+        //     msg.Setup(x => x.MetaData.StreamSequence).Returns();
+        //
+        //     messages.Add(msg);
+        // });
 
-        return allMessages;
+        return messages;
     }
 
-
-    public void Dispose()
+    
+    // public interface IMetaData
+    // {
+    //     string Stream { get; }
+    //     string Consumer { get; }
+    //     ulong NumDelivered{ get; }
+    //     ulong StreamSequence { get; }
+    //     ulong ConsumerSequence { get; }
+    //     ulong NumPending { get; }
+    //     string Domain { get; }
+    //     string Prefix { get; }
+    //     ulong TimestampNanos { get; }
+    //     DateTime Timestamp { get; }
+    // }
+    //
+    // public class MetaDataWrapper : IMetaData
+    // {
+    //     private readonly MetaData _metaData;
+    //
+    //     public MetaDataWrapper(MetaData metaData)
+    //     {
+    //         _metaData = metaData;
+    //     }
+    //
+    //     public string Stream => _metaData.Stream;
+    //     public string Consumer => _metaData.Consumer;
+    //     public ulong NumDelivered => _metaData.NumDelivered;
+    //     public ulong StreamSequence => _metaData.StreamSequence;
+    //     public ulong ConsumerSequence => _metaData.ConsumerSequence;
+    //     public ulong NumPending => _metaData.NumPending;
+    //     public string Domain => _metaData.Domain;
+    //     public string Prefix => _metaData.Prefix;
+    //     public ulong TimestampNanos => _metaData.TimestampNanos;
+    //     public DateTime Timestamp => _metaData.Timestamp;
+    // }
+    
+    
+    private Mock<MetaData> MockMetaData(ulong sequenceNumber)
     {
-        _process.Kill();
-    }
+        var metaData = new Mock<MetaData>();
+        
+        metaData.SetupGet(m => m.Stream).Returns(PrimarySubject);
+        metaData.SetupGet(m => m.Consumer).Returns("");
+        metaData.SetupGet(m => m.NumDelivered).Returns(10);
+        metaData.SetupGet(m => m.StreamSequence).Returns(sequenceNumber);
+        metaData.SetupGet(m => m.ConsumerSequence).Returns(3);
+        metaData.SetupGet(m => m.NumPending).Returns(5);
+        metaData.SetupGet(m => m.Timestamp).Returns(DateTime.Now);
+        metaData.SetupGet(m => m.Domain).Returns("");
+        metaData.SetupGet(m => m.Prefix).Returns("");
+        metaData.SetupGet(m => m.TimestampNanos).Returns(100);
 
-    static IConnection NatsConnectionFactory(IServiceProvider provider)
-    {
-        // Arrange
-        // var mockConnectionFactory = new Mock<IConnectionFactory>();
-        // var mockConnection = new Mock<IConnection>();
-        //
-        // mockConnectionFactory.Setup(factory => factory.CreateConnection()).Returns(mockConnection.Object);
-        //
-        // // Act
-        // var natsClient = new NatsClient(mockConnectionFactory.Object);
-        // var connection = natsClient.CreateConnection();
-        //
-        // // Assert
-        // Assert.NotNull(connection);
-        // mockConnectionFactory.Verify(factory => factory.CreateConnection(), Times.Once);
-        return new ConnectionFactory().CreateConnection("localhost:9000");
+        return metaData;
     }
+    
+    // private void PublishTestMessages()
+    // {
+    //     MsgDataDtos?.ForEach(x =>
+    //     {
+    //         var header = new MsgHeader { { x.Headers.First().Name, x.Headers.First().Value } };
+    //         IConnection.Publish(new Msg(x.Subject, header, Encoding.UTF8.GetBytes(x.Payload.Data!)));
+    //     });
+    // }
+
+    // public List<Msg> GetAllJetStreamMessages(string subject)
+    // {
+    //     using var connection = Provider.GetRequiredService<IConnection>();
+    //     var js = connection.CreateJetStreamContext();
+    //     var pullOptions = PullSubscribeOptions.Builder().WithStream(StreamName).Build();
+    //     var sub = js.PullSubscribe(subject, pullOptions);
+    //
+    //     return sub.Fetch(100, 1000).ToList();
+    // }
+    //
+    // public List<Msg> GetAllJetStreamMessages()
+    // {
+    //     using var connection = Provider.GetRequiredService<IConnection>();
+    //
+    //     var allMessages = new List<Msg>();
+    //     var js = connection.CreateJetStreamContext();
+    //     var pullOptions = PullSubscribeOptions.Builder().WithStream(StreamName).Build();
+    //     foreach (var subject in ValidSubjects)
+    //     {
+    //         var sub = js.PullSubscribe(subject, pullOptions);
+    //         allMessages.AddRange(sub.Fetch(100, 1000).ToList());
+    //     }
+    //
+    //     return allMessages;
+    // }
+    //
+    //
+    // public void Dispose()
+    // {
+    //     _process.Kill();
+    // }
+    //
+    // static IConnection NatsConnectionFactory(IServiceProvider provider)
+    // {
+    //     // Arrange
+    //     // var mockConnectionFactory = new Mock<IConnectionFactory>();
+    //     // var mockConnection = new Mock<IConnection>();
+    //     //
+    //     // mockConnectionFactory.Setup(factory => factory.CreateConnection()).Returns(mockConnection.Object);
+    //     //
+    //     // // Act
+    //     // var natsClient = new NatsClient(mockConnectionFactory.Object);
+    //     // var connection = natsClient.CreateConnection();
+    //     //
+    //     // // Assert
+    //     // Assert.NotNull(connection);
+    //     // mockConnectionFactory.Verify(factory => factory.CreateConnection(), Times.Once);
+    //     return new ConnectionFactory().CreateConnection("localhost:9000");
+    // }
 }
