@@ -1,4 +1,3 @@
-using System.Data.SqlTypes;
 using NATS.Client;
 using NATS.Client.JetStream;
 using vite_api.Dto;
@@ -54,7 +53,7 @@ namespace vite_api.Classes
                {
                    Name = x.Config.Name,
                    SubjectCount = x.State.SubjectCount,
-                   ConsumerCount = FilterConsumers(jsm.GetConsumers(x.Config.Name).ToList()).Count,
+                   ConsumerCount = jsm.GetConsumers(x.Config.Name).ToList().Count,
                    MessageCount = x.State.Messages
                }).ToList();
         }
@@ -76,7 +75,11 @@ namespace vite_api.Classes
                 {
                     Name = streamInfo.Config.Name,
                     Subjects = streamInfo.Config.Subjects,
-                    Consumers = FilterConsumers(jsm.GetConsumers(streamName).ToList()).Select(x => x.Name).ToList(),
+                    Consumers = jsm.GetConsumers(streamName).ToList().Select(x => new ConsumerDto()
+                    {
+                        Name = x.Name,
+                        Created = x.Created
+                    }).ToList(),
                     Description = streamInfo.Config.Description,
                     Messages = streamInfo.State.Messages,
                     Deleted = streamInfo.State.DeletedCount,
@@ -91,19 +94,6 @@ namespace vite_api.Classes
             {
                 throw new ArgumentException("Given stream name or sequence number does not exist on the server");
             }
-        }
-
-        /// <summary>
-        /// Filters consumers based on the date they where created. Only consumers older than 10 minutes are being kept.
-        /// </summary>
-        /// <param name="consumers">List of consumers.</param>
-        /// <returns>Filtered list.</returns>
-        private static List<ConsumerInfo> FilterConsumers(IEnumerable<ConsumerInfo> consumers)
-        {
-            return consumers.Where(x =>
-                DateTime.Now.Date > x.Created ||
-                (DateTime.Now.ToUniversalTime() - x.Created.ToUniversalTime()).TotalHours >= 1 ||
-                (DateTime.Now.ToUniversalTime() - x.Created.ToUniversalTime()).TotalMinutes > 10).ToList();
         }
     }
 }

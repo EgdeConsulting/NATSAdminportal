@@ -19,6 +19,7 @@ import {
   StreamViewContext,
   LoadingSpinner,
   StreamExtendedProps,
+  ConsumerProps,
 } from "components";
 
 import { CloseIcon } from "@chakra-ui/icons";
@@ -128,8 +129,26 @@ function StreamView() {
                     {streamData.consumers != undefined &&
                     streamData.consumers.length != 0 ? (
                       streamData.consumers.map(
-                        (consumer: string, key: number) => {
-                          return <Text key={key}>{consumer}</Text>;
+                        (consumer: ConsumerProps, index: number) => {
+                          return (
+                            <Text
+                              key={index}
+                              variant={
+                                (consumer.name != undefined &&
+                                  consumer.name.length != 8) ||
+                                /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(
+                                  consumer.name
+                                ) ||
+                                Date.now() -
+                                  Date.parse(consumer.created.toString()) >
+                                  1000 * 60
+                                  ? "none"
+                                  : "greyedOut"
+                              }
+                            >
+                              {consumer.name}
+                            </Text>
+                          );
                         }
                       )
                     ) : (
