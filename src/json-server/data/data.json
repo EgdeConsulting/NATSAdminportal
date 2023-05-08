@@ -62,14 +62,14 @@
     {
       "name": "stream1",
       "subjectCount": 3,
-      "consumerCount": 2,
+      "consumerCount": 1,
       "messageCount": 46,
-      "subjects": [
-        "subject.A.1"
-      ],
+      "subjects": ["subject.A.1"],
       "consumers": [
-        "consumer1",
-        "consumer3"
+        {
+          "name": "consumer47",
+          "created": "2023-05-05T09:12:20.1765672Z"
+        }
       ],
       "description": "",
       "messages": 56,
@@ -82,13 +82,22 @@
     {
       "name": "stream2",
       "subjectCount": 2,
-      "consumerCount": 1,
+      "consumerCount": 3,
       "messageCount": 16,
-      "subjects": [
-        "subject.B.1"
-      ],
+      "subjects": ["subject.B.1"],
       "consumers": [
-        "consumer2"
+        {
+          "name": "consumer2",
+          "created": "2024-05-05T09:12:20.1765672Z"
+        },
+        {
+          "name": "consumer43",
+          "created": "2024-05-05T09:11:57.4938367Z"
+        },
+        {
+          "name": "consumer69",
+          "created": "2023-05-05T09:12:20.1765672Z"
+        }
       ],
       "description": "",
       "messages": 23,
@@ -101,14 +110,19 @@
     {
       "name": "stream3",
       "subjectCount": 2,
-      "consumerCount": 1,
+      "consumerCount": 2,
       "messageCount": 8,
-      "subjects": [
-        "subject.C.1",
-        "subject.C.2"
-      ],
+      "subjects": ["subject.C.1", "subject.C.2"],
+
       "consumers": [
-        "consumer4"
+        {
+          "name": "consumer4",
+          "created": "2024-05-05T09:12:20.1765672Z"
+        },
+        {
+          "name": "consumer2",
+          "created": "2023-05-05T09:11:57.4938367Z"
+        }
       ],
       "description": "",
       "messages": 17,
@@ -123,9 +137,7 @@
       "subjectCount": 1,
       "consumerCount": 0,
       "messageCount": 13,
-      "subjects": [
-        "subject2.A.1"
-      ],
+      "subjects": ["subject2.A.1"],
       "consumers": [],
       "description": "",
       "messages": 14,
@@ -140,9 +152,7 @@
       "subjectCount": 1,
       "consumerCount": 0,
       "messageCount": 1,
-      "subjects": [
-        "subject.C.3"
-      ],
+      "subjects": ["subject.C.3"],
       "consumers": [],
       "description": "",
       "messages": 2,
@@ -155,12 +165,15 @@
     {
       "name": "streamtest",
       "subjectCount": 1,
-      "consumerCount": 0,
+      "consumerCount": 1,
       "messageCount": 15,
-      "subjects": [
-        "subject.A"
+      "subjects": ["subject.A"],
+      "consumers": [
+        {
+          "name": "consumer666",
+          "created": "2023-05-05T09:12:20.1765672Z"
+        }
       ],
-      "consumers": [],
       "description": "",
       "messages": 29,
       "deleted": 0,

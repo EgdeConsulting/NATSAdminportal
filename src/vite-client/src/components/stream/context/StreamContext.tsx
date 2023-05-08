@@ -11,11 +11,17 @@ interface PoliciesProps {
   discard: string;
   retention: string;
 }
+
+export interface ConsumerProps {
+  name: string;
+  created: Date;
+}
+
 export interface StreamExtendedProps {
   name: string;
   description: string;
   subjects: string[];
-  consumers: string[];
+  consumers: ConsumerProps[];
   deleted: number;
   policies: PoliciesProps;
 }
